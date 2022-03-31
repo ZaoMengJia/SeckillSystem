@@ -1,0 +1,18 @@
+project:
+  version: 1.0.0
+
+server:
+  port: 8001
+  servlet:
+    encoding:
+      force-response: true
+
+spring:
+  application:
+    name: SeckillSystemManager
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource #数据源
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc.mysql://124.70.96.169:3306/seckill_system?useUnicode=true&chatacterEncoding=utf-8&useSSL=false
+    username: root
+    password: hbjKA737489
