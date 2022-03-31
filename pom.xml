@@ -8,9 +8,10 @@
     <artifactId>BankSeckillSystem</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
     <modules>
-        <module>BankManager</module>
-        <module>BankClient</module>
+        <module>bank-common</module>
+        <module>bank-modules</module>
     </modules>
 
     <properties>
@@ -18,16 +19,11 @@
         <maven.compiler.target>8</maven.compiler.target>
         <junit.version>4.13.2</junit.version>
         <lombok.version>1.18.22</lombok.version>
+        <springboot.version>2.6.5</springboot.version>
     </properties>
 
+    <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.6.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
@@ -43,6 +39,26 @@
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>3.5.1</version>
             </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zaomengjia.common</groupId>
+                <artifactId>bank-common</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!--         测试-->
             <dependency>
                 <groupId>junit</groupId>
@@ -51,11 +67,7 @@
                 <scope>test</scope>
             </dependency>
             <!--         日志-->
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
@@ -77,5 +89,7 @@
                 <version>1.2.17</version>
             </dependency>
         </dependencies>
+    </dependencyManagement>
+
 
 </project>
