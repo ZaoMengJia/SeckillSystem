@@ -1,7 +1,9 @@
 package com.zaomengjia.bankmanager.controller;
 
-import com.zaomengjia.common.message.Result;
+import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.pojo.User;
+import com.zaomengjia.common.utils.ResultUtils;
+import com.zaomengjia.common.vo.ResultVO;
 import com.zaomengjia.bankmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -11,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-
-
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * 查询是否存在该用户或管理员
@@ -23,11 +25,11 @@ public class UserController {
      * @return
      */
     @GetMapping("/userNameExist/{userName}")
-    public Result userNameExist(@PathVariable String userName){
+    public ResultVO<?> userNameExist(@PathVariable String userName){
         try{
-            return Result.succ(userService.userExist(userName));
+            return ResultUtils.success(userService.userExist(userName));
         }catch (Exception e){
-            return Result.fail(500, e.getMessage(), false);
+            return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
     }
 
@@ -38,11 +40,11 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/getAllUser/{pageIndex}/{pageSize}")
-    public Result getAllUser(@PathVariable int pageIndex, @PathVariable int pageSize){
+    public ResultVO<?> getAllUser(@PathVariable int pageIndex, @PathVariable int pageSize){
         try{
-            return Result.succ(userService.getUserList(pageIndex, pageSize));
+            return ResultUtils.success(userService.getUserList(pageIndex, pageSize));
         }catch (Exception e){
-            return Result.fail(500, e.getMessage(), null);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -53,11 +55,11 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/getAllAdmin/{pageIndex}/{pageSize}")
-    public Result getAllAdmin(@PathVariable int pageIndex, @PathVariable int pageSize){
+    public ResultVO<?> getAllAdmin(@PathVariable int pageIndex, @PathVariable int pageSize){
         try{
-            return Result.succ(userService.getAdminList(pageIndex, pageSize));
+            return ResultUtils.success(userService.getAdminList(pageIndex, pageSize));
         }catch (Exception e){
-            return Result.fail(500, e.getMessage(), null);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -67,11 +69,11 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/getAdminById/{id}")
-    public Result getAdminById(@PathVariable int id){
+    public ResultVO<?> getAdminById(@PathVariable int id){
         try{
-            return Result.succ(userService.getAdminById(id));
+            return ResultUtils.success(userService.getAdminById(id));
         }catch (Exception e){
-            return Result.fail(500, e.getMessage(), null);
+            return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
     }
 
@@ -82,11 +84,11 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/getUserById/{id}")
-    public Result getUserById(@PathVariable int id){
+    public ResultVO<?> getUserById(@PathVariable int id){
         try{
-            return Result.succ(userService.getUserById(id));
+            return ResultUtils.success(userService.getUserById(id));
         }catch (Exception e){
-            return Result.fail(500, e.getMessage(), null);
+            return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
     }
 
@@ -96,11 +98,11 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/getAdminByName/{adminName}")
-    public Result getAdminByName(@PathVariable String adminName){
+    public ResultVO<?> getAdminByName(@PathVariable String adminName){
         try{
-            return Result.succ(userService.getAdminByName(adminName));
+            return ResultUtils.success(userService.getAdminByName(adminName));
         }catch (Exception e){
-            return Result.fail(500, e.getMessage(), null);
+            return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
     }
 
@@ -110,11 +112,11 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/getUserByName/{userName}")
-    public Result getUserByName(@PathVariable String userName){
+    public ResultVO<?> getUserByName(@PathVariable String userName){
         try{
-            return Result.succ(userService.getUserByName(userName));
+            return ResultUtils.success(userService.getUserByName(userName));
         }catch (Exception e){
-            return Result.fail(500, e.getMessage(), null);
+            return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
     }
 
@@ -124,13 +126,13 @@ public class UserController {
      * @return
      */
     @PostMapping(value = "/addAdmin")
-    public Result addAdmin(@RequestBody User admin){
+    public ResultVO<?> addAdmin(@RequestBody User admin){
         try {
             admin.setPassword(DigestUtils.md5DigestAsHex(admin.getPassword().getBytes()));
             admin.setAdmin(true);
-            return Result.succ(userService.addUser(admin));
+            return ResultUtils.success(userService.addUser(admin));
         } catch (Exception e) {
-            return Result.fail(500, e.getMessage(), -1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -140,13 +142,13 @@ public class UserController {
      * @return
      */
     @PostMapping(value = "/addUser")
-    public Result addUser(@RequestBody User user){
+    public ResultVO<?> addUser(@RequestBody User user){
         try {
             user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
             user.setAdmin(false);
-            return Result.succ(userService.addUser(user));
+            return ResultUtils.success(userService.addUser(user));
         } catch (Exception e) {
-            return Result.fail(500, e.getMessage(), -1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -156,11 +158,11 @@ public class UserController {
      * @return
      */
     @DeleteMapping(value = "/deleteUser/{id}")
-    public Result deleteUser(@PathVariable int id){
+    public ResultVO<?> deleteUser(@PathVariable int id){
         try{
-            return Result.succ(userService.deleteUser(id));
+            return ResultUtils.success(userService.deleteUser(id));
         } catch (Exception e){
-            return Result.fail(500, e.getMessage(), -1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -170,11 +172,11 @@ public class UserController {
      * @return
      */
     @PutMapping(value = "/updateUser")
-    public Result updateAdmin(@RequestBody User user){
+    public ResultVO<?> updateAdmin(@RequestBody User user){
         try {
-            return Result.succ(userService.updateUser(user));
+            return ResultUtils.success(userService.updateUser(user));
         } catch (Exception e) {
-            return Result.fail(500, e.getMessage(), -1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 }
