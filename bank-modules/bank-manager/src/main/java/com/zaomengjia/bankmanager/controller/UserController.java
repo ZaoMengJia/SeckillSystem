@@ -1,11 +1,21 @@
 package com.zaomengjia.bankmanager.controller;
 
+import cn.hutool.core.map.MapUtil;
+import com.zaomengjia.common.dto.LoginDto;
 import com.zaomengjia.common.message.Result;
 import com.zaomengjia.common.pojo.User;
 import com.zaomengjia.bankmanager.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/admin")
@@ -14,8 +24,36 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("/login")
+    public Result toLogin(@Validated @RequestBody LoginDto loginDto){
+        System.out.println("执行登录函数");
+        Subject subject = SecurityUtils.getSubject();
+        User admin = userService.getAdminByName(loginDto.getLoginName());
+        UsernamePasswordToken token = new UsernamePasswordToken(loginDto.getLoginName(), loginDto.getPassword());
+        try{
+            subject.login(token);
+            System.out.println("管理员认证成功");
+            SecurityUtils.getSubject().getSession().setTimeout(36000000);
+            return Result.succ(MapUtil.builder()
+                    .put("id",admin.getUid())
+                    .put("sex",admin.isSex())
+                    .put("userName",admin.getUserName())
+                    .map());
+        }catch (UnknownAccountException e){
+            System.out.println("管理员认证失败");
+            return Result.fail("用户名错误");
+        }catch (IncorrectCredentialsException e){
+            System.out.println("管理员认证失败");
+            return Result.fail("密码错误");
+        }
+    }
 
-
+    @RequiresAuthentication
+    @GetMapping("/logout")
+    public Result toLogout(){
+        SecurityUtils.getSubject().logout();
+        return Result.succ(null);
+    }
 
     /**
      * 查询是否存在该用户或管理员
@@ -67,7 +105,7 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/getAdminById/{id}")
-    public Result getAdminById(@PathVariable int id){
+    public Result getAdminById(@PathVariable long id){
         try{
             return Result.succ(userService.getAdminById(id));
         }catch (Exception e){
@@ -82,7 +120,7 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/getUserById/{id}")
-    public Result getUserById(@PathVariable int id){
+    public Result getUserById(@PathVariable long id){
         try{
             return Result.succ(userService.getUserById(id));
         }catch (Exception e){
@@ -156,7 +194,7 @@ public class UserController {
      * @return
      */
     @DeleteMapping(value = "/deleteUser/{id}")
-    public Result deleteUser(@PathVariable int id){
+    public Result deleteUser(@PathVariable long id){
         try{
             return Result.succ(userService.deleteUser(id));
         } catch (Exception e){
@@ -170,7 +208,7 @@ public class UserController {
      * @return
      */
     @PutMapping(value = "/updateUser")
-    public Result updateAdmin(@RequestBody User user){
+    public Result updateUser(@RequestBody User user){
         try {
             return Result.succ(userService.updateUser(user));
         } catch (Exception e) {

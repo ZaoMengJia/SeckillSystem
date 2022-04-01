@@ -61,7 +61,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
     }
 
     @Override
-    public int deleteFinancialProduct(String fpid) {
+    public int deleteFinancialProduct(long fpid) {
         return financialProductMapper.deleteById(fpid);
     }
 
