@@ -39,8 +39,8 @@ public class SaleProductDetailController {
         }
     }
 
-    @GetMapping("/getSaleProductDetailBySaidAndFpid/{said/{fpid}")
-    public Result getSaleProductDetailByFpid(@PathVariable long said,@PathVariable long fpid){
+    @GetMapping("/getSaleProductDetailBySaidAndFpid/{said}/{fpid}")
+    public Result getSaleProductDetailBySaidAndFpid(@PathVariable long said,@PathVariable long fpid){
         try{
             return Result.succ(saleProductDetailService.getSaleProductDetailBySaidAndFpid(said,fpid));
         }catch (Exception e){

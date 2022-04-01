@@ -13,39 +13,20 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource #数据源
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://124.70.96.169:3306/seckill_system?useUnicode=true&chatacterEncoding=utf-8&useSSL=false
-    username: remote
+    url: jdbc:mysql://localhost:3306/seckill_system?useUnicode=true&chatacterEncoding=utf-8&useSSL=false
+    username: root
     password: hbjKA737489
-    druid:
-      initialSize: 1
-      minIdle: 3
-      maxActive: 20
-      maxWait: 60000
-      timeBetweenEvictionRunsMillis: 60000
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: SELECT 1 FROM DUAL
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      poolPreparedStatements: false
-      filters: stat,wall
-      useGlobalDataSourceStat: true
-      aop-patterns: net.icharlotte.*
-      stat-view-servlet:
-        enabled: true
-        login-username: admin
-        login-password: admin
-        reset-enable: false
-      web-stat-filter:
-        enabled: true
-        url-pattern: /*
-        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
-      filter:
-        stat:
-          enabled: true
-          slow-sql-millis: 1000
-          log-slow-sql: true
-        wall:
-          enabled: true
-          config:
-            drop-table-allow: false
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,log4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
