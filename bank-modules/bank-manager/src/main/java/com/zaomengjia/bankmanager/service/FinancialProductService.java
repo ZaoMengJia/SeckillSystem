@@ -17,7 +17,7 @@ public interface FinancialProductService {
 
     int addFinancialProduct(FinancialProduct financialProduct);
 
-    int deleteFinancialProduct(String fpid);
+    int deleteFinancialProduct(long fpid);
 
     int updateFinancialProduct(FinancialProduct financialProduct);
 }

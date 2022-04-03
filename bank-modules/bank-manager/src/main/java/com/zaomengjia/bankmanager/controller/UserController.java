@@ -19,6 +19,8 @@ public class UserController {
         this.userService = userService;
     }
 
+    //Todo: 网关里集成了认证模块，不需要使用shiro了
+
     /**
      * 查询是否存在该用户或管理员
      * @param userName
@@ -172,7 +174,7 @@ public class UserController {
      * @return
      */
     @PutMapping(value = "/updateUser")
-    public ResultVO<?> updateAdmin(@RequestBody User user){
+    public ResultVO<?> updateUser(@RequestBody User user){
         try {
             return ResultUtils.success(userService.updateUser(user));
         } catch (Exception e) {

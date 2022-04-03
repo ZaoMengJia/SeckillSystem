@@ -50,7 +50,7 @@ public interface UserService {
      * @param id
      * @return
      */
-    int deleteUser(int id);
+    int deleteUser(long id);
 
     /**
      * 更新管理员、用户
