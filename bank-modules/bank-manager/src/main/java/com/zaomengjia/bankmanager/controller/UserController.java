@@ -5,7 +5,6 @@ import com.zaomengjia.common.pojo.User;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
 import com.zaomengjia.bankmanager.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 

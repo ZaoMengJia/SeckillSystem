@@ -1,77 +1,82 @@
 package com.zaomengjia.bankmanager.controller;
 
 import com.zaomengjia.bankmanager.service.OrderService;
-import com.zaomengjia.common.message.Result;
+import com.zaomengjia.common.constant.ResultCode;
+import com.zaomengjia.common.utils.ResultUtils;
+import com.zaomengjia.common.vo.ResultVO;
 import com.zaomengjia.common.pojo.Order;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order")
 public class OrderController {
-    @Autowired
-    private OrderService orderService;
+
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping("/getAllOrders/{pageIndex}/{pageSize}")
-    public Result getAllOrders(@PathVariable int pageIndex,@PathVariable int pageSize){
+    public ResultVO<?> getAllOrders(@PathVariable int pageIndex,@PathVariable int pageSize){
         try{
-            return Result.succ(orderService.getOrder(pageIndex,pageSize));
+            return ResultUtils.success(orderService.getOrder(pageIndex,pageSize));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),null);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR,e.getMessage());
         }
     }
 
     @GetMapping("/getOrderById/{id}")
-    public Result getOrderById(@PathVariable long id){
+    public ResultVO<?> getOrderById(@PathVariable long id){
         try{
-            return Result.succ(orderService.getOrderById(id));
+            return ResultUtils.success(orderService.getOrderById(id));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),null);
+            return ResultUtils.error(ResultCode.NO_SUCH_ORDER_ERROR,e.getMessage());
         }
     }
 
-    @GetMapping("/getProductByProductName/{productName}")
-    public Result getProductByProductName(@PathVariable String productName){
+    @GetMapping("/getOrderByProductName/{productName}")
+    public ResultVO<?> getOrderByProductName(@PathVariable String productName){
         try{
-            return Result.succ(orderService.getOrderByProductName(productName));
+            return ResultUtils.success(orderService.getOrderByProductName(productName));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),null);
+            return ResultUtils.error(ResultCode.NO_SUCH_ORDER_ERROR,e.getMessage());
         }
     }
 
-    @GetMapping("/getProductByUserName/{userName}")
-    public Result getProductByPrice(@PathVariable String userName){
+    @GetMapping("/getOrderByUserName/{userName}")
+    public ResultVO<?> getOrderByUserName(@PathVariable String userName){
         try{
-            return Result.succ(orderService.getOrderByUserName(userName));
+            return ResultUtils.success(orderService.getOrderByUserName(userName));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),null);
+            return ResultUtils.error(ResultCode.NO_SUCH_ORDER_ERROR,e.getMessage());
         }
     }
 
     @PostMapping("/addOrder/{order}")
-    public Result addOrder(@RequestBody Order order){
+    public ResultVO<?> addOrder(@RequestBody Order order){
         try{
-            return Result.succ(orderService.addOrder(order));
+            return ResultUtils.success(orderService.addOrder(order));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),-1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR,e.getMessage());
         }
     }
 
     @DeleteMapping("/deleteOrder/{id}")
-    public Result deleteOrder(@PathVariable long id){
+    public ResultVO<?> deleteOrder(@PathVariable long id){
         try{
-            return Result.succ(orderService.deleteOrder(id));
+            return ResultUtils.success(orderService.deleteOrder(id));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),-1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR,e.getMessage());
         }
     }
 
     @PutMapping("/updateOrder/{order}")
-    public Result updateOrder(@RequestBody Order order){
+    public ResultVO<?> updateOrder(@RequestBody Order order){
         try{
-            return Result.succ(orderService.updateOrder(order));
+            return ResultUtils.success(orderService.updateOrder(order));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),-1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR,e.getMessage());
         }
     }
 }

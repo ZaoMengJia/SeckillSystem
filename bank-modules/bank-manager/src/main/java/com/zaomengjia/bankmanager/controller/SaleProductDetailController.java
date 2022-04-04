@@ -1,79 +1,84 @@
 package com.zaomengjia.bankmanager.controller;
 
 import com.zaomengjia.bankmanager.service.SaleProductDetailService;
-import com.zaomengjia.common.message.Result;
+import com.zaomengjia.common.constant.ResultCode;
+import com.zaomengjia.common.utils.ResultUtils;
+import com.zaomengjia.common.vo.ResultVO;
 import com.zaomengjia.common.pojo.SaleProductDetail;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/saleProductDetail")
 public class SaleProductDetailController {
-    @Autowired
+
     private SaleProductDetailService saleProductDetailService;
 
+    public SaleProductDetailController(SaleProductDetailService saleProductDetailService) {
+        this.saleProductDetailService = saleProductDetailService;
+    }
+
     @GetMapping("/getAllSaleProductDetail/{pageIndex}/{pageSize}")
-    public Result getAllSaleProductDetail(@PathVariable int pageIndex, @PathVariable int pageSize){
+    public ResultVO<?> getAllSaleProductDetail(@PathVariable int pageIndex, @PathVariable int pageSize){
         try{
-            return Result.succ(saleProductDetailService.getSaleProductDetail(pageIndex, pageSize));
+            return ResultUtils.success(saleProductDetailService.getSaleProductDetail(pageIndex, pageSize));
         }catch (Exception e){
-            return Result.fail(500, e.getMessage(), null);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     @GetMapping("/getSaleProductDetailBySaid/{said}")
-    public Result getSaleProductDetailBySaid(@PathVariable long said){
+    public ResultVO<?> getSaleProductDetailBySaid(@PathVariable long said){
         try{
-            return Result.succ(saleProductDetailService.getSaleProductDetailBySaid(said));
+            return ResultUtils.success(saleProductDetailService.getSaleProductDetailBySaid(said));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),null);
+            return ResultUtils.error(ResultCode.NO_SUCH_DETAIL_ERROR, e.getMessage());
         }
     }
 
     @GetMapping("/getSaleProductDetailByFpid/{fpid}")
-    public Result getSaleProductDetailByFpid(@PathVariable long fpid){
+    public ResultVO<?> getSaleProductDetailByFpid(@PathVariable long fpid){
         try{
-            return Result.succ(saleProductDetailService.getSaleProductDetailByFpid(fpid));
+            return ResultUtils.success(saleProductDetailService.getSaleProductDetailByFpid(fpid));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),null);
+            return ResultUtils.error(ResultCode.NO_SUCH_DETAIL_ERROR, e.getMessage());
         }
     }
 
     @GetMapping("/getSaleProductDetailBySaidAndFpid/{said}/{fpid}")
-    public Result getSaleProductDetailBySaidAndFpid(@PathVariable long said,@PathVariable long fpid){
+    public ResultVO<?> getSaleProductDetailBySaidAndFpid(@PathVariable long said,@PathVariable long fpid){
         try{
-            return Result.succ(saleProductDetailService.getSaleProductDetailBySaidAndFpid(said,fpid));
+            return ResultUtils.success(saleProductDetailService.getSaleProductDetailBySaidAndFpid(said,fpid));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),null);
+            return ResultUtils.error(ResultCode.NO_SUCH_DETAIL_ERROR, e.getMessage());
         }
     }
 
 
 
     @PostMapping("/addSaleProductDetail/{detail}")
-    public Result addSaleProductDetail(@RequestBody SaleProductDetail detail){
+    public ResultVO<?> addSaleProductDetail(@RequestBody SaleProductDetail detail){
         try{
-            return Result.succ(saleProductDetailService.addSaleProductDetail(detail));
+            return ResultUtils.success(saleProductDetailService.addSaleProductDetail(detail));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),-1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     @DeleteMapping("/deleteSaleProductDetail/{said}/{fpid}")
-    public Result deleteSaleProductDetail(@PathVariable long said,@PathVariable long fpid){
+    public ResultVO<?> deleteSaleProductDetail(@PathVariable long said,@PathVariable long fpid){
         try{
-            return Result.succ(saleProductDetailService.deleteSaleProductDetail(said,fpid));
+            return ResultUtils.success(saleProductDetailService.deleteSaleProductDetail(said,fpid));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),-1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     @PutMapping("/updateSaleProductDetail/{detail}")
-    public Result updateSaleProductDetail(@RequestBody SaleProductDetail detail){
+    public ResultVO<?> updateSaleProductDetail(@RequestBody SaleProductDetail detail){
         try{
-            return Result.succ(saleProductDetailService.updateSaleProductDetail(detail));
+            return ResultUtils.success(saleProductDetailService.updateSaleProductDetail(detail));
         }catch (Exception e){
-            return Result.fail(500,e.getMessage(),-1);
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 }
