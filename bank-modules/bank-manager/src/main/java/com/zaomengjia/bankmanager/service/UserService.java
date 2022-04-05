@@ -23,6 +23,16 @@ public interface UserService {
     Map<String,Object> getUserList(int pageIndex,int pageSize);
 
     /**
+     * 查询管理员以及用户
+     * @param keyword
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    Map<String, Object> searchAdminList(String keyword, int pageIndex, int pageSize);
+    Map<String, Object> searchUserList(String keyword, int pageIndex, int pageSize);
+
+    /**
      * 通过id获取管理员与普通用户
      * @param uid
      * @return

@@ -1,11 +1,21 @@
 package com.zaomengjia.bankmanager.controller;
 
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.zaomengjia.common.constant.ResultCode;
+import com.zaomengjia.common.dto.LoginDto;
 import com.zaomengjia.common.pojo.User;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
 import com.zaomengjia.bankmanager.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.subject.Subject;
 import org.springframework.util.DigestUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +29,25 @@ public class UserController {
     }
 
     //Todo: 网关里集成了认证模块，不需要使用shiro了
+    @PostMapping("/login")
+    public ResultVO<?> toLogin(@Validated @RequestBody LoginDto loginDto){
+        User admin = userService.getAdminByName(loginDto.getLoginName());
+        if(admin.getPassword().equals(SecureUtil.md5(String.valueOf(loginDto.getPassword())))){
+            return ResultUtils.success(MapUtil.builder()
+                    .put("id",admin.getUid())
+                    .put("sex",admin.isSex())
+                    .put("userName",admin.getUserName())
+                    .map());
+        }else{
+            return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR);
+        }
+    }
+
+    @GetMapping("/logout")
+    public ResultVO<?> toLogout(){
+        SecurityUtils.getSubject().logout();
+        return ResultUtils.success(null);
+    }
 
     /**
      * 查询是否存在该用户或管理员
@@ -44,6 +73,38 @@ public class UserController {
     public ResultVO<?> getAllUser(@PathVariable int pageIndex, @PathVariable int pageSize){
         try{
             return ResultUtils.success(userService.getUserList(pageIndex, pageSize));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    /**
+     * 搜索管理员
+     * @param keyword
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    @GetMapping(value = "/searchAdmin/{keyword}/{pageIndex}/{pageSize}")
+    public ResultVO<?> searchAdminList(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
+        try{
+            return ResultUtils.success(userService.searchAdminList(keyword, pageIndex, pageSize));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    /**
+     * 搜索用户
+     * @param keyword
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    @GetMapping(value = "/searchUser/{keyword}/{pageIndex}/{pageSize}")
+    public ResultVO<?> searchUserList(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
+        try{
+            return ResultUtils.success(userService.searchUserList(keyword, pageIndex, pageSize));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
