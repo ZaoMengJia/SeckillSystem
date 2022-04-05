@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     private Map<String, Object> getPageInfo(int pageIndex, int pageSize, QueryWrapper<User> queryWrapper) {
         Page<User> page = new Page<>(pageIndex, pageSize);
-        Map<String, Object> map = new HashMap<>(5);
+        Map<String, Object> map = new HashMap<>();
         Page<User> result = userMapper.selectPage(page, queryWrapper);
         map.put("records", result.getRecords());
         map.put("total", result.getTotal());

@@ -26,6 +26,15 @@ public class SaleProductDetailController {
         }
     }
 
+    @GetMapping(value = "/searchSaleProductDetail/{keyword}/{pageIndex}/{pageSize}")
+    public ResultVO<?> searchSaleProductDetail(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
+        try{
+            return ResultUtils.success(saleProductDetailService.searchDetail(keyword, pageIndex, pageSize));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
     @GetMapping("/getSaleProductDetailBySaid/{said}")
     public ResultVO<?> getSaleProductDetailBySaid(@PathVariable long said){
         try{
@@ -55,7 +64,7 @@ public class SaleProductDetailController {
 
 
 
-    @PostMapping("/addSaleProductDetail/{detail}")
+    @PostMapping("/addSaleProductDetail")
     public ResultVO<?> addSaleProductDetail(@RequestBody SaleProductDetail detail){
         try{
             return ResultUtils.success(saleProductDetailService.addSaleProductDetail(detail));
@@ -73,7 +82,7 @@ public class SaleProductDetailController {
         }
     }
 
-    @PutMapping("/updateSaleProductDetail/{detail}")
+    @PutMapping("/updateSaleProductDetail")
     public ResultVO<?> updateSaleProductDetail(@RequestBody SaleProductDetail detail){
         try{
             return ResultUtils.success(saleProductDetailService.updateSaleProductDetail(detail));

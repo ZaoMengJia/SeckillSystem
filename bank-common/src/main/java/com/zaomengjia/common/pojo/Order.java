@@ -10,7 +10,7 @@ import lombok.Data;
  * 订单类，用户抢购秒杀商品时产生订单一人只能抢购一份商品
  */
 @Data
-@TableName("order")
+@TableName("user_order")
 public class Order {
     @TableId(value = "oid",type = IdType.AUTO)
     private long oid;//订单号

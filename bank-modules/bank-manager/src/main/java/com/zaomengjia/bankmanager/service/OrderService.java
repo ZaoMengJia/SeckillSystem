@@ -10,6 +10,8 @@ public interface OrderService {
 
     Map<String,Object> getOrder(int pageIndex, int pageSize);
 
+    Map<String, Object> searchOrder(String keyword, int pageIndex, int pageSize);
+
     Order getOrderById(long oid);
 
     Order getOrderByProductName(String productName);

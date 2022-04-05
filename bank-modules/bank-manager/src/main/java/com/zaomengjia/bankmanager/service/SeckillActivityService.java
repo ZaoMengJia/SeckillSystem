@@ -10,6 +10,8 @@ public interface SeckillActivityService {
 
     Map<String ,Object> getSeckillActivity(int pageIndex, int pageSize);
 
+    Map<String, Object> searchSeckillActivity(String keyword, int pageIndex, int pageSize);
+
     SeckillActivity getSeckillActivityByName(String name);
 
     SeckillActivity getSeckillActivityById(long id);

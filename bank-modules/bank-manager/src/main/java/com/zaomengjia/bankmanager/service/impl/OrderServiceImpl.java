@@ -27,11 +27,27 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Map<String, Object> getOrder(int pageIndex, int pageSize) {
+        return getPageInfo(pageIndex,pageSize,null);
+    }
+
+    private Map<String, Object> getPageInfo(int pageIndex, int pageSize, QueryWrapper<Order> queryWrapper) {
         Page<Order> page = new Page<>(pageIndex, pageSize);
         Map<String, Object> map = new HashMap<>(5);
-        orderMapper.selectPage(page, null);
+        orderMapper.selectPage(page, queryWrapper);
         map.put("records", page.getRecords());
         map.put("total", page.getTotal());
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> searchOrder(String keyword, int pageIndex, int pageSize) {
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("user_name", keyword);
+        Page<Order> page = new Page<>(pageIndex, pageSize);
+        Map<String, Object> map = new HashMap<>(5);
+        Page<Order> result = orderMapper.selectPage(page, queryWrapper);
+        map.put("records", result.getRecords());
+        map.put("total", result.getTotal());
         return map;
     }
 

@@ -26,6 +26,15 @@ public class OrderController {
         }
     }
 
+    @GetMapping(value = "/searchOrder/{keyword}/{pageIndex}/{pageSize}")
+    public ResultVO<?> searchOrder(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
+        try{
+            return ResultUtils.success(orderService.searchOrder(keyword, pageIndex, pageSize));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
     @GetMapping("/getOrderById/{id}")
     public ResultVO<?> getOrderById(@PathVariable long id){
         try{
@@ -53,7 +62,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/addOrder/{order}")
+    @PostMapping("/addOrder")
     public ResultVO<?> addOrder(@RequestBody Order order){
         try{
             return ResultUtils.success(orderService.addOrder(order));
@@ -71,7 +80,7 @@ public class OrderController {
         }
     }
 
-    @PutMapping("/updateOrder/{order}")
+    @PutMapping("/updateOrder")
     public ResultVO<?> updateOrder(@RequestBody Order order){
         try{
             return ResultUtils.success(orderService.updateOrder(order));

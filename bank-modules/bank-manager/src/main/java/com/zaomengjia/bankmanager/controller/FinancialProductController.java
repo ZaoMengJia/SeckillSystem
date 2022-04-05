@@ -5,7 +5,6 @@ import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
 import com.zaomengjia.common.pojo.FinancialProduct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -19,12 +18,30 @@ public class FinancialProductController {
         this.financialProductService = financialProductService;
     }
 
+    @GetMapping("/productExist/{productName}")
+    public ResultVO<?> productExist(@PathVariable String productName){
+        try{
+            return ResultUtils.success(financialProductService.financialProductExist(productName));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
+        }
+    }
+
     @GetMapping("/getAllProduct/{pageIndex}/{pageSize}")
     public ResultVO<?> getAllProduct(@PathVariable int pageIndex,@PathVariable int pageSize){
         try{
             return ResultUtils.success(financialProductService.getFinancialProduct(pageIndex, pageSize));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/searchProduct/{keyword}/{pageIndex}/{pageSize}")
+    public ResultVO<?> searchProduct(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
+        try{
+            return ResultUtils.success(financialProductService.searchProduct(keyword, pageIndex, pageSize));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -55,7 +72,7 @@ public class FinancialProductController {
         }
     }
 
-    @PostMapping("/addProduct/{product}")
+    @PostMapping("/addProduct")
     public ResultVO<?> addProduct(@RequestBody FinancialProduct product){
         try{
             return ResultUtils.success(financialProductService.addFinancialProduct(product));
@@ -73,7 +90,7 @@ public class FinancialProductController {
         }
     }
 
-    @PutMapping("/updateProduct/{product}")
+    @PutMapping("/updateProduct")
     public ResultVO<?> updateProduct(@RequestBody FinancialProduct product){
         try{
             return ResultUtils.success(financialProductService.updateFinancialProduct(product));

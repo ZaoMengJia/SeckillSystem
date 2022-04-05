@@ -17,11 +17,28 @@ public class SeckillActivityController {
         this.seckillActivityService = seckillActivityService;
     }
 
+    @GetMapping("/activityExist/{activityName}")
+    public ResultVO<?> activityExist(@PathVariable String activityName){
+        try{
+            return ResultUtils.success(seckillActivityService.seckillActivityExist(activityName));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
+        }
+    }
 
     @GetMapping("/getAllSeckillActivity/{pageIndex}/{pageSize}")
     public ResultVO<?> getAllSeckillActivity(@PathVariable int pageIndex, @PathVariable int pageSize){
         try{
             return ResultUtils.success(seckillActivityService.getSeckillActivity(pageIndex, pageSize));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/searchActivity/{keyword}/{pageIndex}/{pageSize}")
+    public ResultVO<?> searchActivity(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
+        try{
+            return ResultUtils.success(seckillActivityService.searchSeckillActivity(keyword, pageIndex, pageSize));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -45,7 +62,7 @@ public class SeckillActivityController {
         }
     }
 
-    @PostMapping("/addSeckillActivity/{activity}")
+    @PostMapping("/addSeckillActivity")
     public ResultVO<?> addSeckillActivity(@RequestBody SeckillActivity activity){
         try{
             return ResultUtils.success(seckillActivityService.addSeckillActivity(activity));
@@ -63,7 +80,7 @@ public class SeckillActivityController {
         }
     }
 
-    @PutMapping("/updateSeckillActivity/{activity}")
+    @PutMapping("/updateSeckillActivity")
     public ResultVO<?> updateSeckillActivity(@RequestBody SeckillActivity activity){
         try{
             return ResultUtils.success(seckillActivityService.updateSeckillActivity(activity));

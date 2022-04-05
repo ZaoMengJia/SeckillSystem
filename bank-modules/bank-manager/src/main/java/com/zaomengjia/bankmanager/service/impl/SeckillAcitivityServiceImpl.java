@@ -35,6 +35,18 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
     }
 
     @Override
+    public Map<String, Object> searchSeckillActivity(String keyword, int pageIndex, int pageSize) {
+        QueryWrapper<SeckillActivity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("sname", keyword);
+        Page<SeckillActivity> page = new Page<>(pageIndex, pageSize);
+        Map<String, Object> map = new HashMap<>(5);
+        Page<SeckillActivity> result = seckillActivityMapper.selectPage(page, queryWrapper);
+        map.put("records", result.getRecords());
+        map.put("total", result.getTotal());
+        return map;
+    }
+
+    @Override
     public SeckillActivity getSeckillActivityByName(String name) {
         QueryWrapper<SeckillActivity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("sname",name);

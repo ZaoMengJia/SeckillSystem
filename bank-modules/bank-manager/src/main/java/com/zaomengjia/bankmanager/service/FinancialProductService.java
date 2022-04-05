@@ -9,6 +9,8 @@ public interface FinancialProductService {
 
     Map<String, Object> getFinancialProduct(int pageIndex, int pageSize);
 
+    Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize);
+
     FinancialProduct getFinancialProductById(long fpid);
 
     FinancialProduct getFinancialProductByPrice(int price);

@@ -29,6 +29,13 @@ public class FinancialProductServiceImpl implements FinancialProductService {
         return getPageInfo(pageIndex,pageSize,null);
     }
 
+    @Override
+    public Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize) {
+        QueryWrapper<FinancialProduct> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("fname", keyword);
+        return getPageInfo(pageIndex, pageSize, queryWrapper);
+    }
+
     private Map<String, Object> getPageInfo(int pageIndex, int pageSize, QueryWrapper<FinancialProduct> queryWrapper) {
         Page<FinancialProduct> page = new Page<>(pageIndex, pageSize);
         Map<String, Object> map = new HashMap<>(5);

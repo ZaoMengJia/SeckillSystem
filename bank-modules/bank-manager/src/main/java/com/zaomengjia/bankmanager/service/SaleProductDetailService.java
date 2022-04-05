@@ -10,9 +10,12 @@ public interface SaleProductDetailService {
 
     Map<String,Object> getSaleProductDetail(int pageIndex,int pageSize);
 
+    Map<String, Object> searchDetail(String keyword, int pageIndex, int pageSize);
+
     SaleProductDetail getSaleProductDetailBySaid(long said);
 
     SaleProductDetail getSaleProductDetailByFpid(long fpid);
+
     SaleProductDetail getSaleProductDetailBySaidAndFpid(long said,long fpid);
 
     int addSaleProductDetail(SaleProductDetail saleProductDetail);

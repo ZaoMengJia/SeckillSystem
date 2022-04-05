@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.pojo.SaleProductDetail;
-import com.zaomengjia.common.pojo.SeckillActivity;
 import com.zaomengjia.bankmanager.service.SaleProductDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +31,18 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
         saleProductDetailMapper.selectPage(page, null);
         map.put("records", page.getRecords());
         map.put("total", page.getTotal());
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> searchDetail(String keyword, int pageIndex, int pageSize) {
+        QueryWrapper<SaleProductDetail> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("seckill_activity_id", keyword);
+        Page<SaleProductDetail> page = new Page<>(pageIndex, pageSize);
+        Map<String, Object> map = new HashMap<>(5);
+        Page<SaleProductDetail> result = saleProductDetailMapper.selectPage(page, queryWrapper);
+        map.put("records", result.getRecords());
+        map.put("total", result.getTotal());
         return map;
     }
 
