@@ -33,33 +33,18 @@ public class UserServiceImpl implements UserService {
 
     private Map<String, Object> getPageInfo(int pageIndex, int pageSize, QueryWrapper<User> queryWrapper) {
         Page<User> page = new Page<>(pageIndex, pageSize);
-        Map<String, Object> map = new HashMap<>();
-        Page<User> result = userMapper.selectPage(page, queryWrapper);
-        map.put("records", result.getRecords());
-        map.put("total", result.getTotal());
+        Map<String, Object> map = new HashMap<>(5);
+        userMapper.selectPage(page, queryWrapper);
+        map.put("records", page.getRecords());
+
+        map.put("total", page.getTotal());
         return map;
     }
 
     @Override
     public Map<String, Object> getUserList(int pageIndex, int pageSize) {
-        System.out.println(pageIndex);
-        System.out.println(pageSize);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("is_admin", 0);
-        return getPageInfo(pageIndex, pageSize, queryWrapper);
-    }
-
-    @Override
-    public Map<String, Object> searchAdminList(String keyword, int pageIndex, int pageSize) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin", 1).like("user_name", keyword);
-        return getPageInfo(pageIndex, pageSize, queryWrapper);
-    }
-
-    @Override
-    public Map<String, Object> searchUserList(String keyword, int pageIndex, int pageSize) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin", 0).like("user_name", keyword);
         return getPageInfo(pageIndex, pageSize, queryWrapper);
     }
 

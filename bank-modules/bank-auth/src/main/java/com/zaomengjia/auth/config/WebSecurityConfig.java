@@ -1,22 +1,32 @@
 package com.zaomengjia.auth.config;
 
-import com.zaomengjia.auth.filter.WeixinLoginAuthenticationFilter;
-import com.zaomengjia.auth.service.impl.WeixinLoginAuthenticationProvider;
+import com.zaomengjia.auth.filter.JwtFilter;
+import com.zaomengjia.auth.filter.UsernamePasswordManager;
+import com.zaomengjia.auth.pojo.JwtToken;
+import com.zaomengjia.auth.pojo.WeixinToken;
+import com.zaomengjia.auth.filter.WeixinLoginManager;
+import com.zaomengjia.common.utils.MD5Utils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.*;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.web.reactive.handler.WebFluxResponseStatusExceptionHandler;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.annotation.Resource;
+import java.util.Objects;
 
 /**
  * @author orangeboyChen
@@ -24,42 +34,84 @@ import java.io.IOException;
  * @date 2022/4/1 11:48
  */
 @Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebFluxSecurity
+public class WebSecurityConfig {
 
-    private final WeixinLoginAuthenticationProvider weixinLoginAuthenticationProvider;
+
+    @Resource
+    private WebFluxResponseStatusExceptionHandler responseStatusExceptionHandler;
 
 
-    public WebSecurityConfig(WeixinLoginAuthenticationProvider weixinLoginAuthenticationProvider) {
-        this.weixinLoginAuthenticationProvider = weixinLoginAuthenticationProvider;
+    public AuthenticationWebFilter usernamePasswordFilter(ReactiveAuthenticationManager reactiveAuthenticationManager) {
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager);
+        authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/auth/web"));
+        authenticationWebFilter.setServerAuthenticationConverter(exchange -> exchange.getFormData().map(data -> {
+            String username = data.getFirst("username");
+            String password = MD5Utils.fromMD5(Objects.requireNonNull(data.getFirst("password")));
+            return new UsernamePasswordAuthenticationToken(username, password);
+        }));
+        authenticationWebFilter.setAuthenticationFailureHandler((webFilterExchange, exception) -> responseStatusExceptionHandler.handle(webFilterExchange.getExchange(), exception));
+        return authenticationWebFilter;
     }
 
-    WeixinLoginAuthenticationFilter weixinLoginAuthenticationFilter() throws Exception {
-        WeixinLoginAuthenticationFilter weixinLoginAuthenticationFilter = new WeixinLoginAuthenticationFilter();
 
-        weixinLoginAuthenticationFilter.setAuthenticationSuccessHandler((request, response, authentication) -> {
-
-        });
-        weixinLoginAuthenticationFilter.setAuthenticationFailureHandler((request, response, exception) -> {
-
-        });
-        weixinLoginAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
-        weixinLoginAuthenticationFilter.setFilterProcessesUrl("/weixin/login");
-        return weixinLoginAuthenticationFilter;
+    public AuthenticationWebFilter weixinFilter(ReactiveAuthenticationManager reactiveAuthenticationManager) {
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager);
+        authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/auth/weixin"));
+        authenticationWebFilter.setServerAuthenticationConverter(exchange -> exchange.getFormData().map(data -> {
+            String code = data.getFirst("code");
+            return new WeixinToken(code, null);
+        }));
+        authenticationWebFilter.setAuthenticationFailureHandler((webFilterExchange, exception) -> responseStatusExceptionHandler.handle(webFilterExchange.getExchange(), exception));
+        return authenticationWebFilter;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .anyRequest().authenticated()
+//    public AuthenticationWebFilter jwtFilter(ReactiveAuthenticationManager reactiveAuthenticationManager) {
+//        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager);
+//        authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
+//        authenticationWebFilter.setServerAuthenticationConverter(exchange ->
+//                Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst("Authorization"))
+//                        .switchIfEmpty(Mono.error(new RuntimeException("空数据")))
+//                        .map(JwtToken::new)
+//        );
+//        authenticationWebFilter.setAuthenticationFailureHandler((webFilterExchange, exception) -> responseStatusExceptionHandler.handle(webFilterExchange.getExchange(), exception));
+//        return authenticationWebFilter;
+//    }
+
+    @Bean
+    @Primary
+    public ReactiveAuthenticationManager reactiveAuthenticationManager(WeixinLoginManager weixinLoginManager, UsernamePasswordManager usernamePasswordManager, JwtFilter jwtFilter) {
+        return authentication -> {
+            if(authentication instanceof WeixinToken) {
+                return weixinLoginManager.authenticate(authentication);
+            }
+            else if(authentication instanceof UsernamePasswordAuthenticationToken) {
+                return usernamePasswordManager.authenticate(authentication);
+            }
+
+            return Mono.just(authentication);
+        };
+    }
+
+
+    @Bean
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager reactiveAuthenticationManager, JwtFilter jwtFilter) {
+        http
+                .authenticationManager(reactiveAuthenticationManager)
+                .exceptionHandling()
+                .accessDeniedHandler((exchange, denied) -> responseStatusExceptionHandler.handle(exchange, denied))
+                .authenticationEntryPoint((exchange, ex) -> responseStatusExceptionHandler.handle(exchange, ex))
                 .and()
+                .authorizeExchange()
+                .pathMatchers("/auth/weixin/**").permitAll()
+                .pathMatchers("/admin/**").hasRole("ADMIN")
+                .pathMatchers("/item/**").hasRole("USER")
+                .anyExchange().authenticated()
+                .and()
+                .addFilterAt(weixinFilter(reactiveAuthenticationManager), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(usernamePasswordFilter(reactiveAuthenticationManager), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAfter(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .csrf().disable().exceptionHandling();
-
-        http.addFilterAt(weixinLoginAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //微信openid登录
-        auth.authenticationProvider(weixinLoginAuthenticationProvider);
+        return http.build();
     }
 }

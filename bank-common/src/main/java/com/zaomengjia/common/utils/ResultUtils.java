@@ -49,4 +49,16 @@ public final class ResultUtils {
     public static ResultVO<?> error(ResultCode code, String message) {
         return new ResultVO<>(code.code, message);
     }
+
+    /**
+     * 强烈不推荐使用
+     * @param code
+     * @param message
+     * @return
+     */
+    @Deprecated
+    public static ResultVO<?> error(int code, String message) {
+        return new ResultVO<>(code, message);
+    }
+
 }

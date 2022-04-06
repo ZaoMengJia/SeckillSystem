@@ -2,20 +2,17 @@ package com.zaomengjia.bankmanager.controller;
 
 import com.zaomengjia.bankmanager.service.SaleProductDetailService;
 import com.zaomengjia.common.constant.ResultCode;
+import com.zaomengjia.common.pojo.SaleProductDetail;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
-import com.zaomengjia.common.pojo.SaleProductDetail;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/saleProductDetail")
 public class SaleProductDetailController {
-
+    @Autowired
     private SaleProductDetailService saleProductDetailService;
-
-    public SaleProductDetailController(SaleProductDetailService saleProductDetailService) {
-        this.saleProductDetailService = saleProductDetailService;
-    }
 
     @GetMapping("/getAllSaleProductDetail/{pageIndex}/{pageSize}")
     public ResultVO<?> getAllSaleProductDetail(@PathVariable int pageIndex, @PathVariable int pageSize){
@@ -26,21 +23,12 @@ public class SaleProductDetailController {
         }
     }
 
-    @GetMapping(value = "/searchSaleProductDetail/{keyword}/{pageIndex}/{pageSize}")
-    public ResultVO<?> searchSaleProductDetail(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
-        try{
-            return ResultUtils.success(saleProductDetailService.searchDetail(keyword, pageIndex, pageSize));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
     @GetMapping("/getSaleProductDetailBySaid/{said}")
     public ResultVO<?> getSaleProductDetailBySaid(@PathVariable long said){
         try{
             return ResultUtils.success(saleProductDetailService.getSaleProductDetailBySaid(said));
         }catch (Exception e){
-            return ResultUtils.error(ResultCode.NO_SUCH_DETAIL_ERROR, e.getMessage());
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -49,7 +37,7 @@ public class SaleProductDetailController {
         try{
             return ResultUtils.success(saleProductDetailService.getSaleProductDetailByFpid(fpid));
         }catch (Exception e){
-            return ResultUtils.error(ResultCode.NO_SUCH_DETAIL_ERROR, e.getMessage());
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -58,13 +46,13 @@ public class SaleProductDetailController {
         try{
             return ResultUtils.success(saleProductDetailService.getSaleProductDetailBySaidAndFpid(said,fpid));
         }catch (Exception e){
-            return ResultUtils.error(ResultCode.NO_SUCH_DETAIL_ERROR, e.getMessage());
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
 
 
-    @PostMapping("/addSaleProductDetail")
+    @PostMapping("/addSaleProductDetail/{detail}")
     public ResultVO<?> addSaleProductDetail(@RequestBody SaleProductDetail detail){
         try{
             return ResultUtils.success(saleProductDetailService.addSaleProductDetail(detail));
@@ -82,7 +70,7 @@ public class SaleProductDetailController {
         }
     }
 
-    @PutMapping("/updateSaleProductDetail")
+    @PutMapping("/updateSaleProductDetail/{detail}")
     public ResultVO<?> updateSaleProductDetail(@RequestBody SaleProductDetail detail){
         try{
             return ResultUtils.success(saleProductDetailService.updateSaleProductDetail(detail));
