@@ -11,20 +11,20 @@ import java.util.Collection;
  * @version 1.0
  * @date 2022/4/1 12:03
  */
-public class WeixinAuthenticationToken extends AbstractAuthenticationToken {
+public class WeixinToken extends AbstractAuthenticationToken {
 
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
     private final String code;
     private final String openid;
 
-    public WeixinAuthenticationToken(String code, String openid) {
+    public WeixinToken(String code, String openid) {
         super(null);
         this.code = code;
         this.openid = openid;
         super.setAuthenticated(false);
     }
 
-    public WeixinAuthenticationToken(String code, String openid, Collection<? extends GrantedAuthority> authorities) {
+    public WeixinToken(String code, String openid, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.code = code;
         this.openid = openid;
