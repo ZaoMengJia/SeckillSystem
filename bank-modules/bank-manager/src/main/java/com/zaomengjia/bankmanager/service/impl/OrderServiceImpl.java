@@ -1,11 +1,11 @@
 package com.zaomengjia.bankmanager.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zaomengjia.common.dao.OrderMapper;
 import com.zaomengjia.common.pojo.Order;
 import com.zaomengjia.bankmanager.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,68 +20,58 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Boolean orderExist(long oid) {
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("oid",oid);
-        return orderMapper.selectOne(queryWrapper)!=null;
+        return orderMapper.findByOid(oid) !=null;
     }
 
     @Override
     public Map<String, Object> getOrder(int pageIndex, int pageSize) {
-        return getPageInfo(pageIndex,pageSize,null);
+        return getPageInfo(pageIndex,pageSize);
     }
 
-    private Map<String, Object> getPageInfo(int pageIndex, int pageSize, QueryWrapper<Order> queryWrapper) {
-        Page<Order> page = new Page<>(pageIndex, pageSize);
+    private Map<String, Object> getPageInfo(int pageIndex, int pageSize) {
         Map<String, Object> map = new HashMap<>(5);
-        orderMapper.selectPage(page, queryWrapper);
-        map.put("records", page.getRecords());
-        map.put("total", page.getTotal());
+        Page<Order> page = orderMapper.findAll(PageRequest.of(pageIndex, pageSize));
+        map.put("records", page.toList());
+        map.put("total", page.getTotalElements());
         return map;
     }
 
     @Override
     public Map<String, Object> searchOrder(String keyword, int pageIndex, int pageSize) {
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("user_name", keyword);
-        Page<Order> page = new Page<>(pageIndex, pageSize);
+        Page<Order> result = orderMapper.findByUserNameLike(keyword, PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
-        Page<Order> result = orderMapper.selectPage(page, queryWrapper);
-        map.put("records", result.getRecords());
-        map.put("total", result.getTotal());
+        map.put("records", result.toList());
+        map.put("total", result.getTotalElements());
         return map;
     }
 
     @Override
     public Order getOrderById(long oid) {
-        return orderMapper.selectById(oid);
+        return orderMapper.findById(oid).orElse(null);
     }
 
     @Override
     public Order getOrderByUserName(String userName) {
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_name",userName);
-        return orderMapper.selectOne(queryWrapper);
+        return orderMapper.findByUserName(userName);
     }
 
     @Override
     public Order getOrderByProductName(String productName) {
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("financial_product_name",productName);
-        return orderMapper.selectOne(queryWrapper);
+        return orderMapper.findByFinancialProductName(productName);
     }
 
     @Override
-    public int addOrder(Order order) {
-        return orderMapper.insert(order);
+    public void addOrder(Order order) {
+        orderMapper.save(order);
     }
 
     @Override
-    public int deleteOrder(long oid) {
-        return orderMapper.deleteById(oid);
+    public void deleteOrder(long oid) {
+        orderMapper.deleteById(oid);
     }
 
     @Override
-    public int updateOrder(Order order) {
-        return orderMapper.updateById(order);
+    public void updateOrder(Order order) {
+        orderMapper.save(order);
     }
 }

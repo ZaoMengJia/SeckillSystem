@@ -16,11 +16,11 @@ public interface SeckillActivityService {
 
     SeckillActivity getSeckillActivityById(long id);
 
-    int addSeckillActivity(SeckillActivity seckillActivity);
+    void addSeckillActivity(SeckillActivity seckillActivity);
 
-    int deleteSeckillActivity(long id);
+    void deleteSeckillActivity(long id);
 
-    int updateSeckillActivity(SeckillActivity seckillActivity);
+    void updateSeckillActivity(SeckillActivity seckillActivity);
 
 
 }

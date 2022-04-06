@@ -1,38 +1,59 @@
 package com.zaomengjia.common.pojo;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * 用户类，记录用户数据
  * */
 @Data
-@TableName("user")
+@Entity(name = "user")
 public class User {
-    @TableId(value = "uid",type = IdType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "uid")
     private long uid;
-    @TableField("id_number")
-    private String idNumber;//身份证号
-    @TableField("user_name")
+
+
+    /**
+     * 身份证号
+     */
+    @Column(name = "id_number")
+    private String idNumber;
+
+    @Column(name = "user_name")
     private String userName;
-    @TableField("password")
+
+    @Column(name = "password")
     private String password;
-    @TableField("sex")
-    private boolean sex;//true为男，false为女
-    @TableField("is_admin")
-    private boolean isAdmin;
-    @TableField("birthday")
+
+    /**
+     * true为男，false为女
+     */
+    @Column(name = "sex")
+    private boolean sex;
+
+    @Column(name = "type")
+    private int type;
+
+    @Column(name = "birthday")
     private Date birthday;
-    @TableField("has_job")
+
+    @Column(name = "has_job")
     private boolean hasJob;
-    @TableField("overdue_record")
-    private int overdueRecord;//记录次数
-    @TableField("is_discredit")
-    private boolean isDiscredit;//是否为失信人
+
+    /**
+     * 记录次数
+     */
+    @Column(name = "overdue_record")
+    private int overdueRecord;
+
+    /**
+     * 是否为失信人
+     */
+    @Column(name = "is_discredit")
+    private boolean isDiscredit;
 }

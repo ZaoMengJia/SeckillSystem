@@ -8,7 +8,6 @@ import com.zaomengjia.common.pojo.User;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
 import com.zaomengjia.bankmanager.service.UserService;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +39,6 @@ public class UserController {
 
     @GetMapping("/logout")
     public ResultVO<?> toLogout(){
-        SecurityUtils.getSubject().logout();
         return ResultUtils.success(null);
     }
 
@@ -186,8 +184,9 @@ public class UserController {
     public ResultVO<?> addAdmin(@RequestBody User admin){
         try {
             admin.setPassword(DigestUtils.md5DigestAsHex(admin.getPassword().getBytes()));
-            admin.setAdmin(true);
-            return ResultUtils.success(userService.addUser(admin));
+            admin.setType(1);
+            userService.addUser(admin);
+            return ResultUtils.success();
         } catch (Exception e) {
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -202,8 +201,9 @@ public class UserController {
     public ResultVO<?> addUser(@RequestBody User user){
         try {
             user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
-            user.setAdmin(false);
-            return ResultUtils.success(userService.addUser(user));
+            user.setType(0);
+            userService.addUser(user);
+            return ResultUtils.success();
         } catch (Exception e) {
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -217,7 +217,8 @@ public class UserController {
     @DeleteMapping(value = "/deleteUser/{id}")
     public ResultVO<?> deleteUser(@PathVariable int id){
         try{
-            return ResultUtils.success(userService.deleteUser(id));
+            userService.deleteUser(id);
+            return ResultUtils.success();
         } catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -231,7 +232,8 @@ public class UserController {
     @PutMapping(value = "/updateUser")
     public ResultVO<?> updateUser(@RequestBody User user){
         try {
-            return ResultUtils.success(userService.updateUser(user));
+            userService.updateUser(user);
+            return ResultUtils.success();
         } catch (Exception e) {
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }

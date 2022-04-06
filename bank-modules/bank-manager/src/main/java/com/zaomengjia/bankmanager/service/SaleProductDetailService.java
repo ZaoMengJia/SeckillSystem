@@ -1,7 +1,6 @@
 package com.zaomengjia.bankmanager.service;
 
 import com.zaomengjia.common.pojo.SaleProductDetail;
-import com.zaomengjia.common.pojo.SeckillActivity;
 
 import java.util.Map;
 
@@ -18,7 +17,7 @@ public interface SaleProductDetailService {
 
     SaleProductDetail getSaleProductDetailBySaidAndFpid(long said,long fpid);
 
-    int addSaleProductDetail(SaleProductDetail saleProductDetail);
-    int deleteSaleProductDetail(long said,long fpid);
-    int updateSaleProductDetail(SaleProductDetail saleProductDetail);
+    void addSaleProductDetail(SaleProductDetail saleProductDetail);
+    void deleteSaleProductDetail(long said, long fpid);
+    void updateSaleProductDetail(SaleProductDetail saleProductDetail);
 }

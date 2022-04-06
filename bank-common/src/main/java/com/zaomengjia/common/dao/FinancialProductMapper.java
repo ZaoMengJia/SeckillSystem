@@ -1,9 +1,17 @@
 package com.zaomengjia.common.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zaomengjia.common.pojo.FinancialProduct;
-import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Mapper
-public interface FinancialProductMapper extends BaseMapper<FinancialProduct> {
+@Repository
+public interface FinancialProductMapper extends JpaRepository<FinancialProduct, Long> {
+    FinancialProduct getByFname(String fname);
+
+    FinancialProduct getByPrice(int price);
+
+    Page<FinancialProduct> getByFnameLike(String keyword, Pageable pageable);
 }

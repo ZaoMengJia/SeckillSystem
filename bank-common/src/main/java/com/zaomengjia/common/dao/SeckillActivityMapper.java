@@ -1,9 +1,17 @@
 package com.zaomengjia.common.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zaomengjia.common.pojo.SeckillActivity;
-import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
-public interface SeckillActivityMapper extends BaseMapper<SeckillActivity> {
+import com.zaomengjia.common.pojo.SeckillActivity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+
+@Repository
+public interface SeckillActivityMapper extends JpaRepository<SeckillActivity, Long> {
+
+    SeckillActivity getBySname(String sname);
+
+    Page<SeckillActivity> getBySnameLike(String keyword, Pageable pageable);
 }

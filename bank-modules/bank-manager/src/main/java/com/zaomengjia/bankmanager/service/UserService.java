@@ -1,7 +1,6 @@
 package com.zaomengjia.bankmanager.service;
 
 import com.zaomengjia.common.pojo.User;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.Map;
 
@@ -37,35 +36,32 @@ public interface UserService {
      * @param uid
      * @return
      */
-    User getAdminById(@Param("uid") long uid);
-    User getUserById(@Param("uid") long uid);
+    User getAdminById(long uid);
+    User getUserById(long uid);
 
     /**
      * 通过名字获取管理员与用户
      * @param name
      * @return
      */
-    User getUserByName(@Param("name") String name);
-    User getAdminByName(@Param("name") String name);
+    User getUserByName(String name);
+    User getAdminByName(String name);
 
     /**
      * 添加管理员与用户
      * @param user
-     * @return
      */
-    int addUser(User user);
+    void addUser(User user);
 
     /**
      * 删除管理员、用户
      * @param id
-     * @return
      */
-    int deleteUser(long id);
+    void deleteUser(long id);
 
     /**
      * 更新管理员、用户
      * @param user
-     * @return
      */
-    int updateUser(User user);
+    void updateUser(User user);
 }

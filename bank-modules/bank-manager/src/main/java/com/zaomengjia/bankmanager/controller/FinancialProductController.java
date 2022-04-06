@@ -54,7 +54,8 @@ public class FinancialProductController {
     @PostMapping("/addProduct/{product}")
     public ResultVO<?> addProduct(@RequestBody FinancialProduct product){
         try{
-            return ResultUtils.success(financialProductService.addFinancialProduct(product));
+            financialProductService.addFinancialProduct(product);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -63,7 +64,8 @@ public class FinancialProductController {
     @DeleteMapping("/deleteProduct/{id}")
     public ResultVO<?> deleteProduct(@PathVariable long id){
         try{
-            return ResultUtils.success(financialProductService.deleteFinancialProduct(id));
+            financialProductService.deleteFinancialProduct(id);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -72,7 +74,8 @@ public class FinancialProductController {
     @PutMapping("/updateProduct/{product}")
     public ResultVO<?> updateProduct(@RequestBody FinancialProduct product){
         try{
-            return ResultUtils.success(financialProductService.updateFinancialProduct(product));
+            financialProductService.updateFinancialProduct(product);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }

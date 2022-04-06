@@ -55,7 +55,8 @@ public class SaleProductDetailController {
     @PostMapping("/addSaleProductDetail/{detail}")
     public ResultVO<?> addSaleProductDetail(@RequestBody SaleProductDetail detail){
         try{
-            return ResultUtils.success(saleProductDetailService.addSaleProductDetail(detail));
+            saleProductDetailService.addSaleProductDetail(detail);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -64,7 +65,8 @@ public class SaleProductDetailController {
     @DeleteMapping("/deleteSaleProductDetail/{said}/{fpid}")
     public ResultVO<?> deleteSaleProductDetail(@PathVariable long said,@PathVariable long fpid){
         try{
-            return ResultUtils.success(saleProductDetailService.deleteSaleProductDetail(said,fpid));
+            saleProductDetailService.deleteSaleProductDetail(said, fpid);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -73,7 +75,8 @@ public class SaleProductDetailController {
     @PutMapping("/updateSaleProductDetail/{detail}")
     public ResultVO<?> updateSaleProductDetail(@RequestBody SaleProductDetail detail){
         try{
-            return ResultUtils.success(saleProductDetailService.updateSaleProductDetail(detail));
+            saleProductDetailService.updateSaleProductDetail(detail);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }

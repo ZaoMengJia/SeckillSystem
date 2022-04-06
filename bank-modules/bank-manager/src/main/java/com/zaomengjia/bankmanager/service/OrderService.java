@@ -18,11 +18,11 @@ public interface OrderService {
 
     Order getOrderByUserName(String userName);
 
-    int addOrder(Order order);
+    void addOrder(Order order);
 
-    int deleteOrder(long oid);
+    void deleteOrder(long oid);
 
-    int updateOrder(Order order);
+    void updateOrder(Order order);
 
 
 }

@@ -45,7 +45,8 @@ public class SeckillActivityController {
     @PostMapping("/addSeckillActivity/{activity}")
     public ResultVO<?> addSeckillActivity(@RequestBody SeckillActivity activity){
         try{
-            return ResultUtils.success(seckillActivityService.addSeckillActivity(activity));
+            seckillActivityService.addSeckillActivity(activity);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -54,7 +55,8 @@ public class SeckillActivityController {
     @DeleteMapping("/deleteSeckillActivity/{id}")
     public ResultVO<?> deleteSeckillActivity(@PathVariable long id){
         try{
-            return ResultUtils.success(seckillActivityService.deleteSeckillActivity(id));
+            seckillActivityService.deleteSeckillActivity(id);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -63,7 +65,8 @@ public class SeckillActivityController {
     @PutMapping("/updateSeckillActivity/{activity}")
     public ResultVO<?> updateSeckillActivity(@RequestBody SeckillActivity activity){
         try{
-            return ResultUtils.success(seckillActivityService.updateSeckillActivity(activity));
+            seckillActivityService.updateSeckillActivity(activity);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }

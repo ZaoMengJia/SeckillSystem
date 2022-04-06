@@ -1,6 +1,5 @@
 package com.zaomengjia.auth.filter;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zaomengjia.common.dao.UserMapper;
 import com.zaomengjia.common.pojo.User;
 import io.netty.handler.codec.spdy.SpdyGoAwayFrame;
@@ -39,7 +38,7 @@ public class UsernamePasswordManager implements ReactiveAuthenticationManager {
             return Mono.just(authentication);
         }
 
-        User user = userMapper.selectByUserNameAndPassword(username, password);
+        User user = null;
         if(user == null) {
             //找不到用户
             throw new RuntimeException("");

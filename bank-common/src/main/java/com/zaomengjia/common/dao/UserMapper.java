@@ -1,13 +1,20 @@
 package com.zaomengjia.common.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zaomengjia.common.pojo.User;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Mapper
-public interface UserMapper extends BaseMapper<User> {
+@Repository
+public interface UserMapper extends JpaRepository<User, Long> {
 
-    @Select("SELECT * FROM `user` WHERE `user_name` = #{username} AND `password` = #{password}")
-    User selectByUserNameAndPassword(String username, String password);
+    User getByTypeAndUserName(int type, String username);
+
+    Page<User> getByType(int type, Pageable pageable);
+
+    User getByUserName(String username);
+
+    User getByTypeAndUid(int type, long uid);
+
 }

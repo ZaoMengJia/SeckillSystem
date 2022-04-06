@@ -1,9 +1,21 @@
 package com.zaomengjia.common.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zaomengjia.common.pojo.SaleProductDetail;
-import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Mapper
-public interface SaleProductDetailMapper extends BaseMapper<SaleProductDetail> {
+@Repository
+public interface SaleProductDetailMapper extends JpaRepository<SaleProductDetail, Long> {
+
+    SaleProductDetail findByFpidAndSaid(long said, long fpid);
+
+    SaleProductDetail findByFpid(long fpid);
+
+    SaleProductDetail findBySaid(long said);
+
+    void deleteBySaidAndFpid(long said, long fpid);
+
+    Page<SaleProductDetail> findBySaidLike(String keyword, Pageable pageable);
 }

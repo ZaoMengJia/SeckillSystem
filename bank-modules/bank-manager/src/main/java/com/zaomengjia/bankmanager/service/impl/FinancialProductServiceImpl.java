@@ -1,11 +1,11 @@
 package com.zaomengjia.bankmanager.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zaomengjia.common.dao.FinancialProductMapper;
 import com.zaomengjia.common.pojo.FinancialProduct;
 import com.zaomengjia.bankmanager.service.FinancialProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,61 +19,55 @@ public class FinancialProductServiceImpl implements FinancialProductService {
 
     @Override
     public Boolean financialProductExist(String fname) {
-        QueryWrapper<FinancialProduct> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("fname",fname);
-        return financialProductMapper.selectOne(queryWrapper)!=null;
+        return financialProductMapper.getByFname(fname) != null;
     }
 
     @Override
     public Map<String, Object> getFinancialProduct(int pageIndex, int pageSize) {
-        return getPageInfo(pageIndex,pageSize,null);
-    }
-
-    @Override
-    public Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize) {
-        QueryWrapper<FinancialProduct> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("fname", keyword);
-        return getPageInfo(pageIndex, pageSize, queryWrapper);
-    }
-
-    private Map<String, Object> getPageInfo(int pageIndex, int pageSize, QueryWrapper<FinancialProduct> queryWrapper) {
-        Page<FinancialProduct> page = new Page<>(pageIndex, pageSize);
+        Page<FinancialProduct> page = financialProductMapper.getByFnameLike("", PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
-        financialProductMapper.selectPage(page, queryWrapper);
-        map.put("records", page.getRecords());
-        map.put("total", page.getTotal());
+        map.put("records", page.toList());
+        map.put("total", page.getTotalElements());
         return map;
     }
 
     @Override
+    public Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize) {
+        Page<FinancialProduct> page = financialProductMapper.getByFnameLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Map<String, Object> map = new HashMap<>(5);
+        map.put("records", page.toList());
+        map.put("total", page.getTotalElements());
+        return map;
+    }
+
+
+    @Override
     public FinancialProduct getFinancialProductById(long fpid) {
-        return financialProductMapper.selectById(fpid);
+        return financialProductMapper.findById(fpid).orElse(null);
     }
 
     @Override
     public FinancialProduct getFinancialProductByPrice(int price) {
-        QueryWrapper<FinancialProduct> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("price",price);
-        return financialProductMapper.selectOne(queryWrapper);
+        return financialProductMapper.getByPrice(price);
     }
 
     @Override
     public FinancialProduct getFinancialProductByName(String fname) {
-        return financialProductMapper.selectOne(new QueryWrapper<FinancialProduct>().eq("fname",fname));
+        return financialProductMapper.getByFname(fname);
     }
 
     @Override
-    public int addFinancialProduct(FinancialProduct financialProduct) {
-        return financialProductMapper.insert(financialProduct);
+    public void addFinancialProduct(FinancialProduct financialProduct) {
+        financialProductMapper.save(financialProduct);
     }
 
     @Override
-    public int deleteFinancialProduct(long fpid) {
-        return financialProductMapper.deleteById(fpid);
+    public void deleteFinancialProduct(long fpid) {
+         financialProductMapper.deleteById(fpid);
     }
 
     @Override
-    public int updateFinancialProduct(FinancialProduct financialProduct) {
-        return financialProductMapper.updateById(financialProduct);
+    public void updateFinancialProduct(FinancialProduct financialProduct) {
+        financialProductMapper.save(financialProduct);
     }
 }

@@ -53,7 +53,8 @@ public class OrderController {
     @PostMapping("/addOrder/{order}")
     public ResultVO<?> addOrder(@RequestBody Order order){
         try{
-            return ResultUtils.success(orderService.addOrder(order));
+            orderService.addOrder(order);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -62,7 +63,8 @@ public class OrderController {
     @DeleteMapping("/deleteOrder/{id}")
     public ResultVO<?> deleteOrder(@PathVariable long id){
         try{
-            return ResultUtils.success(orderService.deleteOrder(id));
+            orderService.deleteOrder(id);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -71,7 +73,8 @@ public class OrderController {
     @PutMapping("/updateOrder/{order}")
     public ResultVO<?> updateOrder(@RequestBody Order order){
         try{
-            return ResultUtils.success(orderService.updateOrder(order));
+            orderService.updateOrder(order);
+            return ResultUtils.success();
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }

@@ -1,11 +1,11 @@
 package com.zaomengjia.bankmanager.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zaomengjia.common.dao.UserMapper;
 import com.zaomengjia.common.pojo.User;
 import com.zaomengjia.bankmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,75 +19,68 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean userExist(String userName) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin",1).eq("user_name",userName);
-        return userMapper.selectOne(queryWrapper)!=null;
+        return userMapper.getByTypeAndUserName(1, userName) != null;
     }
 
     @Override
     public Map<String, Object> getAdminList(int pageIndex, int pageSize) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin", 1);
-        return getPageInfo(pageIndex, pageSize, queryWrapper);
+        return getPageInfo(userMapper.getByType(1, PageRequest.of(pageIndex, pageSize)));
     }
 
-    private Map<String, Object> getPageInfo(int pageIndex, int pageSize, QueryWrapper<User> queryWrapper) {
-        Page<User> page = new Page<>(pageIndex, pageSize);
-        Map<String, Object> map = new HashMap<>(5);
-        userMapper.selectPage(page, queryWrapper);
-        map.put("records", page.getRecords());
-
-        map.put("total", page.getTotal());
+    private Map<String, Object> getPageInfo(Page<User> page) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("records", page.toList());
+        map.put("total", page.getTotalElements());
         return map;
     }
 
     @Override
     public Map<String, Object> getUserList(int pageIndex, int pageSize) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin", 0);
-        return getPageInfo(pageIndex, pageSize, queryWrapper);
+        return getPageInfo(userMapper.getByType(1, PageRequest.of(pageIndex, pageSize)));
+    }
+
+    @Override
+    public Map<String, Object> searchAdminList(String keyword, int pageIndex, int pageSize) {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> searchUserList(String keyword, int pageIndex, int pageSize) {
+        return null;
     }
 
     @Override
     public User getAdminById(long uid) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin", 1).eq("uid",uid);
-        return userMapper.selectOne(queryWrapper);
+        return userMapper.getByTypeAndUid(1, uid);
     }
 
     @Override
     public User getUserById(long uid) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin", 0).eq("uid",uid);
-        return userMapper.selectOne(queryWrapper);
+        return userMapper.getByTypeAndUid(0, uid);
     }
 
     @Override
     public User getUserByName(String name) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin", 0).eq("user_name",name);
-        return userMapper.selectOne(queryWrapper);
+        return userMapper.getByTypeAndUserName(0, name);
     }
 
     @Override
     public User getAdminByName(String name) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_admin", 1).eq("user_name",name);
-        return userMapper.selectOne(queryWrapper);
+        return userMapper.getByTypeAndUserName(1, name);
     }
 
     @Override
-    public int addUser(User user) {
-        return userMapper.insert(user);
+    public void addUser(User user) {
+        userMapper.save(user);
     }
 
     @Override
-    public int deleteUser(long id) {
-        return userMapper.deleteById(id);
+    public void deleteUser(long id) {
+        userMapper.deleteById(id);
     }
 
     @Override
-    public int updateUser(User user) {
-        return userMapper.updateById(user);
+    public void updateUser(User user) {
+        userMapper.save(user);
     }
 }
