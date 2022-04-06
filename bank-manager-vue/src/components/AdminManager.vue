@@ -286,7 +286,7 @@ export default {
                   temp.isDiscredit = tempAdminList[i].isDiscredit ? "是":"否";
                   that.adminList.push(temp);
                 }
-                that.total = tempAdminList.length;
+                that.total = ress.data.data.total;
               } else {
                 that.$message.error("请求管理员列表失败");
               }
@@ -318,7 +318,7 @@ export default {
                   temp.isDiscredit = tempAdminList[i].isDiscredit ? "是":"否";
                   this.adminList.push(temp);
                 }
-                this.total = tempAdminList.length;
+                this.total = ress.data.data.total;
               } else {
                 that.$message.error("请求管理员列表失败");
               }

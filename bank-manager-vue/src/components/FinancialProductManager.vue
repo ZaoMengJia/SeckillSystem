@@ -233,7 +233,7 @@ export default {
                   temp.price = tempProductList[i].price;
                   that.productList.push(temp);
                 }
-                that.total = tempProductList.length;
+                that.total = ress.data.data.total;
               } else {
                 that.$message.error("请求产品列表失败");
               }
@@ -260,7 +260,7 @@ export default {
                   temp.price = tempProductList[i].price;
                   that.productList.push(temp);
                 }
-                this.total = tempProductList.length;
+                this.total = ress.data.data.total;
               } else {
                 that.$message.error("请求产品列表失败");
               }

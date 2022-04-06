@@ -42,6 +42,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, Object> getUserList(int pageIndex, int pageSize) {
+        System.out.println(pageIndex);
+        System.out.println(pageSize);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("is_admin", 0);
         return getPageInfo(pageIndex, pageSize, queryWrapper);

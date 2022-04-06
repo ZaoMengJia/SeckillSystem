@@ -245,7 +245,7 @@ export default {
                   temp.said = tempOrderList[i].said;
                   that.orderList.push(temp);
                 }
-                that.total = tempOrderList.length;
+                that.total = ress.data.data.total;
               } else {
                 that.$message.error("请求订单列表失败");
               }
@@ -273,7 +273,7 @@ export default {
                   temp.said = tempOrderList[i].said;
                   that.orderList.push(temp);
                 }
-                this.total = tempOrderList.length;
+                this.total = ress.data.data.total;
               } else {
                 that.$message.error("请求订单列表失败");
               }

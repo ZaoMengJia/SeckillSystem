@@ -316,7 +316,7 @@ export default {
                   temp.isDiscredit = tempUserList[i].isDiscredit ? "是":"否";
                   that.userList.push(temp);
                 }
-                that.total = tempUserList.length;
+                that.total = ress.data.data.total;
               } else {
                 that.$message.error("请求用户列表失败");
               }
@@ -348,7 +348,7 @@ export default {
                   temp.isDiscredit = tempUserList[i].isDiscredit ? "是" : "否";
                   this.userList.push(temp);
                 }
-                this.total = tempUserList.length;
+                this.total = ress.data.data.total;
               } else {
                 that.$message.error("请求用户列表失败");
               }

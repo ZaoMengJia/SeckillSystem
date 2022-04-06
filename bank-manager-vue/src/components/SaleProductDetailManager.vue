@@ -215,7 +215,7 @@ export default {
                   temp.quantity = tempDetailList[i].quantity;
                   that.detailList.push(temp);
                 }
-                that.total = tempDetailList.length;
+                that.total = ress.data.data.total;
               } else {
                 that.$message.error("请求明细列表失败");
               }
@@ -242,7 +242,7 @@ export default {
                   temp.quantity = tempDetailList[i].quantity;
                   that.detailList.push(temp);
                 }
-                this.total = tempDetailList.length;
+                this.total = ress.data.data.total;
               } else {
                 that.$message.error("请求明细列表失败");
               }

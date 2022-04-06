@@ -198,7 +198,7 @@ export default {
                   temp.sname = tempActivityList[i].sname;
                   that.activityList.push(temp);
                 }
-                that.total = tempActivityList.length;
+                that.total = ress.data.data.total;
               } else {
                 that.$message.error("请求秒杀活动列表失败");
               }
@@ -224,7 +224,7 @@ export default {
                   temp.sname = tempActivityList[i].sname;
                   that.activityList.push(temp);
                 }
-                this.total = tempActivityList.length;
+                this.total = ress.data.data.total;
               } else {
                 that.$message.error("请求秒杀活动列表失败");
               }
