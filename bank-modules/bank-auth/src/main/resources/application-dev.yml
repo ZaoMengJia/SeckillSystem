@@ -3,8 +3,8 @@ auth:
   expired-time: 3000
 
 weixin:
-  appid:
-  secret:
+  appid: wx3f7f4b71b02fb7ab
+  secret: 0728701dbff0f9d33e29e65d59e57147
 
 
 spring:
