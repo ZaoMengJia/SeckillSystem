@@ -59,7 +59,7 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
             throw new NetworkException();
         }
 
-        if(json.getInteger("errcode") != 0) {
+        if(json.getInteger("errcode") != null) {
             String message = json.getString("errmsg");
             logger.error("微信登录出错: {}", message);
             throw new LoginErrorException(message);
