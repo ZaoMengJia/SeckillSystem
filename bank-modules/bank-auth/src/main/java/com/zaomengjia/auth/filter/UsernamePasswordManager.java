@@ -43,6 +43,7 @@ public class UsernamePasswordManager implements ReactiveAuthenticationManager {
             return Mono.just(authentication);
         }
 
+        //Todo: 下面测试用
         User user = userMapper.getByUserNameAndPassword(username, password);
         user = new User();
         user.setUid(123);

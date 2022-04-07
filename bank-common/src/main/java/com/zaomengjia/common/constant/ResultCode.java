@@ -20,7 +20,7 @@ public enum ResultCode {
 
     LOGIN_ERROR(40001, "用户名或密码错误"),
     TOKEN_EXPIRED(40002, "登录信息超时，请重新登录"),
-    TOKEN_ERROR(40003, "请重新登录")
+    TOKEN_ERROR(40003, "请重新登录"),
     ;
 
     public final int code;

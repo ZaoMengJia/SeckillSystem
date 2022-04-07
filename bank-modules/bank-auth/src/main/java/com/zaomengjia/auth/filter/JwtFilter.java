@@ -7,6 +7,7 @@ import com.zaomengjia.auth.exception.TokenErrorException;
 import com.zaomengjia.auth.pojo.JwtToken;
 import com.zaomengjia.auth.utils.JwtUtils;
 import io.netty.util.internal.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -39,7 +40,7 @@ public class JwtFilter implements WebFilter {
     }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, @NotNull WebFilterChain chain) {
         String jwt = exchange.getRequest().getHeaders().getFirst("Authorization");
         if(!StringUtil.isNullOrEmpty(jwt)) {
             jwt = jwt.substring(7);

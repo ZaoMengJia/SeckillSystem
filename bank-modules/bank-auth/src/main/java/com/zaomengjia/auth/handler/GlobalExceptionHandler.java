@@ -10,6 +10,7 @@ import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
@@ -45,6 +46,9 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
                 default:
                     return ResponseWriter.writeResponse(exchange, ResultUtils.internalServerError(ex.getLocalizedMessage()));
             }
+        }
+        else if (ex instanceof AuthenticationCredentialsNotFoundException) {
+            return ResponseWriter.writeResponse(exchange, ResultUtils.error(ResultCode.TOKEN_ERROR));
         }
         else {
             return ResponseWriter.writeResponse(exchange, ResultUtils.internalServerError(ex.getLocalizedMessage()));
