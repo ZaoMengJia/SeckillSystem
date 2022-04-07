@@ -1,5 +1,7 @@
 package com.zaomengjia.auth.constant;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 /**
  * @author orangeboyChen
  * @version 1.0
@@ -13,5 +15,9 @@ public enum AuthorityGroup {
     public final String raw;
     AuthorityGroup(String raw) {
         this.raw = raw;
+    }
+
+    public SimpleGrantedAuthority getAuthority() {
+        return new SimpleGrantedAuthority(raw);
     }
 }

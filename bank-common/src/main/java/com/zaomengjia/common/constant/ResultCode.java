@@ -19,7 +19,8 @@ public enum ResultCode {
     NO_SUCH_ACTIVITY_ERROR(30005,"没有这个秒杀活动"),
 
     LOGIN_ERROR(40001, "用户名或密码错误"),
-    TOKEN_EXPIRED(40002, "登录信息超时，请重新登录")
+    TOKEN_EXPIRED(40002, "登录信息超时，请重新登录"),
+    TOKEN_ERROR(40003, "请重新登录")
     ;
 
     public final int code;

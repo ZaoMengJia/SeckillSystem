@@ -6,6 +6,8 @@ import com.zaomengjia.auth.constant.AuthorityGroup;
 import com.zaomengjia.auth.exception.LoginErrorException;
 import com.zaomengjia.auth.exception.NetworkException;
 import com.zaomengjia.auth.pojo.WeixinToken;
+import com.zaomengjia.common.dao.UserMapper;
+import com.zaomengjia.common.pojo.User;
 import lombok.SneakyThrows;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -42,6 +44,12 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
     @Value("${weixin.secret}")
     private String secret;
 
+    private final UserMapper userMapper;
+
+    public WeixinLoginManager(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) throws AuthenticationException {
@@ -59,10 +67,18 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
 
         String openid = json.getString("openid");
 
-
-
+        //保存openid
+        User user = userMapper.getByWxOpenid(openid);
+        if(user == null) {
+            user = new User();
+            user.setType(0);
+            user.setWxOpenid(openid);
+            user = userMapper.save(user);
+        }
 
         WeixinToken authenticate = new WeixinToken(code, openid, AuthorityUtils.createAuthorityList(AuthorityGroup.USER.raw));
+        authenticate.setAuthenticated(true);
+        authenticate.setDetails(user);
         return Mono.just(authenticate);
     }
 

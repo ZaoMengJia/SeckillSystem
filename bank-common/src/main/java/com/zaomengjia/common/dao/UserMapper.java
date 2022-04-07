@@ -19,4 +19,6 @@ public interface UserMapper extends JpaRepository<User, Long> {
 
     User getByUserNameAndPassword(String username, String password);
 
+    User getByWxOpenid(String wxOpenid);
+
 }
