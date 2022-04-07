@@ -2,7 +2,7 @@ package com.zaomengjia.bankmanager.controller;
 
 import com.zaomengjia.bankmanager.service.SeckillActivityService;
 import com.zaomengjia.common.constant.ResultCode;
-import com.zaomengjia.common.pojo.SeckillActivity;
+import com.zaomengjia.common.entity.SeckillActivity;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;

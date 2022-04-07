@@ -1,6 +1,6 @@
 package com.zaomengjia.common.dao;
 
-import com.zaomengjia.common.pojo.User;
+import com.zaomengjia.common.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +18,4 @@ public interface UserMapper extends JpaRepository<User, Long> {
     User getByTypeAndUid(int type, long uid);
 
     User getByUserNameAndPassword(String username, String password);
-
-    User getByWxOpenid(String wxOpenid);
-
 }

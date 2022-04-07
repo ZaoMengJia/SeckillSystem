@@ -1,6 +1,6 @@
 package com.zaomengjia.bankmanager.service;
 
-import com.zaomengjia.common.pojo.FinancialProduct;
+import com.zaomengjia.common.entity.FinancialProduct;
 
 import java.util.Map;
 

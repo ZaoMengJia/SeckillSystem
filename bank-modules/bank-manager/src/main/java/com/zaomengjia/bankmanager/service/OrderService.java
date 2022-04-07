@@ -1,6 +1,6 @@
 package com.zaomengjia.bankmanager.service;
 
-import com.zaomengjia.common.pojo.Order;
+import com.zaomengjia.common.entity.Order;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.zaomengjia.common.dto;
+package com.zaomengjia.bankmanager.dto;
 
 import lombok.Data;
 

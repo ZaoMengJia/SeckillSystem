@@ -1,6 +1,6 @@
 package com.zaomengjia.common.dao;
 
-import com.zaomengjia.common.pojo.Order;
+import com.zaomengjia.common.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

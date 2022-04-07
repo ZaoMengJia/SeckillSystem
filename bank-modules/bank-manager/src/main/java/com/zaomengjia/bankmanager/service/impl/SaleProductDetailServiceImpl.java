@@ -1,7 +1,7 @@
 package com.zaomengjia.bankmanager.service.impl;
 
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
-import com.zaomengjia.common.pojo.SaleProductDetail;
+import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.bankmanager.service.SaleProductDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

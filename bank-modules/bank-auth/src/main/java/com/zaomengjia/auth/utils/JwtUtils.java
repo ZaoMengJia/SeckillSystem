@@ -27,6 +27,16 @@ public final class JwtUtils {
 
     public String getJwt(List<AuthorityGroup> authorityGroup, long userId) {
         return JWT.create()
+                .withClaim("userType", "web")
+                .withClaim("role", JSONObject.toJSONString(authorityGroup))
+                .withClaim("timestamp", System.currentTimeMillis())
+                .withClaim("userId", userId)
+                .sign(Algorithm.HMAC384(secret));
+    }
+
+    public String getJwt(List<AuthorityGroup> authorityGroup, String userId) {
+        return JWT.create()
+                .withClaim("userType", "weixin")
                 .withClaim("role", JSONObject.toJSONString(authorityGroup))
                 .withClaim("timestamp", System.currentTimeMillis())
                 .withClaim("userId", userId)

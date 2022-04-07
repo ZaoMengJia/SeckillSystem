@@ -6,8 +6,9 @@ import com.zaomengjia.auth.constant.AuthorityGroup;
 import com.zaomengjia.auth.exception.LoginErrorException;
 import com.zaomengjia.auth.exception.NetworkException;
 import com.zaomengjia.auth.pojo.WeixinToken;
-import com.zaomengjia.common.dao.UserMapper;
-import com.zaomengjia.common.pojo.User;
+import com.zaomengjia.common.dao.WeixinUserMapper;
+import com.zaomengjia.common.entity.User;
+import com.zaomengjia.common.entity.WeixinUser;
 import lombok.SneakyThrows;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -17,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -44,10 +44,10 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
     @Value("${weixin.secret}")
     private String secret;
 
-    private final UserMapper userMapper;
+    private final WeixinUserMapper weixinUserMapper;
 
-    public WeixinLoginManager(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public WeixinLoginManager(WeixinUserMapper weixinUserMapper) {
+        this.weixinUserMapper = weixinUserMapper;
     }
 
 
@@ -59,7 +59,7 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
             throw new NetworkException();
         }
 
-        if(json.getInteger("errcode") != 0) {
+        if(json.getInteger("errcode") != null) {
             String message = json.getString("errmsg");
             logger.error("微信登录出错: {}", message);
             throw new LoginErrorException(message);
@@ -68,15 +68,14 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
         String openid = json.getString("openid");
 
         //保存openid
-        User user = userMapper.getByWxOpenid(openid);
+        WeixinUser user = weixinUserMapper.findByOpenid(openid);
         if(user == null) {
-            user = new User();
-            user.setType(0);
-            user.setWxOpenid(openid);
-            user = userMapper.save(user);
+            user = new WeixinUser();
+            user.setOpenid(openid);
+            user = weixinUserMapper.save(user);
         }
 
-        WeixinToken authenticate = new WeixinToken(code, openid, AuthorityUtils.createAuthorityList(AuthorityGroup.USER.raw));
+        WeixinToken authenticate = new WeixinToken(code, openid, Collections.singleton(AuthorityGroup.USER.getAuthority()));
         authenticate.setAuthenticated(true);
         authenticate.setDetails(user);
         return Mono.just(authenticate);

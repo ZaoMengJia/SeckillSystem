@@ -3,29 +3,29 @@ package com.zaomengjia.bankmanager.controller;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.zaomengjia.common.constant.ResultCode;
-import com.zaomengjia.common.dto.LoginDto;
-import com.zaomengjia.common.pojo.User;
+import com.zaomengjia.bankmanager.dto.LoginDto;
+import com.zaomengjia.common.entity.User;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
-import com.zaomengjia.bankmanager.service.UserService;
+import com.zaomengjia.bankmanager.service.OldUserService;
 import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
-public class UserController {
+@Deprecated
+public class OldUserController {
 
-    private final UserService userService;
+    private final OldUserService oldUserService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public OldUserController(OldUserService oldUserService) {
+        this.oldUserService = oldUserService;
     }
 
-    //Todo: 网关里集成了认证模块，不需要使用shiro了
     @PostMapping("/login")
     public ResultVO<?> toLogin(@Validated @RequestBody LoginDto loginDto){
-        User admin = userService.getAdminByName(loginDto.getLoginName());
+        User admin = oldUserService.getAdminByName(loginDto.getLoginName());
         if(admin.getPassword().equals(SecureUtil.md5(String.valueOf(loginDto.getPassword())))){
             return ResultUtils.success(MapUtil.builder()
                     .put("id",admin.getUid())
@@ -50,7 +50,7 @@ public class UserController {
     @GetMapping("/userNameExist/{userName}")
     public ResultVO<?> userNameExist(@PathVariable String userName){
         try{
-            return ResultUtils.success(userService.userExist(userName));
+            return ResultUtils.success(oldUserService.userExist(userName));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
@@ -65,7 +65,7 @@ public class UserController {
     @GetMapping(value = "/getAllUser/{pageIndex}/{pageSize}")
     public ResultVO<?> getAllUser(@PathVariable int pageIndex, @PathVariable int pageSize){
         try{
-            return ResultUtils.success(userService.getUserList(pageIndex, pageSize));
+            return ResultUtils.success(oldUserService.getUserList(pageIndex, pageSize));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -81,7 +81,7 @@ public class UserController {
     @GetMapping(value = "/searchAdmin/{keyword}/{pageIndex}/{pageSize}")
     public ResultVO<?> searchAdminList(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
         try{
-            return ResultUtils.success(userService.searchAdminList(keyword, pageIndex, pageSize));
+            return ResultUtils.success(oldUserService.searchAdminList(keyword, pageIndex, pageSize));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -97,7 +97,7 @@ public class UserController {
     @GetMapping(value = "/searchUser/{keyword}/{pageIndex}/{pageSize}")
     public ResultVO<?> searchUserList(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
         try{
-            return ResultUtils.success(userService.searchUserList(keyword, pageIndex, pageSize));
+            return ResultUtils.success(oldUserService.searchUserList(keyword, pageIndex, pageSize));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -112,7 +112,7 @@ public class UserController {
     @GetMapping(value = "/getAllAdmin/{pageIndex}/{pageSize}")
     public ResultVO<?> getAllAdmin(@PathVariable int pageIndex, @PathVariable int pageSize){
         try{
-            return ResultUtils.success(userService.getAdminList(pageIndex, pageSize));
+            return ResultUtils.success(oldUserService.getAdminList(pageIndex, pageSize));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -126,7 +126,7 @@ public class UserController {
     @GetMapping(value = "/getAdminById/{id}")
     public ResultVO<?> getAdminById(@PathVariable int id){
         try{
-            return ResultUtils.success(userService.getAdminById(id));
+            return ResultUtils.success(oldUserService.getAdminById(id));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
@@ -141,7 +141,7 @@ public class UserController {
     @GetMapping(value = "/getUserById/{id}")
     public ResultVO<?> getUserById(@PathVariable int id){
         try{
-            return ResultUtils.success(userService.getUserById(id));
+            return ResultUtils.success(oldUserService.getUserById(id));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
@@ -155,7 +155,7 @@ public class UserController {
     @GetMapping(value = "/getAdminByName/{adminName}")
     public ResultVO<?> getAdminByName(@PathVariable String adminName){
         try{
-            return ResultUtils.success(userService.getAdminByName(adminName));
+            return ResultUtils.success(oldUserService.getAdminByName(adminName));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
@@ -169,7 +169,7 @@ public class UserController {
     @GetMapping(value = "/getUserByName/{userName}")
     public ResultVO<?> getUserByName(@PathVariable String userName){
         try{
-            return ResultUtils.success(userService.getUserByName(userName));
+            return ResultUtils.success(oldUserService.getUserByName(userName));
         }catch (Exception e){
             return ResultUtils.error(ResultCode.NO_SUCH_ACCOUNT_ERROR, e.getMessage());
         }
@@ -185,7 +185,7 @@ public class UserController {
         try {
             admin.setPassword(DigestUtils.md5DigestAsHex(admin.getPassword().getBytes()));
             admin.setType(1);
-            userService.addUser(admin);
+            oldUserService.addUser(admin);
             return ResultUtils.success();
         } catch (Exception e) {
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -202,7 +202,7 @@ public class UserController {
         try {
             user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
             user.setType(0);
-            userService.addUser(user);
+            oldUserService.addUser(user);
             return ResultUtils.success();
         } catch (Exception e) {
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -217,7 +217,7 @@ public class UserController {
     @DeleteMapping(value = "/deleteUser/{id}")
     public ResultVO<?> deleteUser(@PathVariable int id){
         try{
-            userService.deleteUser(id);
+            oldUserService.deleteUser(id);
             return ResultUtils.success();
         } catch (Exception e){
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -232,7 +232,7 @@ public class UserController {
     @PutMapping(value = "/updateUser")
     public ResultVO<?> updateUser(@RequestBody User user){
         try {
-            userService.updateUser(user);
+            oldUserService.updateUser(user);
             return ResultUtils.success();
         } catch (Exception e) {
             return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());

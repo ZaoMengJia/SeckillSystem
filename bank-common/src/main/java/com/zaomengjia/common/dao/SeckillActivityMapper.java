@@ -1,7 +1,7 @@
 package com.zaomengjia.common.dao;
 
 
-import com.zaomengjia.common.pojo.SeckillActivity;
+import com.zaomengjia.common.entity.SeckillActivity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
 package com.zaomengjia.bankmanager.service;
 
-import com.zaomengjia.common.pojo.SaleProductDetail;
+import com.zaomengjia.common.entity.SaleProductDetail;
 
 import java.util.Map;
 

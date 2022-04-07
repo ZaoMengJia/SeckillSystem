@@ -4,47 +4,36 @@ import com.alibaba.fastjson.JSONObject;
 import com.zaomengjia.auth.constant.AuthorityGroup;
 import com.zaomengjia.auth.filter.JwtFilter;
 import com.zaomengjia.auth.filter.UsernamePasswordManager;
-import com.zaomengjia.auth.pojo.JwtToken;
 import com.zaomengjia.auth.pojo.WeixinToken;
 import com.zaomengjia.auth.filter.WeixinLoginManager;
 import com.zaomengjia.auth.utils.JwtUtils;
 import com.zaomengjia.auth.utils.ResponseWriter;
-import com.zaomengjia.common.pojo.User;
-import com.zaomengjia.common.utils.MD5Utils;
+import com.zaomengjia.common.entity.User;
+import com.zaomengjia.common.entity.WeixinUser;
 import com.zaomengjia.common.utils.ResultUtils;
 import io.netty.util.internal.StringUtil;
-import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
-import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
-import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.reactive.handler.WebFluxResponseStatusExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 
 /**
  * @author orangeboyChen
@@ -102,15 +91,24 @@ public class WebSecurityConfig {
     }
 
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication, JwtUtils jwtUtils) {
-        User user = (User) authentication.getDetails();
+        Object details = authentication.getDetails();
+        String jwt;
+        if(details instanceof WeixinUser) {
+            WeixinUser weixinUser = (WeixinUser) details;
+            String userId = weixinUser.getId();
+            jwt = jwtUtils.getJwt(Collections.singletonList(AuthorityGroup.USER), userId);
+        }
+        else {
+            User user = (User) authentication.getDetails();
 
-        //下面这个以后有可能用到
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        boolean isUser = authorities.contains(AuthorityGroup.USER.getAuthority());
-        boolean isAdmin = authorities.contains(AuthorityGroup.ADMIN.getAuthority());
+            //下面这个以后有可能用到
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            boolean isUser = authorities.contains(AuthorityGroup.USER.getAuthority());
+            boolean isAdmin = authorities.contains(AuthorityGroup.ADMIN.getAuthority());
 
-        AuthorityGroup authorityGroup = user.getType() == 0 ? AuthorityGroup.USER : AuthorityGroup.ADMIN;
-        String jwt = jwtUtils.getJwt(Collections.singletonList(authorityGroup), user.getUid());
+            AuthorityGroup authorityGroup = user.getType() == 0 ? AuthorityGroup.USER : AuthorityGroup.ADMIN;
+            jwt = jwtUtils.getJwt(Collections.singletonList(authorityGroup), user.getUid());
+        }
 
         JSONObject json = new JSONObject();
         json.put("token", "Bearer " + jwt);

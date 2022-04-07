@@ -26,7 +26,7 @@ public final class ResultUtils {
      * @return 统一返回
      */
     public static <T> ResultVO<?> success(T data) {
-        return new ResultVO<>(ResultCode.SUCCESS.code, data);
+        return new ResultVO<>(ResultCode.SUCCESS.code, data, ResultCode.SUCCESS.message);
     }
 
     /**

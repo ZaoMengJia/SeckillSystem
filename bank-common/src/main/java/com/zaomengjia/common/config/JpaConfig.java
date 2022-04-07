@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @Configuration
 @EnableJpaRepositories(basePackages = "com.zaomengjia.common.dao")
-@EntityScan(basePackages = "com.zaomengjia.common.pojo")
+@EntityScan(basePackages = "com.zaomengjia.common.entity")
 public class JpaConfig {
 }

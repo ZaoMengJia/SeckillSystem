@@ -1,67 +1,38 @@
 package com.zaomengjia.bankmanager.service;
 
-import com.zaomengjia.common.pojo.User;
+import com.zaomengjia.bankmanager.dto.AdminUserDto;
+import com.zaomengjia.bankmanager.dto.WeixinUserDto;
+import com.zaomengjia.common.vo.page.PageVO;
+import com.zaomengjia.common.vo.user.AdminUserVO;
+import com.zaomengjia.common.vo.user.WeixinUserVO;
 
-import java.util.Map;
-
+/**
+ * @author orangeboyChen
+ * @version 1.0
+ * @date 2022/4/7 23:59
+ */
 public interface UserService {
-    /**
-     * 判断用户是否存在
-     * @param userName
-     * @return
-     */
-    Boolean userExist(String userName);
+    AdminUserVO getAdminUserById(String id);
 
-    /**
-     * 获取所有管理员与普通用户
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    Map<String,Object> getAdminList(int pageIndex,int pageSize);
-    Map<String,Object> getUserList(int pageIndex,int pageSize);
+    PageVO<AdminUserVO> getAdminUserList(int pageNum, int pageSize);
 
-    /**
-     * 查询管理员以及用户
-     * @param keyword
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    Map<String, Object> searchAdminList(String keyword, int pageIndex, int pageSize);
-    Map<String, Object> searchUserList(String keyword, int pageIndex, int pageSize);
+    PageVO<WeixinUserVO> getWeixinUserList(int pageNum, int pageSize);
 
-    /**
-     * 通过id获取管理员与普通用户
-     * @param uid
-     * @return
-     */
-    User getAdminById(long uid);
-    User getUserById(long uid);
+    AdminUserVO getAdminUserByUsername(String username);
 
-    /**
-     * 通过名字获取管理员与用户
-     * @param name
-     * @return
-     */
-    User getUserByName(String name);
-    User getAdminByName(String name);
+    PageVO<WeixinUserVO> searchWeixinUserByNickname(String nickname, int pageNum, int pageSize);
 
-    /**
-     * 添加管理员与用户
-     * @param user
-     */
-    void addUser(User user);
+    PageVO<WeixinUserVO> searchWeixinUserByRealName(String keyword, int pageNum, int pageSize);
 
-    /**
-     * 删除管理员、用户
-     * @param id
-     */
-    void deleteUser(long id);
+    PageVO<AdminUserVO> searchAdminUserByUsername(String keyword, int pageNum, int pageSize);
 
-    /**
-     * 更新管理员、用户
-     * @param user
-     */
-    void updateUser(User user);
+    String insertAdminUser(AdminUserDto dto);
+
+    void updateAdminUser(String userId, AdminUserDto dto);
+
+    void updateWeixinUser(String userId, WeixinUserDto dto);
+
+    void deleteAdminUser(String userId);
+
+    void deleteWeixinUser(String userId);
 }

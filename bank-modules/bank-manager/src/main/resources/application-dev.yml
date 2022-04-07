@@ -11,9 +11,15 @@ spring:
   application:
     name: bank-manager
   mvc:
-    servlet:
-      load-on-startup: 1
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
   cloud:
     nacos:
       discovery:
         server-addr: 112.74.189.224:8848
+
+
+

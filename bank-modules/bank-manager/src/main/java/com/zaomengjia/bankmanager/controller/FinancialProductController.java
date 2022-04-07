@@ -2,7 +2,7 @@ package com.zaomengjia.bankmanager.controller;
 
 import com.zaomengjia.bankmanager.service.FinancialProductService;
 import com.zaomengjia.common.constant.ResultCode;
-import com.zaomengjia.common.pojo.FinancialProduct;
+import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;

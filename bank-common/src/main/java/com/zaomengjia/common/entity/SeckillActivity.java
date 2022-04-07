@@ -1,10 +1,9 @@
-package com.zaomengjia.common.pojo;
+package com.zaomengjia.common.entity;
 
 
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
 
 
 /**

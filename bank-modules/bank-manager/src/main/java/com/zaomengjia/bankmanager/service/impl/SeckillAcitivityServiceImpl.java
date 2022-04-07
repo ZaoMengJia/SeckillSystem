@@ -1,7 +1,7 @@
 package com.zaomengjia.bankmanager.service.impl;
 
 import com.zaomengjia.common.dao.SeckillActivityMapper;
-import com.zaomengjia.common.pojo.SeckillActivity;
+import com.zaomengjia.common.entity.SeckillActivity;
 import com.zaomengjia.bankmanager.service.SeckillActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

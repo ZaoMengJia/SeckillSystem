@@ -1,7 +1,7 @@
 package com.zaomengjia.bankmanager.service.impl;
 
 import com.zaomengjia.common.dao.FinancialProductMapper;
-import com.zaomengjia.common.pojo.FinancialProduct;
+import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.bankmanager.service.FinancialProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

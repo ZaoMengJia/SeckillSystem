@@ -1,4 +1,4 @@
-package com.zaomengjia.common.pojo;
+package com.zaomengjia.common.entity;
 
 import lombok.Data;
 

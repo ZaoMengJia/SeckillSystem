@@ -1,7 +1,7 @@
 package com.zaomengjia.bankmanager.service;
 
 
-import com.zaomengjia.common.pojo.SeckillActivity;
+import com.zaomengjia.common.entity.SeckillActivity;
 
 import java.util.Map;
 

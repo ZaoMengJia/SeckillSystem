@@ -1,7 +1,7 @@
 package com.zaomengjia.bankmanager.service.impl;
 
 import com.zaomengjia.common.dao.OrderMapper;
-import com.zaomengjia.common.pojo.Order;
+import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.bankmanager.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

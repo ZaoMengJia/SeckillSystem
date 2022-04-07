@@ -1,86 +1,140 @@
 package com.zaomengjia.bankmanager.service.impl;
 
-import com.zaomengjia.common.dao.UserMapper;
-import com.zaomengjia.common.pojo.User;
+import com.zaomengjia.bankmanager.dto.WeixinUserDto;
 import com.zaomengjia.bankmanager.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.zaomengjia.common.constant.ResultCode;
+import com.zaomengjia.common.dao.AdminUserMapper;
+import com.zaomengjia.common.dao.WeixinUserMapper;
+import com.zaomengjia.bankmanager.dto.AdminUserDto;
+import com.zaomengjia.common.entity.AdminUser;
+import com.zaomengjia.common.entity.WeixinUser;
+import com.zaomengjia.common.exception.AppException;
+import com.zaomengjia.common.vo.page.PageVO;
+import com.zaomengjia.common.vo.user.AdminUserVO;
+import com.zaomengjia.common.vo.user.WeixinUserVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * @author orangeboyChen
+ * @version 1.0
+ * @date 2022/4/7 23:59
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final AdminUserMapper adminUserMapper;
 
-    @Override
-    public Boolean userExist(String userName) {
-        return userMapper.getByTypeAndUserName(1, userName) != null;
+    private final WeixinUserMapper weixinUserMapper;
+
+    public UserServiceImpl(AdminUserMapper adminUserMapper, WeixinUserMapper weixinUserMapper) {
+        this.adminUserMapper = adminUserMapper;
+        this.weixinUserMapper = weixinUserMapper;
+    }
+
+    private AdminUserVO entityToVO(AdminUser adminUser) {
+        if(adminUser == null) {
+            return null;
+        }
+        AdminUserVO vo = new AdminUserVO();
+        BeanUtils.copyProperties(adminUser, vo);
+        return vo;
+    }
+
+    private WeixinUserVO entityToVO(WeixinUser weixinUser) {
+        if(weixinUser == null) {
+            return null;
+        }
+        WeixinUserVO vo = new WeixinUserVO();
+        BeanUtils.copyProperties(weixinUser, vo);
+        return vo;
     }
 
     @Override
-    public Map<String, Object> getAdminList(int pageIndex, int pageSize) {
-        return getPageInfo(userMapper.getByType(1, PageRequest.of(pageIndex, pageSize)));
-    }
-
-    private Map<String, Object> getPageInfo(Page<User> page) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("records", page.toList());
-        map.put("total", page.getTotalElements());
-        return map;
+    public AdminUserVO getAdminUserById(String id) {
+        AdminUser result = adminUserMapper.findById(id).orElse(null);
+        return entityToVO(result);
     }
 
     @Override
-    public Map<String, Object> getUserList(int pageIndex, int pageSize) {
-        return getPageInfo(userMapper.getByType(1, PageRequest.of(pageIndex, pageSize)));
+    public PageVO<AdminUserVO> getAdminUserList(int pageNum, int pageSize) {
+        Page<AdminUser> entityPage = adminUserMapper.findAll(PageRequest.of(pageNum, pageSize));
+        return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
-    public Map<String, Object> searchAdminList(String keyword, int pageIndex, int pageSize) {
-        return null;
+    public PageVO<WeixinUserVO> getWeixinUserList(int pageNum, int pageSize) {
+        Page<WeixinUser> entityPage = weixinUserMapper.findAll(PageRequest.of(pageNum, pageSize));
+        return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
-    public Map<String, Object> searchUserList(String keyword, int pageIndex, int pageSize) {
-        return null;
+    public AdminUserVO getAdminUserByUsername(String username) {
+        return entityToVO(adminUserMapper.findByUsername(username));
     }
 
     @Override
-    public User getAdminById(long uid) {
-        return userMapper.getByTypeAndUid(1, uid);
+    public PageVO<WeixinUserVO> searchWeixinUserByNickname(String keyword, int pageNum, int pageSize) {
+        Page<WeixinUser> entityPage = weixinUserMapper.searchByNicknameLike(keyword, PageRequest.of(pageNum, pageSize));
+        return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
-    public User getUserById(long uid) {
-        return userMapper.getByTypeAndUid(0, uid);
+    public PageVO<WeixinUserVO> searchWeixinUserByRealName(String keyword, int pageNum, int pageSize) {
+        Page<WeixinUser> entityPage = weixinUserMapper.searchByRealNameLike(keyword, PageRequest.of(pageNum, pageSize));
+        return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
-    public User getUserByName(String name) {
-        return userMapper.getByTypeAndUserName(0, name);
+    public PageVO<AdminUserVO> searchAdminUserByUsername(String keyword, int pageNum, int pageSize) {
+        Page<AdminUser> entityPage = adminUserMapper.searchByUsernameLike(keyword, PageRequest.of(pageNum, pageSize));
+        return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
-    public User getAdminByName(String name) {
-        return userMapper.getByTypeAndUserName(1, name);
+    public String insertAdminUser(AdminUserDto dto) {
+        AdminUser entity = new AdminUser();
+        BeanUtils.copyProperties(dto, entity);
+        entity = adminUserMapper.save(entity);
+        return entity.getId();
+    }
+
+
+    @Override
+    public void updateAdminUser(String userId, AdminUserDto dto) {
+        AdminUser entity = adminUserMapper.findById(userId).orElseThrow(() -> new AppException(ResultCode.NO_SUCH_USER));
+        String password = entity.getPassword();
+        BeanUtils.copyProperties(dto, entity);
+
+        if(dto.getPassword() == null) {
+            entity.setPassword(password);
+        }
+
+        entity.setId(userId);
+        adminUserMapper.save(entity);
     }
 
     @Override
-    public void addUser(User user) {
-        userMapper.save(user);
+    public void updateWeixinUser(String userId, WeixinUserDto dto) {
+        WeixinUser entity = weixinUserMapper.findById(userId).orElseThrow(() -> new AppException(ResultCode.NO_SUCH_USER));
+        BeanUtils.copyProperties(dto, entity);
+
+        entity.setId(userId);
+        weixinUserMapper.save(entity);
     }
 
     @Override
-    public void deleteUser(long id) {
-        userMapper.deleteById(id);
+    public void deleteAdminUser(String userId) {
+        adminUserMapper.deleteById(userId);
     }
 
     @Override
-    public void updateUser(User user) {
-        userMapper.save(user);
+    public void deleteWeixinUser(String userId) {
+        weixinUserMapper.deleteById(userId);
     }
+
+
+
 }
