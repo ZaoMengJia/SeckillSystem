@@ -39,6 +39,15 @@ public final class ResultUtils {
     }
 
     /**
+     * 其它未定义的系统异常
+     * @param message 错误信息
+     * @return 统一返回
+     */
+    public static ResultVO<?> internalServerError(String message) {
+        return new ResultVO<>(ResultCode.INTERNAL_SERVER_ERROR.code, message);
+    }
+
+    /**
      * 错误统一返回
      * @deprecated 请使用error(ResultCode code)，创建新的代码来代替消息。如果是从异常中获取message，请使用handler拦截，在logger中输出错误，用统一的代号（INTERNAL_SERVER_ERROR）返回。@orangeboy
      * @param code 错误代号
@@ -60,5 +69,4 @@ public final class ResultUtils {
     public static ResultVO<?> error(int code, String message) {
         return new ResultVO<>(code, message);
     }
-
 }

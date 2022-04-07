@@ -1,0 +1,27 @@
+auth:
+  secret: 123
+  expired-time: 3000
+
+weixin:
+  appid:
+  secret:
+
+
+spring:
+  application:
+    name: bank-auth
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: path_route
+          uri: lb://bank-manager
+          predicates:
+            - Path=/admin/**

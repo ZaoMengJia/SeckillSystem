@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
  * @version 1.0
  * @date 2022/4/1 01:34
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.zaomengjia.common", "com.zaomengjia.auth"})
 @EnableDiscoveryClient
 public class AuthApplication {
     public static void main(String[] args) {

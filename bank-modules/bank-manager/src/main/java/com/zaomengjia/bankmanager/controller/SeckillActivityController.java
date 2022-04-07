@@ -2,7 +2,6 @@ package com.zaomengjia.bankmanager.controller;
 
 import com.zaomengjia.bankmanager.service.SeckillActivityService;
 import com.zaomengjia.common.constant.ResultCode;
-import com.zaomengjia.common.exception.ISEException;
 import com.zaomengjia.common.pojo.SeckillActivity;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
@@ -20,7 +19,7 @@ public class SeckillActivityController {
         try{
             return ResultUtils.success(seckillActivityService.getSeckillActivity(pageIndex, pageSize));
         }catch (Exception e){
-            throw new ISEException();
+            throw new RuntimeException();
         }
     }
 

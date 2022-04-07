@@ -2,6 +2,9 @@ package com.zaomengjia.auth.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.zaomengjia.auth.constant.AuthorityGroup;
+import com.zaomengjia.auth.exception.LoginErrorException;
+import com.zaomengjia.auth.exception.NetworkException;
 import com.zaomengjia.auth.pojo.WeixinToken;
 import lombok.SneakyThrows;
 import okhttp3.HttpUrl;
@@ -11,10 +14,12 @@ import okhttp3.Response;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -31,20 +36,34 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Value("${weixin.appid}")
+    private String appid;
+
+    @Value("${weixin.secret}")
+    private String secret;
+
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) throws AuthenticationException {
         String code = authentication.getName();
+        JSONObject json = obtainOpenidResponse(code);
+        if(json == null) {
+            throw new NetworkException();
+        }
 
-        return Mono.justOrEmpty(obtainOpenidResponse(code))
-                .filter(Objects::nonNull)
-                .switchIfEmpty(Mono.error(new AuthenticationServiceException("12")))
-                .filter(json -> json.getInteger("errcode") != 0)
-                .switchIfEmpty(Mono.error(new AuthenticationServiceException("errmsg")))
-                .map(json -> {
-                    String openid = json.getString("openid");
-                    return new WeixinToken(code, openid, Collections.emptyList());
-                });
+        if(json.getInteger("errcode") != 0) {
+            String message = json.getString("errmsg");
+            logger.error("微信登录出错: {}", message);
+            throw new LoginErrorException(message);
+        }
+
+        String openid = json.getString("openid");
+
+
+
+
+        WeixinToken authenticate = new WeixinToken(code, openid, AuthorityUtils.createAuthorityList(AuthorityGroup.USER.raw));
+        return Mono.just(authenticate);
     }
 
     @Nullable
@@ -54,8 +73,8 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
         Request request = new Request.Builder()
                 .url(
                         Objects.requireNonNull(HttpUrl.parse("https://api.weixin.qq.com/sns/jscode2session")).newBuilder()
-                                .addQueryParameter("appid", "")
-                                .addQueryParameter("secret", "")
+                                .addQueryParameter("appid", appid)
+                                .addQueryParameter("secret", secret)
                                 .addQueryParameter("js_code", code)
                                 .addQueryParameter("grant_type", "authorization_code")
                                 .build()

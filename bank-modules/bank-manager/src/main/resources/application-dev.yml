@@ -1,0 +1,19 @@
+project:
+  version: 1.0.0
+
+server:
+  port: 8001
+  servlet:
+    encoding:
+      force-response: true
+
+spring:
+  application:
+    name: bank-manager
+  mvc:
+    servlet:
+      load-on-startup: 1
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 112.74.189.224:8848

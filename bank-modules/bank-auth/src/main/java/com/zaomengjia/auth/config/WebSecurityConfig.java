@@ -6,9 +6,12 @@ import com.zaomengjia.auth.pojo.JwtToken;
 import com.zaomengjia.auth.pojo.WeixinToken;
 import com.zaomengjia.auth.filter.WeixinLoginManager;
 import com.zaomengjia.common.utils.MD5Utils;
+import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -22,6 +25,7 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.reactive.handler.WebFluxResponseStatusExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -46,6 +50,9 @@ public class WebSecurityConfig {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager);
         authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/auth/web"));
         authenticationWebFilter.setServerAuthenticationConverter(exchange -> exchange.getFormData().map(data -> {
+            if(exchange.getRequest().getMethod() != HttpMethod.POST) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
             String username = data.getFirst("username");
             String password = MD5Utils.fromMD5(Objects.requireNonNull(data.getFirst("password")));
             return new UsernamePasswordAuthenticationToken(username, password);
@@ -59,24 +66,15 @@ public class WebSecurityConfig {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager);
         authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/auth/weixin"));
         authenticationWebFilter.setServerAuthenticationConverter(exchange -> exchange.getFormData().map(data -> {
+            if(exchange.getRequest().getMethod() != HttpMethod.POST) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
             String code = data.getFirst("code");
             return new WeixinToken(code, null);
         }));
         authenticationWebFilter.setAuthenticationFailureHandler((webFilterExchange, exception) -> responseStatusExceptionHandler.handle(webFilterExchange.getExchange(), exception));
         return authenticationWebFilter;
     }
-
-//    public AuthenticationWebFilter jwtFilter(ReactiveAuthenticationManager reactiveAuthenticationManager) {
-//        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager);
-//        authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
-//        authenticationWebFilter.setServerAuthenticationConverter(exchange ->
-//                Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst("Authorization"))
-//                        .switchIfEmpty(Mono.error(new RuntimeException("空数据")))
-//                        .map(JwtToken::new)
-//        );
-//        authenticationWebFilter.setAuthenticationFailureHandler((webFilterExchange, exception) -> responseStatusExceptionHandler.handle(webFilterExchange.getExchange(), exception));
-//        return authenticationWebFilter;
-//    }
 
     @Bean
     @Primary
@@ -104,9 +102,9 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeExchange()
                 .pathMatchers("/auth/weixin/**").permitAll()
-                .pathMatchers("/admin/**").hasRole("ADMIN")
-                .pathMatchers("/item/**").hasRole("USER")
-                .anyExchange().authenticated()
+//                .pathMatchers("/admin/**").hasRole("ADMIN")
+//                .pathMatchers("/item/**").hasRole("USER")
+                .anyExchange().permitAll()
                 .and()
                 .addFilterAt(weixinFilter(reactiveAuthenticationManager), SecurityWebFiltersOrder.AUTHENTICATION)
                 .addFilterAt(usernamePasswordFilter(reactiveAuthenticationManager), SecurityWebFiltersOrder.AUTHENTICATION)

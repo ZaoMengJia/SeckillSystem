@@ -17,6 +17,12 @@ public class User {
     @Column(name = "uid")
     private long uid;
 
+    /**
+     * 微信Openid
+     */
+    @Column(name = "wx_openid")
+    private String wxOpenid;
+
 
     /**
      * 身份证号

@@ -1,5 +1,6 @@
 package com.zaomengjia.auth.filter;
 
+import com.zaomengjia.auth.exception.LoginErrorException;
 import com.zaomengjia.common.dao.UserMapper;
 import com.zaomengjia.common.pojo.User;
 import io.netty.handler.codec.spdy.SpdyGoAwayFrame;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 @Component
 public class UsernamePasswordManager implements ReactiveAuthenticationManager {
 
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     public UsernamePasswordManager(UserMapper userMapper) {
         this.userMapper = userMapper;
@@ -30,22 +31,22 @@ public class UsernamePasswordManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
-        String username = (String) usernamePasswordAuthenticationToken.getPrincipal();
-        String password = (String) usernamePasswordAuthenticationToken.getCredentials();
+        UsernamePasswordAuthenticationToken authenticate = (UsernamePasswordAuthenticationToken) authentication;
+        String username = (String) authenticate.getPrincipal();
+        String password = (String) authenticate.getCredentials();
 
         if(StringUtil.isNullOrEmpty(username) || StringUtil.isNullOrEmpty(password)) {
             return Mono.just(authentication);
         }
 
-        User user = null;
+        User user = userMapper.getByUserNameAndPassword(username, password);
         if(user == null) {
             //找不到用户
-            throw new RuntimeException("");
+            throw new LoginErrorException();
         }
 
-
-
-        return null;
+        authenticate.setAuthenticated(true);
+        authenticate.setDetails(user);
+        return Mono.just(authenticate);
     }
 }
