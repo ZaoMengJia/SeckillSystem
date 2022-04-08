@@ -1,0 +1,68 @@
+name: Java CI with Maven
+
+on:
+  push:
+    tags:
+      - 'gateway-*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Install module bank-common
+        run: mvn -B install --file ./bank-common/pom.xml
+
+      - name: Change directory to module bank-gateway
+        run: cd ./bank-modules/bank-gateway/
+
+      - name: Build module bank-gateway
+        run: mvn -B package --file pom.xml
+
+      - name: Build docker image
+        run: docker build . --file Dockerfile --tag bank-gateway:$(date +%s)
+
+      - name: Publish to docker repository
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: orangeboy/bank-gateway
+          username: ${{ secrets.ALI_DOCKER_HUB_USN }}
+          password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
+          registry: registry.cn-shenzhen.aliyuncs.com
+
+      - name: Set ssh environment
+        run: |
+          mkdir -p ~/.ssh/
+#          echo "${{ secrets.GATEWAY_RSA }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.GATEWAY_RSA_KEY }}" > ~/.ssh/id_rsa.pub
+          cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+          cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys2
+          chmod 600 ~/.ssh/id_rsa
+          chmod 640 ~/.ssh/authorized_keys2
+          chmod 700 ~/.ssh && chmod 700 ~/.ssh/*
+          ls -l ~/.ssh/
+      - name: Deploy docker image to target server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GATEWAY_HOST }} #服务器ip地址
+          username: ${{ secrets.GATEWAY_USERNAME }} #服务器ssh用户名
+          key: ${{ secrets.GATEWAY_RSA_KEY }} #服务器ssh证书key
+          port: 22
+          script: |
+            if docker ps -a|grep -i bank-gateway;then 
+             docker rm -f bank-gateway
+            fi
+            
+            if docker images -a|grep -i bank-gateway;then
+            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/bank-gateway
+            fi
+            
+            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/bank-gateway:latest
+            docker run --name bank-gateway -p 8811:8811 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/bank-gateway:latest
+            docker ps -a | grep bank-gateway

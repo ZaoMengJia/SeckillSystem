@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -41,10 +42,17 @@ public class OpenApiResourceConfig {
         Map<String, Object> config = new LinkedHashMap<>();
         List<AbstractSwaggerUiConfigProperties.SwaggerUrl> urls = new LinkedList<>();
 
+        Map<String, String> serviceNameContextPathMap = new HashMap<>();
+        serviceNameContextPathMap.put("bank-auth", "");
+        serviceNameContextPathMap.put("bank-manager", "/web");
+
         discoveryClient.getServices().forEach(serviceName ->
                 discoveryClient.getInstances(serviceName).forEach(serviceInstance ->{
                             if(!currentServiceName.equals(serviceName)) {
-                                urls.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(serviceName, serviceInstance.getUri() + "/v3/api-docs"));
+                                if(!serviceName.contains("spring")) {
+                                    String prefix = Optional.ofNullable(serviceNameContextPathMap.get(serviceName)).orElse("");
+                                    urls.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(serviceName, serviceInstance.getUri() + prefix + "/v3/api-docs"));
+                                }
                             }
                             else {
                                 urls.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(serviceName, serviceInstance.getUri() + "/v3/api-docs-gateway"));

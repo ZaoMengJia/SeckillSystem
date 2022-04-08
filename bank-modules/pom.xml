@@ -11,9 +11,8 @@
 
     <artifactId>bank-modules</artifactId>
     <modules>
-        <module>bank-client</module>
         <module>bank-manager</module>
-        <module>bank-auth</module>
+        <module>bank-gateway</module>
         <module>bank-product</module>
         <module>bank-seckill</module>
     </modules>

@@ -162,6 +162,7 @@ public class WebSecurityConfig {
                         "/swagger-resources/**",
                         "/v3/api-docs",
                         "/webjars/**").permitAll()
+                .pathMatchers("/actuator/**").permitAll()
                 .anyExchange().permitAll()
 
                 .and()

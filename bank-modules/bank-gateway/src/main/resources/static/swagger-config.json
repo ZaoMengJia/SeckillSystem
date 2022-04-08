@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "servers": [{
-    "url": "http://127.0.0.1:8080",
-    "description": "Generated server url"
+    "url": "https://api.zmj.nowcent.cn",
+    "description": "地址"
   }],
   "tags": [{
     "name": "登录"
