@@ -10,6 +10,7 @@ weixin:
 spring:
   application:
     name: bank-auth
+    url: localhost:8080
 
   cloud:
     nacos:
@@ -24,4 +25,9 @@ spring:
         - id: path_route
           uri: lb://bank-manager
           predicates:
-            - Path=/admin/**
+            - Path=/web/**
+
+springdoc:
+  swagger-ui:
+    configUrl: /swagger-config.json
+

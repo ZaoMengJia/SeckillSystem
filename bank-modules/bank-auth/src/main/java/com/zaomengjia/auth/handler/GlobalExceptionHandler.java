@@ -6,6 +6,8 @@ import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.common.utils.ResultUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -30,6 +32,8 @@ import java.util.Optional;
 @Component
 public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @NotNull
     @Override
     public Mono<Void> handle(@NotNull ServerWebExchange exchange, @NotNull Throwable ex) {
@@ -51,6 +55,8 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             return ResponseWriter.writeResponse(exchange, ResultUtils.error(ResultCode.TOKEN_ERROR));
         }
         else {
+            logger.error("拦截到了错误: {}", ex.getLocalizedMessage());
+            ex.printStackTrace();
             return ResponseWriter.writeResponse(exchange, ResultUtils.internalServerError(ex.getLocalizedMessage()));
         }
     }

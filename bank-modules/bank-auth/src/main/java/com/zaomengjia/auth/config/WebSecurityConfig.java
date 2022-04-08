@@ -27,11 +27,14 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.handler.WebFluxResponseStatusExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -52,7 +55,7 @@ public class WebSecurityConfig {
     public AuthenticationWebFilter usernamePasswordFilter(ReactiveAuthenticationManager reactiveAuthenticationManager, JwtUtils jwtUtils) {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager);
         authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/auth/web"));
-        authenticationWebFilter.setServerAuthenticationConverter(exchange -> exchange.getFormData().map(data -> {
+        authenticationWebFilter.setServerAuthenticationConverter(exchange ->  exchange.getFormData().map(data -> {
             if(exchange.getRequest().getMethod() != HttpMethod.POST) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
@@ -140,17 +143,46 @@ public class WebSecurityConfig {
                 .exceptionHandling()
                 .accessDeniedHandler((exchange, denied) -> responseStatusExceptionHandler.handle(exchange, denied))
                 .authenticationEntryPoint((exchange, ex) -> responseStatusExceptionHandler.handle(exchange, ex))
+
                 .and()
                 .authorizeExchange()
                 .pathMatchers("/auth/**").permitAll()
-                .pathMatchers("/admin/**").hasRole("ADMIN")
-                .pathMatchers("/item/**").hasRole("USER")
+                .pathMatchers("/web/**").permitAll()
+//                    .hasRole(AuthorityGroup.ADMIN.raw)
+                .pathMatchers("/item/**")
+                .permitAll()
+//                    .hasRole(AuthorityGroup.USER.raw)
+
+                //OpenApi
+                .pathMatchers(
+                        "/swagger-ui.html",
+                        "/v3/api-docs-gateway",
+                        "/swagger-config.json",
+                        "/swagger-ui/*",
+                        "/swagger-resources/**",
+                        "/v3/api-docs",
+                        "/webjars/**").permitAll()
                 .anyExchange().permitAll()
+
                 .and()
                 .addFilterAt(weixinFilter(reactiveAuthenticationManager, jwtUtils), SecurityWebFiltersOrder.AUTHENTICATION)
                 .addFilterAt(usernamePasswordFilter(reactiveAuthenticationManager, jwtUtils), SecurityWebFiltersOrder.AUTHENTICATION)
                 .addFilterAfter(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-                .csrf().disable().exceptionHandling();
+                .csrf().disable().exceptionHandling()
+                .and()
+                .cors().configurationSource(urlBasedCorsConfigurationSource());
         return http.build();
+    }
+
+    private UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.applyPermitDefaultValues();
+        // corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+        corsConfiguration.setAllowedOrigins(Collections.singletonList("*"));
+        UrlBasedCorsConfigurationSource ccs = new UrlBasedCorsConfigurationSource();
+        ccs.registerCorsConfiguration("/**", corsConfiguration);
+        return ccs;
     }
 }

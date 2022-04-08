@@ -6,6 +6,7 @@ server:
   servlet:
     encoding:
       force-response: true
+    context-path: /web
 
 spring:
   application:
@@ -19,7 +20,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 112.74.189.224:8848
+        server-addr: localhost:8848
 
 
 
