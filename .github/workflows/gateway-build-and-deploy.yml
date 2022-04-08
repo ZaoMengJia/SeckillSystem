@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Gateway CI/CD
 
 on:
   push:
@@ -16,34 +16,36 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Install module bank-common
-        run: mvn -B install --file ./bank-common/pom.xml
-
-      - name: Change directory to module bank-gateway
-        run: cd ./bank-modules/bank-gateway/
-
       - name: Build module bank-gateway
-        run: mvn -B package --file pom.xml
+        run: |
+          mvn -B install --file pom.xml
+          cd ./bank-modules/bank-gateway/
+          pwd
+          mvn -B package --file pom.xml
 
       - name: Build docker image
-        run: docker build . --file Dockerfile --tag bank-gateway:$(date +%s)
+        run: |
+          cd ./bank-modules/bank-gateway/
+          docker build . --file Dockerfile --tag zmj-gateway:$(date +%s)
 
       - name: Publish to docker repository
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: orangeboy/bank-gateway
+          name: orangeboy/zmj-gateway
           username: ${{ secrets.ALI_DOCKER_HUB_USN }}
           password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
           registry: registry.cn-shenzhen.aliyuncs.com
+          workdir: ./bank-modules/bank-gateway/
+          tags: latest
 
       - name: Set ssh environment
         run: |
           mkdir -p ~/.ssh/
-#          echo "${{ secrets.GATEWAY_RSA }}" > ~/.ssh/id_rsa
-          echo "${{ secrets.GATEWAY_RSA_KEY }}" > ~/.ssh/id_rsa.pub
+          echo "${{ secrets.GATEWAY_RSA }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.GATEWAY_RSA_PUB }}" > ~/.ssh/id_rsa.pub
           cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
           cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys2
-          chmod 600 ~/.ssh/id_rsa
+          chmod 640 ~/.ssh/authorized_keys
           chmod 640 ~/.ssh/authorized_keys2
           chmod 700 ~/.ssh && chmod 700 ~/.ssh/*
           ls -l ~/.ssh/
@@ -55,14 +57,14 @@ jobs:
           password: ${{ secrets.GATEWAY_PASSWORD }} #服务器ssh证书密码
           port: 22
           script: |
-            if docker ps -a|grep -i bank-gateway;then 
-             docker rm -f bank-gateway
+            if docker ps -a|grep -i zmj-gateway;then 
+             docker rm -f zmj-gateway
             fi
             
-            if docker images -a|grep -i bank-gateway;then
-            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/bank-gateway
+            if docker images -a|grep -i zmj-gateway;then
+            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-gateway
             fi
             
-            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/bank-gateway:latest
-            docker run --name bank-gateway -p 8811:8811 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/bank-gateway:latest
-            docker ps -a | grep bank-gateway
+            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-gateway:latest
+            docker run --name zmj-gateway -p 8811:8811 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-gateway:latest
+            docker ps -a | grep zmj-gateway
