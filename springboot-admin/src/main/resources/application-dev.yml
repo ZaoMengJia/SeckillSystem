@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: springboot-admin
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  security:
+    user:
+      name: admin
+      password: admin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  file:
+    name: ./logs/${spring.application.name}/info.log
+  config: classpath:logback-spring.xml
+path:
+  log: ./logs/${spring.application.name}
+
+server:
+  port: 8812

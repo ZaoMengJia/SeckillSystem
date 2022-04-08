@@ -1,0 +1,70 @@
+name: Gateway CI/CD
+
+on:
+  push:
+    tags:
+      - 'springboot-admin-*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Build module springboot-admin
+        run: |
+          mvn -B install --file pom.xml
+          cd ./bank-modules/springboot-admin/
+          pwd
+          mvn -B package --file pom.xml
+
+      - name: Build docker image
+        run: |
+          cd ./bank-modules/springboot-admin/
+          docker build . --file Dockerfile --tag zmj-springboot-admin:$(date +%s)
+
+      - name: Publish to docker repository
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: orangeboy/zmj-springboot-admin
+          username: ${{ secrets.ALI_DOCKER_HUB_USN }}
+          password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
+          registry: registry.cn-shenzhen.aliyuncs.com
+          workdir: ./bank-modules/springboot-admin/
+          tags: latest
+
+      - name: Set ssh environment
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.GATEWAY_RSA }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.GATEWAY_RSA_PUB }}" > ~/.ssh/id_rsa.pub
+          cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+          cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys2
+          chmod 640 ~/.ssh/authorized_keys
+          chmod 640 ~/.ssh/authorized_keys2
+          chmod 700 ~/.ssh && chmod 700 ~/.ssh/*
+          ls -l ~/.ssh/
+      - name: Deploy docker image to target server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GATEWAY_HOST }} #服务器ip地址
+          username: ${{ secrets.GATEWAY_USERNAME }} #服务器ssh用户名
+          password: ${{ secrets.GATEWAY_PASSWORD }} #服务器ssh证书密码
+          port: 22
+          script: |
+            if docker ps -a|grep -i zmj-springboot-admin;then 
+             docker rm -f zmj-springboot-admin
+            fi
+            
+            if docker images -a|grep -i zmj-springboot-admin;then
+            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-springboot-admin
+            fi
+            
+            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-springboot-admin:latest
+            docker run --name zmj-springboot-admin -p 8811:8811 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-springboot-admin:latest
+            docker ps -a | grep zmj-springboot-admin
