@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -52,7 +52,7 @@ jobs:
         with:
           host: ${{ secrets.GATEWAY_HOST }} #服务器ip地址
           username: ${{ secrets.GATEWAY_USERNAME }} #服务器ssh用户名
-          key: ${{ secrets.GATEWAY_RSA_KEY }} #服务器ssh证书key
+          password: ${{ secrets.GATEWAY_PASSWORD }} #服务器ssh证书密码
           port: 22
           script: |
             if docker ps -a|grep -i bank-gateway;then 

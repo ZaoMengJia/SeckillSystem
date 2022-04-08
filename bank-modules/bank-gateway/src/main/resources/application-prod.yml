@@ -2,10 +2,22 @@ auth:
   secret: 123
   expired-time: 3000
 
+weixin:
+  appid: wx3f7f4b71b02fb7ab
+  secret: 0728701dbff0f9d33e29e65d59e57147
+
+server:
+  port: 8811
+
 
 spring:
   application:
     name: bank-auth
+    url: localhost:8811
+  boot:
+    admin:
+      client:
+        url: http://loalhost:8080
 
   cloud:
     nacos:
@@ -15,8 +27,13 @@ spring:
       discovery:
         locator:
           enabled: true
+          lower-case-service-id: true
       routes:
-        - id: bank-manager-router
+        - id: path_route
           uri: lb://bank-manager
           predicates:
-            - Path=/admin/**
+            - Path=/web/**
+
+springdoc:
+  swagger-ui:
+    configUrl: /swagger-config.json
