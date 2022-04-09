@@ -1,3 +1,4 @@
 spring:
   profiles:
-    include: common, prod
+    active: common, prod
+#    active: prod

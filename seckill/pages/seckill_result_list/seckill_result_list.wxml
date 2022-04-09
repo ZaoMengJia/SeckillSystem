@@ -1,0 +1,23 @@
+<scroll-view scroll-y class="scrollPage">
+    <view class="UCenter-bg">
+        <image src="{{userAvatarUrl}}" class="png round" mode="widthFix"></image>
+        <view class="text-xl margin-top text-black">{{userName}}</view>
+        <image src="../../images/wave.gif" mode="scaleToFill" class="gif-wave"></image>
+    </view>
+    <view class="cu-list margin-top-xl margin-bottom-xl shadow-lg radius">
+        <!-- TODO -->
+    </view>
+    <view class="cu-tabbar-height"></view>
+</scroll-view>
+
+<view class="cu-bar tabbar bg-white bar-wrapper">
+    <view class="action {{pageIndex===0?'text-orange':'text-grey'}}" bind:tap="onProductListTab">
+        <view class="cuIcon-homefill"></view>
+        秒杀活动
+    </view>
+
+    <view class="action {{pageIndex===1?'text-orange':'text-grey'}}" bind:tap="onSecKillListTab">
+        <view class="cuIcon-my"></view>
+        我的
+    </view>
+</view>

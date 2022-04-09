@@ -1,0 +1,17 @@
+/**index.wxss**/
+page{
+    background-image: url("https://6472-dreamland2-a708ef-1259161827.tcb.qcloud.la/bg-image/index-bg.PNG?sign=63ba1ec84f43d4d6049a01307e8a4f5a&t=1603625990");
+    background-repeat:no-repeat;
+    background-size:100% 100%;
+    -moz-background-size:100% 100%;
+}
+
+.container .indexBtn{
+    margin-top: 80rpx;
+    align-items: center;
+    justify-content: center;
+}
+
+.container .indexImg{
+    margin-top: 380rpx;
+}
