@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OrderMapper extends JpaRepository<Order, Long> {
-    Order findByFinancialProductName(String finalProductName);
+public interface OrderMapper extends JpaRepository<Order, String> {
+    Order findByFinancialProductId(String finalProductId);
 
-    Order findByUserName(String username);
+    Order findByUserId(String userId);
 
-    Order findByOid(long oid);
+    Page<Order> findByUserId(String userId, Pageable pageable);
 
-    Page<Order> findByUserNameLike(String keyword, Pageable pageable);
+    Page<Order> findByUserIdLike(String keyword, Pageable pageable);
 }

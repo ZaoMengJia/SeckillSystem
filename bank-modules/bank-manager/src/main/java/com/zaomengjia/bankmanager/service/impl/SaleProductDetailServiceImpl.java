@@ -19,7 +19,7 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
 
     @Override
     public Boolean saleProductDetailExist(long said,long fpid) {
-        return saleProductDetailMapper.findByFpidAndSaid(said, fpid) !=null;
+        return saleProductDetailMapper.findByFinancialProductIdAndSeckillActivityId(said, fpid) !=null;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
 
 
         Map<String, Object> map = new HashMap<>(5);
-        Page<SaleProductDetail> result = saleProductDetailMapper.findBySaidLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<SaleProductDetail> result = saleProductDetailMapper.findBySeckillActivityIdLike(keyword, PageRequest.of(pageIndex, pageSize));
         map.put("records", result.toList());
         map.put("total", result.getTotalElements());
         return map;
@@ -48,17 +48,17 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
 
     @Override
     public SaleProductDetail getSaleProductDetailBySaid(long said) {
-        return saleProductDetailMapper.findBySaid(said);
+        return saleProductDetailMapper.findBySeckillActivityId(said);
     }
 
     @Override
     public SaleProductDetail getSaleProductDetailByFpid(long fpid) {
-        return saleProductDetailMapper.findByFpid(fpid);
+        return saleProductDetailMapper.findByFinancialProductId(fpid);
     }
 
     @Override
     public SaleProductDetail getSaleProductDetailBySaidAndFpid(long said, long fpid){
-        return saleProductDetailMapper.findByFpidAndSaid(fpid, said);
+        return saleProductDetailMapper.findByFinancialProductIdAndSeckillActivityId(fpid, said);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
 
     @Override
     public void deleteSaleProductDetail(long said, long fpid) {
-        saleProductDetailMapper.deleteBySaidAndFpid(said, fpid);
+        saleProductDetailMapper.deleteBySeckillActivityIdAndFinancialProductId(said, fpid);
     }
 
     @Override

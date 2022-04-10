@@ -1,21 +1,26 @@
 package com.zaomengjia.common.entity;
 
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * 用户类，记录用户数据
  * */
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uid")
-    private long uid;
+    private Long uid;
 
     /**
      * 身份证号
@@ -55,4 +60,17 @@ public class User {
      */
     @Column(name = "is_discredit")
     private boolean isDiscredit;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return uid != null && Objects.equals(uid, user.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

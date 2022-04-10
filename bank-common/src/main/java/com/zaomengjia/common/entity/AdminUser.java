@@ -1,6 +1,7 @@
 package com.zaomengjia.common.entity;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -10,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.Objects;
 
 /**
  * @author orangeboyChen
@@ -21,7 +23,10 @@ import javax.persistence.Id;
 @SQLDelete(sql = "update `admin_user` set `deleted`= 1 where `id` = ?")
 @Where(clause = "`deleted` = 0")
 @EnableJpaAuditing
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class AdminUser {
     @Id
     @GeneratedValue(generator = "jpa-uuid")
@@ -39,4 +44,17 @@ public class AdminUser {
 
     @Column(name = "deleted")
     private int deleted;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        AdminUser adminUser = (AdminUser) o;
+        return id != null && Objects.equals(id, adminUser.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

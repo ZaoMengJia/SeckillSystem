@@ -6,13 +6,13 @@ import java.util.Map;
 
 public interface OrderService {
 
-    Boolean orderExist(long oid);
+    Boolean orderExist(String id);
 
     Map<String,Object> getOrder(int pageIndex, int pageSize);
 
     Map<String, Object> searchOrder(String keyword, int pageIndex, int pageSize);
 
-    Order getOrderById(long oid);
+    Order getOrderById(String id);
 
     Order getOrderByProductName(String productName);
 
@@ -20,7 +20,7 @@ public interface OrderService {
 
     void addOrder(Order order);
 
-    void deleteOrder(long oid);
+    void deleteOrder(String id);
 
     void updateOrder(Order order);
 

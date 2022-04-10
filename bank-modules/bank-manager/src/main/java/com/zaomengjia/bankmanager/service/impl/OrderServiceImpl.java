@@ -19,8 +19,8 @@ public class OrderServiceImpl implements OrderService {
     OrderMapper orderMapper;
 
     @Override
-    public Boolean orderExist(long oid) {
-        return orderMapper.findByOid(oid) !=null;
+    public Boolean orderExist(String id) {
+        return orderMapper.findById(id).isPresent();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Map<String, Object> searchOrder(String keyword, int pageIndex, int pageSize) {
-        Page<Order> result = orderMapper.findByUserNameLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<Order> result = orderMapper.findByUserIdLike(keyword, PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
         map.put("records", result.toList());
         map.put("total", result.getTotalElements());
@@ -46,18 +46,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOrderById(long oid) {
-        return orderMapper.findById(oid).orElse(null);
+    public Order getOrderById(String id) {
+        return orderMapper.findById(id).orElse(null);
     }
 
     @Override
     public Order getOrderByUserName(String userName) {
-        return orderMapper.findByUserName(userName);
+        return orderMapper.findByUserId(userName);
     }
 
     @Override
     public Order getOrderByProductName(String productName) {
-        return orderMapper.findByFinancialProductName(productName);
+        return orderMapper.findByFinancialProductId(productName);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(long oid) {
-        orderMapper.deleteById(oid);
+    public void deleteOrder(String id) {
+        orderMapper.deleteById(id);
     }
 
     @Override

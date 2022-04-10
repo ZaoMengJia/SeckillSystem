@@ -24,7 +24,7 @@ public class OrderController {
     }
 
     @GetMapping("/getOrderById/{id}")
-    public ResultVO<?> getOrderById(@PathVariable long id){
+    public ResultVO<?> getOrderById(@PathVariable String id){
         try{
             return ResultUtils.success(orderService.getOrderById(id));
         }catch (Exception e){
@@ -61,7 +61,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/deleteOrder/{id}")
-    public ResultVO<?> deleteOrder(@PathVariable long id){
+    public ResultVO<?> deleteOrder(@PathVariable String id){
         try{
             orderService.deleteOrder(id);
             return ResultUtils.success();

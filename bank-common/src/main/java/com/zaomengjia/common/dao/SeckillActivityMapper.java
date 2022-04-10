@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface SeckillActivityMapper extends JpaRepository<SeckillActivity, Long> {
+public interface SeckillActivityMapper extends JpaRepository<SeckillActivity, String> {
 
-    SeckillActivity getBySname(String sname);
+    SeckillActivity getByName(String name);
 
-    Page<SeckillActivity> getBySnameLike(String keyword, Pageable pageable);
+    Page<SeckillActivity> getByNameLike(String keyword, Pageable pageable);
 }

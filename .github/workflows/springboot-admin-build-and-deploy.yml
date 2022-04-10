@@ -1,4 +1,4 @@
-name: Gateway CI/CD
+name: Springboot Admin CI/CD
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          cd ./bank-modules/springboot-admin/
+          cd ./springboot-admin/
           docker build . --file Dockerfile --tag zmj-springboot-admin:$(date +%s)
 
       - name: Publish to docker repository

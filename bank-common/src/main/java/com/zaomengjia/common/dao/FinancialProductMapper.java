@@ -6,11 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface FinancialProductMapper extends JpaRepository<FinancialProduct, Long> {
-    FinancialProduct getByFname(String fname);
+public interface FinancialProductMapper extends JpaRepository<FinancialProduct, String> {
+    FinancialProduct getByName(String name);
 
     FinancialProduct getByPrice(int price);
 
-    Page<FinancialProduct> getByFnameLike(String keyword, Pageable pageable);
+    Page<FinancialProduct> getByNameLike(String keyword, Pageable pageable);
 }

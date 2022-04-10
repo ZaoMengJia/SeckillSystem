@@ -19,7 +19,7 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
 
     @Override
     public Boolean seckillActivityExist(String activityName) {
-        return seckillActivityMapper.getBySname(activityName) != null;
+        return seckillActivityMapper.getByName(activityName) != null;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
     @Override
     public Map<String, Object> searchSeckillActivity(String keyword, int pageIndex, int pageSize) {
         HashMap<String, Object> map = new HashMap<>();
-        Page<SeckillActivity> result = seckillActivityMapper.getBySnameLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<SeckillActivity> result = seckillActivityMapper.getByNameLike(keyword, PageRequest.of(pageIndex, pageSize));
         map.put("records", result.toList());
         map.put("total", result.getTotalElements());
         return map;
@@ -42,7 +42,7 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
 
     @Override
     public SeckillActivity getSeckillActivityByName(String name) {
-        return seckillActivityMapper.getBySname(name);
+        return seckillActivityMapper.getByName(name);
     }
 
     @Override

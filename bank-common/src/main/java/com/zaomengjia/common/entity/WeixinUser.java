@@ -1,6 +1,7 @@
 package com.zaomengjia.common.entity;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -8,8 +9,12 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author orangeboyChen
@@ -21,7 +26,10 @@ import java.util.Date;
 @SQLDelete(sql = "update `weixin_user` set `deleted`= 1 where `id` = ?")
 @Where(clause = "`deleted` = 0")
 @EnableJpaAuditing
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class WeixinUser {
     @Id
     @GeneratedValue(generator = "jpa-uuid")
@@ -57,4 +65,16 @@ public class WeixinUser {
     @Column(name = "deleted")
     private int deleted;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        WeixinUser that = (WeixinUser) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -20,7 +20,9 @@ public enum ResultCode {
     NO_SUCH_DETAIL_ERROR(30004,"没有这个活动明细"),
     NO_SUCH_ACTIVITY_ERROR(30005,"没有这个秒杀活动"),
     NO_SUCH_USER(30006, "是他！还没有注册就来访问接口！"),
-    CANNOT_DELETE_SELF(300077, "不能删除自己哦"),
+    CANNOT_DELETE_SELF(30077, "不能删除自己哦"),
+    SELL_OUT(30010, "已售罄"),
+    CREATE_ORDER_ERROR(30011, "创建订单失败"),
 
     LOGIN_ERROR(40001, "用户名或密码错误"),
     TOKEN_EXPIRED(40002, "登录信息超时，请重新登录"),

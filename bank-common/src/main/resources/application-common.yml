@@ -1,4 +1,18 @@
 spring:
+  rabbitmq:
+    username: admin
+    password: admin
+    host: localhost
+    port: 5672
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          multiplier: 2
+          max-attempts: 3
+          stateless: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://nowcent-database.mysql.rds.aliyuncs.com:3306/zmj?useUnicode=true&chatacterEncoding=utf-8&useSSL=false

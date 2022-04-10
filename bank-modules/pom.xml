@@ -13,8 +13,8 @@
     <modules>
         <module>bank-manager</module>
         <module>bank-gateway</module>
-        <module>bank-product</module>
-        <module>bank-seckill</module>
+        <module>bank-order</module>
+        <module>bank-stock</module>
     </modules>
 
     <properties>
@@ -31,21 +31,6 @@
 
     <packaging>pom</packaging>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
-        </plugins>
-    </build>
 
 </project>

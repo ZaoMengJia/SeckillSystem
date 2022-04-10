@@ -6,16 +6,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface SaleProductDetailMapper extends JpaRepository<SaleProductDetail, Long> {
+public interface SaleProductDetailMapper extends JpaRepository<SaleProductDetail, String> {
 
-    SaleProductDetail findByFpidAndSaid(long said, long fpid);
+    SaleProductDetail findByFinancialProductIdAndSeckillActivityId(String finalProductId, String seckillActivityId);
 
-    SaleProductDetail findByFpid(long fpid);
+    SaleProductDetail findByFinancialProductId(String finalProductId);
 
-    SaleProductDetail findBySaid(long said);
+    List<SaleProductDetail> findBySeckillActivityId(String seckillActivityId);
 
-    void deleteBySaidAndFpid(long said, long fpid);
+    void deleteBySeckillActivityIdAndFinancialProductId(String seckillActivityId, String finalProductId);
 
-    Page<SaleProductDetail> findBySaidLike(String keyword, Pageable pageable);
+    Page<SaleProductDetail> findBySeckillActivityIdLike(String keyword, Pageable pageable);
 }
