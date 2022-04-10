@@ -1,0 +1,5 @@
+<!--pages/register/register.wxml-->
+<cu-custom bgColor="bg-yellow" isBack="{{true}}">
+    <view slot="backText" catch:tap="onredirectIndex">首页</view>
+    <view slot="content">注册</view>
+</cu-custom>

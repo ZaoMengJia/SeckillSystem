@@ -1,0 +1,20 @@
+<!--pages/product_list/product_list.wxml-->
+<cu-custom bgColor="bg-yellow" isBack="{{false}}">
+  <view slot="content">秒杀活动</view>
+</cu-custom>
+
+
+
+<view class="hline"></view>
+<view class="cu-bar tabbar bg-white bar-wrapper">
+    <view class="action {{pageIndex===0?'text-orange':'text-grey'}}" bind:tap="onProductListTab">
+        <view class="cuIcon-homefill"></view> 秒杀活动
+    </view>
+
+    <view class="action {{pageIndex===1?'text-orange':'text-grey'}}" bind:tap="onSecKillListTab">
+        <view class="cuIcon-my">
+            <!-- <view class="cu-tag badge"></view> -->
+        </view>
+        我的
+    </view>
+</view>
