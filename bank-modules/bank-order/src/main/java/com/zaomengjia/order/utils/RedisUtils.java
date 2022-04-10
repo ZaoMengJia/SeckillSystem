@@ -48,6 +48,10 @@ public final class RedisUtils {
         }
     }
 
+    public boolean containKey(String key) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
+
     /**
      * 根据 key 获取过期时间
      *
@@ -115,6 +119,7 @@ public final class RedisUtils {
             return false;
         }
     }
+
 
     /**
      * 普通缓存放入并设置时间

@@ -1,5 +1,6 @@
 package com.zaomengjia.common.entity;
 
+import com.zaomengjia.common.constant.OrderStatus;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -63,7 +64,7 @@ public class Order implements Serializable {
      * 是否已经持久化保存了
      */
     @Transient
-    private boolean isPersistent = true;
+    private OrderStatus status = OrderStatus.NORMAL;
 
     @Override
     public boolean equals(Object o) {

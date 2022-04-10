@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author orangeboyChen
  * @version 1.0
@@ -21,7 +19,7 @@ class MQServiceImplTest {
     @Test
     void test() throws InterruptedException {
         Order order = new Order();
-        order.setPersistent(false);
+        order.setStatus(false);
         order.setId(UuidUtils.generateUuid());
         order.setFinancialProductId("test");
         order.setSeckillActivityId("test");

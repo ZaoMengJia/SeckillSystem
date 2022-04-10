@@ -48,6 +48,9 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Override
     public SeckillActivityVO modelToVO(SeckillActivity seckillActivity) {
+        if(seckillActivity == null) {
+            return null;
+        }
         return new SeckillActivityVO()
                 .setId(seckillActivity.getId())
                 .setDetail(seckillActivity.getDetail())
@@ -58,7 +61,16 @@ public class SeckillServiceImpl implements SeckillService {
     }
 
     public SaleProductVO modelToVO(SaleProductDetail saleProductDetail) {
+        if(saleProductDetail == null) {
+            return null;
+        }
+
         FinancialProduct financialProductEntity = orderService.getFinancialProductEntity(saleProductDetail.getFinancialProductId());
+
+        if(financialProductEntity == null) {
+            return null;
+        }
+
         return (SaleProductVO) new SaleProductVO()
                 .setQuantity(saleProductDetail.getQuantity())
                 .setId(financialProductEntity.getId())

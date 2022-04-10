@@ -1,6 +1,7 @@
 package com.zaomengjia.stock.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.zaomengjia.common.constant.OrderStatus;
 import com.zaomengjia.common.dao.OrderMapper;
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.entity.Order;
@@ -55,7 +56,7 @@ public class StockServiceImpl implements StockService {
             order = orderMapper.save(order);
 
             //缓存重设
-            order.setPersistent(true);
+            order.setStatus(OrderStatus.NORMAL);
             redisUtils.set("order::" + order.getId() + "::" + order.getFinancialProductId() + "::" +order.getSeckillActivityId() + "::" + order.getUserId(), order);
             logger.debug("订单{}创建成功", order.getId());
         }
@@ -63,7 +64,12 @@ public class StockServiceImpl implements StockService {
             logger.error("订单{}创建失败，订单内容为\n{}，错误", order.getId(), JSON.toJSONString(order), e);
 
             //设置订单失败
-            redisUtils.del("order::" + order.getId() + "::" + order.getFinancialProductId() + "::" +order.getSeckillActivityId() + "::" + order.getUserId());
+            order.setStatus(OrderStatus.ERROR);
+            String key = "order::" + order.getId() + "::" + order.getFinancialProductId() + "::" +order.getSeckillActivityId() + "::" + order.getUserId();
+            //错误信息4小时后删除
+            redisUtils.set(key, order, 4 * 60 * 60);
+
+
 
             //开始回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

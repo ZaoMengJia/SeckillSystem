@@ -1,6 +1,7 @@
 package com.zaomengjia.order.service.impl;
 
 import com.alibaba.nacos.common.utils.UuidUtils;
+import com.zaomengjia.common.constant.OrderStatus;
 import com.zaomengjia.common.constant.RabbitMQConstant;
 import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.dao.FinancialProductMapper;
@@ -66,6 +67,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderVO modelToVO(Order order) {
+        if(order == null) {
+            return null;
+        }
         FinancialProduct financialProduct = getFinancialProductEntity(order.getFinancialProductId());
         SeckillActivity seckillActivity = seckillService.getSeckillActivityEntity(order.getSeckillActivityId());
 
@@ -93,15 +97,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrder(String orderId) {
-        Order s = (Order) redisUtils.get("order:" + orderId);
-        if(s == null) {
+        String key = "order:" + orderId + "::*";
+
+        if(!redisUtils.containKey(key)) {
             Order order = orderMapper.findById(orderId).orElse(null);
             if(order == null) {
                 return null;
             }
-            redisUtils.set("order:" + orderId, order);
+            redisUtils.set(key, order, 60 * 60 * 12);
+            return order;
         }
-        return s;
+        return (Order) redisUtils.get(key);
     }
 
     @Override
@@ -149,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
 
         //拿到了令牌，开始创建订单
         Order order = new Order();
-        order.setPersistent(false);
+        order.setStatus(OrderStatus.CREATING);
         order.setId(UuidUtils.generateUuid());
         order.setFinancialProductId(saleProductDetail.getFinancialProductId());
         order.setSeckillActivityId(saleProductDetail.getSeckillActivityId());
@@ -187,6 +193,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<FinancialProduct> getFinancialProductEntityList(List<String> idList) {
         return financialProductMapper.findAllById(idList);
+    }
+
+    @Override
+    public OrderVO getOrderDetail(String id) {
+        Order order = getOrder(id);
+        return modelToVO(order);
     }
 
 

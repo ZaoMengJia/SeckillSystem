@@ -33,8 +33,9 @@ public class GlobalExceptionHandler {
         return ResultUtils.error(appException.getResultCode(), appException.getMessage());
     }
 
-    @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
+    @ExceptionHandler(Exception.class)
     public ResultVO<?> internalServerError() {
         return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR);
     }
+
 }

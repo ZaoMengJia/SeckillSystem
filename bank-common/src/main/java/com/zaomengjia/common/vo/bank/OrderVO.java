@@ -1,5 +1,6 @@
 package com.zaomengjia.common.vo.bank;
 
+import com.zaomengjia.common.constant.OrderStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,4 +19,5 @@ public class OrderVO {
     private SeckillActivityVO seckillActivity;
     private Date createTime;
     private Long quantity;
+    private OrderStatus status;
 }

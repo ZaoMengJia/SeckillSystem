@@ -26,14 +26,13 @@ public interface OrderService {
 
     String createOrder(String userId, String seckillActivityId, String financialProductId);
 
-    @Cacheable(cacheNames = "sale-product-detail-entity-by-id", key = "#saleProductDetailID")
     SaleProductDetail getSaleProductDetailEntity(String saleProductDetailID);
 
-    @Cacheable(cacheNames = "sale-product-detail-entity-by-params", key = "#financialProductId + '::' + seckillActivityId")
     SaleProductDetail getSaleProductDetailEntity(String financialProductId, String seckillActivityId);
 
-    @Cacheable(cacheNames = "financial-product-entity", key = "#financialProductId")
     FinancialProduct getFinancialProductEntity(String financialProductId);
 
     List<FinancialProduct> getFinancialProductEntityList(List<String> idList);
+
+    OrderVO getOrderDetail(String id);
 }
