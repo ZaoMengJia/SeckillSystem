@@ -37,6 +37,6 @@ const request = (url, method, data, showLoading) => {
 module.exports = {
     request,
     login: (data) => {//登录
-        return request('/weixin/auth', 'post', data, false)
+        return request('/auth/weixin', 'post', data, false)
     }
 }
