@@ -4,6 +4,13 @@
     <view slot="content">秒杀活动详情</view>
 </cu-custom>
 
+<van-submit-bar
+        label="价格"
+        price="{{ 3050 }}"
+        button-text="立即抢购"
+        button-class="btnClass"
+        bind:submit="onSecKill"
+/>
 
 
 
