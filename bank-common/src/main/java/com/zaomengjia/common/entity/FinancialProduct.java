@@ -33,7 +33,7 @@ public class FinancialProduct {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "jpa-uuid")
-    private Long id;
+    private String id;
 
     /**
      * 理财产品名

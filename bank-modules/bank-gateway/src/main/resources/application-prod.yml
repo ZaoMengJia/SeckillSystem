@@ -12,7 +12,7 @@ server:
 
 spring:
   application:
-    name: bank-auth
+    name: bank-gateway
     url: localhost:8811
   boot:
     admin:

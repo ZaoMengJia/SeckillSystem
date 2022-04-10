@@ -56,14 +56,14 @@ public class StockServiceImpl implements StockService {
 
             //缓存重设
             order.setPersistent(true);
-            redisUtils.set("order::" + order.getId(), order);
+            redisUtils.set("order::" + order.getId() + "::" + order.getFinancialProductId() + "::" +order.getSeckillActivityId() + "::" + order.getUserId(), order);
             logger.debug("订单{}创建成功", order.getId());
         }
         catch (Exception e) {
             logger.error("订单{}创建失败，订单内容为\n{}，错误", order.getId(), JSON.toJSONString(order), e);
 
             //设置订单失败
-            redisUtils.del("order::" + order.getId());
+            redisUtils.del("order::" + order.getId() + "::" + order.getFinancialProductId() + "::" +order.getSeckillActivityId() + "::" + order.getUserId());
 
             //开始回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

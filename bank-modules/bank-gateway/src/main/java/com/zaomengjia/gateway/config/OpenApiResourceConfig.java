@@ -44,17 +44,18 @@ public class OpenApiResourceConfig {
         Map<String, String> serviceNameContextPathMap = new HashMap<>();
         serviceNameContextPathMap.put("bank-auth", "");
         serviceNameContextPathMap.put("bank-manager", "/web");
+        serviceNameContextPathMap.put("bank-order", "/weixin");
 
         discoveryClient.getServices().forEach(serviceName ->
                 discoveryClient.getInstances(serviceName).forEach(serviceInstance ->{
-                            if(!currentServiceName.equals(serviceName)) {
-                                if(!serviceName.contains("spring")) {
-                                    String prefix = Optional.ofNullable(serviceNameContextPathMap.get(serviceName)).orElse("");
-                                    urls.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(serviceName, serviceInstance.getUri() + prefix + "/v3/api-docs"));
-                                }
+                            if(serviceNameContextPathMap.containsKey(serviceName)) {
+                                String prefix = Optional.ofNullable(serviceNameContextPathMap.get(serviceName)).orElse("");
+                                urls.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(serviceName, serviceInstance.getUri() + prefix + "/v3/api-docs"));
                             }
                             else {
-                                urls.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(serviceName, serviceInstance.getUri() + "/v3/api-docs-gateway"));
+                                if(serviceName.equals(currentServiceName)) {
+                                    urls.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(serviceName, serviceInstance.getUri() + "/v3/api-docs-gateway"));
+                                }
                             }
                         }
                 )

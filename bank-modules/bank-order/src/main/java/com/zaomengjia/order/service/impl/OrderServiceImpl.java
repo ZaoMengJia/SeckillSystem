@@ -6,13 +6,16 @@ import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.dao.FinancialProductMapper;
 import com.zaomengjia.common.dao.OrderMapper;
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
-import com.zaomengjia.common.dao.SeckillActivityMapper;
+import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.entity.SeckillActivity;
 import com.zaomengjia.common.exception.AppException;
-import com.zaomengjia.common.vo.order.OrderVO;
+import com.zaomengjia.common.vo.bank.FinancialProductVO;
+import com.zaomengjia.common.vo.bank.OrderVO;
 import com.zaomengjia.common.vo.page.PageVO;
+import com.zaomengjia.order.service.OrderService;
+import com.zaomengjia.order.service.SeckillService;
 import com.zaomengjia.order.utils.RedisUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheConfig;
@@ -21,10 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author orangeboyChen
@@ -33,15 +33,15 @@ import java.util.Set;
  */
 @Service
 @CacheConfig(cacheNames = "order-service")
-public class OrderServiceImpl{
+public class OrderServiceImpl implements OrderService {
 
     private final RabbitTemplate rabbitTemplate;
-
-    private final SeckillActivityMapper seckillActivityMapper;
 
     private final SaleProductDetailMapper saleProductDetailMapper;
 
     private final FinancialProductMapper financialProductMapper;
+
+    private final SeckillService seckillService;
 
     private final OrderMapper orderMapper;
 
@@ -51,25 +51,47 @@ public class OrderServiceImpl{
             OrderMapper orderMapper,
             RabbitTemplate rabbitTemplate,
             RedisUtils redisUtils,
-            SeckillActivityMapper seckillActivityMapper,
             SaleProductDetailMapper saleProductDetailMapper,
-            FinancialProductMapper financialProductMapper
+            FinancialProductMapper financialProductMapper,
+            SeckillService seckillService
     ) {
         this.rabbitTemplate = rabbitTemplate;
-        this.seckillActivityMapper = seckillActivityMapper;
         this.orderMapper = orderMapper;
         this.redisUtils = redisUtils;
         this.saleProductDetailMapper = saleProductDetailMapper;
         this.financialProductMapper = financialProductMapper;
+        this.seckillService = seckillService;
+
     }
 
+    @Override
+    public OrderVO modelToVO(Order order) {
+        FinancialProduct financialProduct = getFinancialProductEntity(order.getFinancialProductId());
+        SeckillActivity seckillActivity = seckillService.getSeckillActivityEntity(order.getSeckillActivityId());
+
+        return new OrderVO()
+                .setId(order.getId())
+                .setCreateTime(order.getCreateTime())
+                .setFinancialProduct(modelToVO(financialProduct))
+                .setSeckillActivity(seckillService.modelToVO(seckillActivity))
+                .setQuantity(order.getQuantity());
+    }
+
+    @Override
+    public FinancialProductVO modelToVO(FinancialProduct financialProduct) {
+        return new FinancialProductVO()
+                .setId(financialProduct.getName())
+                .setPrice((double) financialProduct.getPrice() / 100)
+                .setName(financialProduct.getName());
+    }
+
+    @Override
     public PageVO<OrderVO> getUserOrderList(String userId, int pageNum, int pageSize) {
         Page<Order> entityPage = orderMapper.findByUserId(userId, PageRequest.of(pageNum, pageSize));
-
-        //Todo: 视图类转换还没写
-        return new PageVO<>(entityPage.map(c -> new OrderVO()));
+        return new PageVO<>(entityPage.map(this::modelToVO));
     }
 
+    @Override
     public Order getOrder(String orderId) {
         Order s = (Order) redisUtils.get("order:" + orderId);
         if(s == null) {
@@ -82,21 +104,42 @@ public class OrderServiceImpl{
         return s;
     }
 
-    public String createOrder(String userId, String saleProductDetailId) {
+    @Override
+    public String createOrder(String userId, String seckillActivityId, String financialProductId) {
         //看看这个秒杀活动在不在
-        SaleProductDetail saleProductDetail = getSaleProductDetail(saleProductDetailId);
+        SaleProductDetail saleProductDetail = getSaleProductDetailEntity(financialProductId, seckillActivityId);
         if(saleProductDetail == null) {
             throw new AppException(ResultCode.NO_SUCH_ACTIVITY_ERROR);
         }
+        String saleProductDetailId = saleProductDetail.getId();
+
+        //看看这个用户买过没有
+        //这里就可以对买对数量判断了，目前是从订单数推购买数量，实在不行可以拿数据取和
+        List<Order> orders = orderMapper.findByUserIdAndFinancialProductIdAndSeckillActivityId(userId, saleProductDetail.getFinancialProductId(), saleProductDetail.getSeckillActivityId());
+        if(orders.size() >= 1) {
+            throw new AppException(ResultCode.ORDER_EXCEED_LIMIT);
+        }
+        Set<String> orderKeys = redisUtils.keys("order::" + saleProductDetail.getId() + "::" + saleProductDetail.getFinancialProductId() + "::" + saleProductDetail.getSeckillActivityId() + "::" + userId);
+        if(orderKeys.size() > 0) {
+            throw new AppException(ResultCode.ORDER_EXCEED_LIMIT);
+        }
+
 
         //从令牌桶找一个令牌
         Set<String> keys = redisUtils.keys("seckill-activity-token-bucket::" + saleProductDetailId + "::*");
-        if(keys == null || keys.size() == 0) {
+        int tokenBucketSize = keys.size();
+        if(tokenBucketSize == 0) {
             throw new AppException(ResultCode.SELL_OUT);
         }
 
         //尝试把令牌从令牌桶里拿出来
-        String token = new ArrayList<>(keys).get(0);
+        //避免假死问题
+        int tokenIndex = 0;
+        if(tokenBucketSize > 5) {
+            tokenIndex = new Random().nextInt(tokenBucketSize);
+        }
+
+        String token = new ArrayList<>(keys).get(tokenIndex);
         boolean isSuccess = redisUtils.del(token);
 
         if(!isSuccess) {
@@ -114,7 +157,7 @@ public class OrderServiceImpl{
         order.setUserId(userId);
 
         //预订单保存在redis中
-        redisUtils.set("order::" + order.getId(), order);
+        redisUtils.set("order::" + order.getId() + "::" + order.getFinancialProductId() + "::" +order.getSeckillActivityId() + "::" + userId, order);
 
         //创建消息队列，让库存服务进行持久化
         rabbitTemplate.convertAndSend(RabbitMQConstant.DEFAULT_EXCHANGE_NAME, RabbitMQConstant.CREATE_ORDER_ROUTING_NAME, order);
@@ -123,9 +166,27 @@ public class OrderServiceImpl{
         return order.getId();
     }
 
-    @Cacheable(cacheNames = "sale-product-detail-entity", key = "#saleProductDetailID")
-    public SaleProductDetail getSaleProductDetail(String saleProductDetailID) {
+    @Override
+    @Cacheable(cacheNames = "sale-product-detail-entity-by-id", key = "#saleProductDetailID")
+    public SaleProductDetail getSaleProductDetailEntity(String saleProductDetailID) {
         return saleProductDetailMapper.findById(saleProductDetailID).orElse(null);
+    }
+
+    @Override
+    @Cacheable(cacheNames = "sale-product-detail-entity-by-params", key = "#financialProductId + '::' + seckillActivityId")
+    public SaleProductDetail getSaleProductDetailEntity(String financialProductId, String seckillActivityId) {
+        return saleProductDetailMapper.findByFinancialProductIdAndSeckillActivityId(financialProductId, financialProductId);
+    }
+
+    @Override
+    @Cacheable(cacheNames = "financial-product-entity", key = "#financialProductId")
+    public FinancialProduct getFinancialProductEntity(String financialProductId) {
+        return financialProductMapper.findById(financialProductId).orElse(null);
+    }
+
+    @Override
+    public List<FinancialProduct> getFinancialProductEntityList(List<String> idList) {
+        return financialProductMapper.findAllById(idList);
     }
 
 

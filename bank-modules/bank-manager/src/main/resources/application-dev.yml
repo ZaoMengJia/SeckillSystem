@@ -20,7 +20,6 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
         metadata:
           management:
             context-path: ${server.servlet.context-path}/actuator

@@ -126,7 +126,7 @@ public class WebSecurityConfig {
                 .pathMatchers("/auth/**").permitAll()
                 .pathMatchers("/web/**").permitAll()
 //                    .hasRole(AuthorityGroup.ADMIN.raw)
-                .pathMatchers("/item/**")
+                .pathMatchers("/weixin/**")
                 .permitAll()
 //                    .hasRole(AuthorityGroup.USER.raw)
 

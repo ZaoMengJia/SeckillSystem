@@ -1,0 +1,38 @@
+version: '3'
+services:
+  nacos:
+    image: nacos/nacos-server
+    image: zhusaidong/nacos-server-m1:2.0.3
+    container_name: nacos-standalone
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+    volumes:
+      - ./temp/standalone-logs/:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    command:
+      --requirepass "73wjWEqnrcPG1fJd"
+    privileged: true
+
+  rabbitmq:
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    image: rabbitmq:management
+    volumes:
+      - ./temp/rabbitmq/data:/var/lib/rabbitmq
+      - ./temp/rabbitmq/log:/var/log/rabbitmq/log
+    ports:
+      - "15672:15672"
+      - "4369:4369"
+      - "5672:5672"
+      - "25672:25672"

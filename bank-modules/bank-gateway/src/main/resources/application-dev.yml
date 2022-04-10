@@ -9,9 +9,10 @@ weixin:
 server:
   port: 8811
 
+
 spring:
   application:
-    name: bank-auth
+    name: bank-gateway
     url: localhost:8811
 
   boot:
@@ -19,20 +20,20 @@ spring:
       client:
         url: http://loalhost:8812
 
-  cloud:
-    nacos:
-      discovery:
-        server-addr: localhost:8848
     gateway:
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: path_route
+        - id: web-service
           uri: lb://bank-manager
           predicates:
             - Path=/web/**
+        - id: order-service
+          uri: lb://bank-order
+          predicates:
+            - Path=/weixin/**
 
 springdoc:
   swagger-ui:
