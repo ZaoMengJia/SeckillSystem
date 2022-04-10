@@ -10,6 +10,10 @@
     <view class="cu-tabbar-height"></view>
 </scroll-view>
 
+
+
+
+
 <view class="cu-bar tabbar bg-white bar-wrapper">
     <view class="action {{pageIndex===0?'text-orange':'text-grey'}}" bind:tap="onProductListTab">
         <view class="cuIcon-homefill"></view>
