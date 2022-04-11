@@ -1,6 +1,6 @@
 Page({
     data: {
-        pageIndex: 1,
+        barIndex: 1,
         userName: "",
         userAvatarUrl: "",
         resultList: []

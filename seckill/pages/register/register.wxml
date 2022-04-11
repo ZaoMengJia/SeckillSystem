@@ -3,3 +3,38 @@
     <view slot="backText" catch:tap="onredirectIndex">首页</view>
     <view slot="content">注册</view>
 </cu-custom>
+
+
+<form>
+    <view class="cu-card">
+        <view class="cu-item shadow margin-top">
+            <view class="cu-form-group">
+                <view class="title">头像</view>
+                <open-data class='cu-avatar radius bg-gray' type="userAvatarUrl"></open-data>
+            </view>
+            <view class="cu-form-group">
+                <view class="title">昵称</view>
+                <input class="text-right" value="{{nickName}}" placeholder="请输入昵称" bindinput="onChangeNickName"></input>
+            </view>
+            <view class="cu-form-group">
+                <view class="title">真实姓名</view>
+                <input class="text-right" value="{{realName}}" placeholder="请输入电话" bindinput="onChangeRealName"></input>
+            </view>
+            <view class="cu-form-group">
+                <view class="title">身份证号</view>
+                <input class="text-right" value="{{idCard}}" placeholder="请输入学号" bindinput="onChangeIdCard"></input>
+            </view>
+            <van-radio-group value="{{gender}}" bind:change="onChangeGender" direction="horizontal">
+                <van-radio name="male">男</van-radio>
+                <van-radio name="female">女</van-radio>
+            </van-radio-group>
+            <van-datetime-picker
+                    type="date"
+                    value="{{ birthday }}"
+                    bind:input="onChangeDate"
+                    min-date="{{ minDate }}"
+                    formatter="{{ formatter }}"
+            />
+        </view>
+    </view>
+</form>

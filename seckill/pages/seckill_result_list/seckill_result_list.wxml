@@ -6,6 +6,9 @@
     </view>
     <view class="cu-list margin-top-xl margin-bottom-xl shadow-lg radius">
         <!-- TODO -->
+        <view wx:if="{{resultList.length===0}}">
+    <van-empty description="不存在成功秒杀订单" />
+</view>
     </view>
     <view class="cu-tabbar-height"></view>
 </scroll-view>
@@ -15,12 +18,12 @@
 
 
 <view class="cu-bar tabbar bg-white bar-wrapper">
-    <view class="action {{pageIndex===0?'text-orange':'text-grey'}}" bind:tap="onProductListTab">
+    <view class="action {{barIndex===0?'text-orange':'text-grey'}}" bind:tap="onProductListTab">
         <view class="cuIcon-homefill"></view>
         秒杀活动
     </view>
 
-    <view class="action {{pageIndex===1?'text-orange':'text-grey'}}" bind:tap="onSecKillListTab">
+    <view class="action {{barIndex===1?'text-orange':'text-grey'}}" bind:tap="onSecKillListTab">
         <view class="cuIcon-my"></view>
         我的
     </view>

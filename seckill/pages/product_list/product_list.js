@@ -1,10 +1,11 @@
 // pages/product_list/product_list.js
-import {request} from "../../utils/api";
+const app = getApp()
 
 const MAX_PAGE_SIZE = 4
 Page({
 
   data: {
+    barIndex: 0,
     pageIndex: 1,
     isLoading: false,
     hasMore: true,
@@ -24,7 +25,6 @@ Page({
     this.setData({
       isLoading: true
     })
-    // const res = request("/product_list/product",'get',null,false)
     // if (res.data.hasNextPage == true) {
     //   this.setData({
     //     commodityList: this.data.commodityList.concat(res.data.pageInfo),
@@ -53,6 +53,13 @@ Page({
 
   },
   initProductList() {
-
+    wx.request({
+      url: app.globalData.BASE_PATH + ":8090/weixin/sec-kill/list?pageNum="+this.data.pageIndex+"&pageSize="+MAX_PAGE_SIZE,
+      method: 'GET',
+      success :res =>{
+        res = res.data
+        console.log(res)
+      }
+    })
   }
 })
