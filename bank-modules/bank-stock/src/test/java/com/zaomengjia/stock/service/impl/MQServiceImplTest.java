@@ -16,15 +16,15 @@ class MQServiceImplTest {
     @Autowired
     private MQServiceImpl mqService;
 
-    @Test
-    void test() throws InterruptedException {
-        Order order = new Order();
-        order.setStatus(false);
-        order.setId(UuidUtils.generateUuid());
-        order.setFinancialProductId("test");
-        order.setSeckillActivityId("test");
-        order.setQuantity(1);
-        order.setUserId("test");
-//        mqService.saveOrder(order);
-    }
+//    @Test
+//    void test() throws InterruptedException {
+//        Order order = new Order();
+//        order.setStatus(false);
+//        order.setId(UuidUtils.generateUuid());
+//        order.setFinancialProductId("test");
+//        order.setSeckillActivityId("test");
+//        order.setQuantity(1);
+//        order.setUserId("test");
+////        mqService.saveOrder(order);
+//    }
 }

@@ -1,12 +1,8 @@
-const api = require("./utils/api");
-const { sign, RequestType } = require("./utils/signUtils");
-
 App({
     onLaunch() {
-        api.login({
-            a: '1'
-        });
-        this.globalData = {}
+        this.globalData = {
+            BASE_PATH: 'http://localhost'
+        }
         // 获得系统信息
         wx.getSystemInfo({
             success: e => {
@@ -19,20 +15,37 @@ App({
         // 登录
         wx.login({
             success: res => {
-                console.log(res)
-                // 发送 res.code 到后台换取 openId, token
-                // wx.request({
-                //     url: 'http://localhost:8080/auth/weixin',
-                //     method: 'POST',
-                //     data: {
-                //         code: res.code
-                //     },
-                //     success: res => {
-                //         console.log(res)
-                //     }
-                // })
+                //发送 res.code 到后台换取 openId, token
+                wx.request({
+                    url: this.globalData.BASE_PATH + ':8811/auth/weixin',
+                    method: 'POST',
+                    data: {
+                        code: res.code
+                    },
+                    header: {
+                        'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+                    },
+                    success: res => {
+                        res = res.data
+                        this.globalData.token = res.data.token
+                        this.globalData.auth = this.globalData.token.replace("Bearer ", "")
+                        this.globalData.userId = res.data.userId
+                        wx.request({
+                            url: this.globalData.BASE_PATH + ':8090/weixin/user/' + this.globalData.userId,
+                            header: {
+                                "Authorization": this.globalData.auth
+                            },
+                            success: res => {
+                                res = res.data
+                                this.globalData.openid = res.data.openid
+                            }
+                        })
+                    },
+                    complete: res => {
+                        console.log(this.globalData)
+                    }
+                })
             }
         })
-        console.log(this.globalData)
     }
 })
