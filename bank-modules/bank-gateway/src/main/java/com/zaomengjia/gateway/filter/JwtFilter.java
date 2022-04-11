@@ -3,10 +3,13 @@ package com.zaomengjia.gateway.filter;
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.interfaces.Claim;
 import com.zaomengjia.common.constant.RequestHeaderKey;
+import com.zaomengjia.common.constant.ResultCode;
+import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.gateway.constant.AuthorityGroup;
 import com.zaomengjia.gateway.exception.TokenErrorException;
 import com.zaomengjia.gateway.pojo.JwtToken;
 import com.zaomengjia.gateway.utils.JwtUtils;
+import com.zaomengjia.gateway.utils.RedisUtils;
 import io.netty.util.internal.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,11 +39,14 @@ public class JwtFilter implements WebFilter {
 
     private final JwtUtils jwtUtils;
 
+    private final RedisUtils redisUtils;
+
     @Value("${auth.expired-time}")
     private long expire;
 
-    public JwtFilter(JwtUtils jwtUtils) {
+    public JwtFilter(JwtUtils jwtUtils, RedisUtils redisUtils) {
         this.jwtUtils = jwtUtils;
+        this.redisUtils = redisUtils;
     }
 
     private Mono<Void> chainFilterAndSetHeaders(WebFilterChain chain, ServerWebExchange exchange, LinkedHashMap<String, String> headerMap) {
@@ -66,19 +72,39 @@ public class JwtFilter implements WebFilter {
 
             jwt = jwt.substring(7);
 
-            //判断jwt是不是正确的
+            //1. 判断jwt是不是正确的
             Map<String, Claim> claimMap = jwtUtils.decodeJwt(jwt);
             if(claimMap == null) {
                 throw new TokenErrorException();
             }
 
-            //判断过期了没有
+            //2. 判断过期了没有
             Long timestamp = claimMap.get("timestamp").asLong();
             long now = System.currentTimeMillis();
             if(timestamp == null || now - timestamp > expire * 1000) {
                 throw new TokenErrorException();
             }
 
+            //3.判断是不是恶意访问
+            //3.1 在不在黑名单里
+            String userId = claimMap.get("userId").asString();
+            String blacklistKey = "user::blacklist::" + userId;
+            if(redisUtils.containKey(blacklistKey)) {
+                throw new AppException(ResultCode.HAVE_A_REST_PLEASE);
+            }
+
+            //3.2 判断当前次数
+            String requestKey = "user::request::" + userId;
+            int requestTime = redisUtils.keys(requestKey).size();
+            if(requestTime > 100) {
+                redisUtils.set(blacklistKey, "", 30 * 60);
+                throw new AppException(ResultCode.HAVE_A_REST_PLEASE);
+            }
+
+            //3.3 设置这次的访问
+            redisUtils.set(requestKey, jwt, 2 * 60);
+
+            //4. 授权
             List<AuthorityGroup> authorityGroup = JSON.parseArray(claimMap.get("role").asString(), AuthorityGroup.class);
             JwtToken authentication = new JwtToken(jwt, authorityGroup.stream().map(AuthorityGroup::getAuthority).collect(Collectors.toList()));
             authentication.setAuthenticated(true);
