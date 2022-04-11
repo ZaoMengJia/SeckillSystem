@@ -39,10 +39,12 @@ public class LoginSuccessHandler implements ServerAuthenticationSuccessHandler {
         Object details = authentication.getDetails();
         String jwt;
         String userId;
+        JSONObject json = new JSONObject();
         if(details instanceof WeixinUser) {
             WeixinUser weixinUser = (WeixinUser) details;
             userId = weixinUser.getId();
             jwt = jwtUtils.getJwt(Collections.singletonList(AuthorityGroup.USER), userId);
+            json.put("openId", weixinUser.getOpenid());
         }
         else {
             AdminUser user = (AdminUser) authentication.getDetails();
@@ -51,7 +53,7 @@ public class LoginSuccessHandler implements ServerAuthenticationSuccessHandler {
             jwt = jwtUtils.getJwt(Collections.singletonList(authorityGroup), userId);
         }
 
-        JSONObject json = new JSONObject();
+
         json.put("token", "Bearer " + jwt);
         json.put("userId", userId);
         return ResponseWriter.writeResponse(webFilterExchange.getExchange(), ResultUtils.success(json));

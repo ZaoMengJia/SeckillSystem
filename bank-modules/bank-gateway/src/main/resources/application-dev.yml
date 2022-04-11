@@ -20,6 +20,7 @@ spring:
       client:
         url: http://loalhost:8812
 
+  cloud:
     gateway:
       discovery:
         locator:
@@ -34,6 +35,10 @@ spring:
           uri: lb://bank-order
           predicates:
             - Path=/weixin/**
+logging:
+  level:
+    org.springframework.cloud.gateway: trace
+
 
 springdoc:
   swagger-ui:

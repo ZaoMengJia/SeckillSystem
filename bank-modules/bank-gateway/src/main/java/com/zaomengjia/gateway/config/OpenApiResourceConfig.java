@@ -73,20 +73,4 @@ public class OpenApiResourceConfig {
     }
 
 
-//    @SneakyThrows
-//    private String getSwaggerConfig() {
-//        BufferedReader br = null;
-//        String path = "/static/swagger-config.json";
-//        br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path))));
-//        String line = br.readLine();
-//        StringBuilder sb = new StringBuilder();
-//        while (line != null) {
-//            sb.append(line + "\r\n");
-//            line = br.readLine();
-//        }
-//        return sb.toString();
-//    }
-
-
-
 }
