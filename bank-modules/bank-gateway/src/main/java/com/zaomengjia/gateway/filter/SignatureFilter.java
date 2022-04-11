@@ -1,14 +1,12 @@
 package com.zaomengjia.gateway.filter;
 
 import cn.hutool.core.codec.Base64;
-import cn.hutool.http.Method;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zaomengjia.common.constant.RequestHeaderKey;
 import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.common.utils.MD5Utils;
-import com.zaomengjia.gateway.utils.RedisUtils;
+import com.zaomengjia.common.utils.RedisUtils;
 import io.netty.util.internal.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +16,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
-import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
-import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
@@ -29,7 +25,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;

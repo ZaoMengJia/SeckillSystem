@@ -45,8 +45,7 @@ public class UserController {
             throw new AppException(ResultCode.INVALID_REQUEST_ERROR);
         }
 
-
-        userService.updateUserInfo(userInfoDto);
+        userService.updateUserInfo(userInfoDto, userId);
         return ResultUtils.success();
     }
 

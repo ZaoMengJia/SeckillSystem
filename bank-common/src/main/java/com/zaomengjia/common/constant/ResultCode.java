@@ -32,6 +32,7 @@ public enum ResultCode {
     CREATE_ORDER_ERROR(30011, "创建订单失败"),
     ORDER_EXCEED_LIMIT(30012, "每人限购哦～不能贪多哦～"),
     ACTIVITY_NOT_STARTED(30013, "活动未开始"),
+    SECKILL_RETRY(30014, "交易失败"),
 
     LOGIN_ERROR(40001, "用户名或密码错误"),
     TOKEN_EXPIRED(40002, "登录信息超时，请重新登录"),

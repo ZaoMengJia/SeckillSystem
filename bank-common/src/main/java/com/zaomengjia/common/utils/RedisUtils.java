@@ -1,4 +1,4 @@
-package com.zaomengjia.gateway.utils;
+package com.zaomengjia.common.utils;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -334,6 +334,7 @@ public final class RedisUtils {
             return null;
         }
     }
+
 
 
     /**

@@ -6,8 +6,10 @@ import com.zaomengjia.common.dao.OrderMapper;
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.entity.SaleProductDetail;
+import com.zaomengjia.common.service.OrderSimpleService;
+import com.zaomengjia.common.service.SaleProductDetailSimpleService;
 import com.zaomengjia.stock.service.StockService;
-import com.zaomengjia.stock.utils.RedisUtils;
+import com.zaomengjia.common.utils.RedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,18 +28,18 @@ public class StockServiceImpl implements StockService {
 
     private final OrderMapper orderMapper;
 
-    private final RedisUtils redisUtils;
-
     private final SaleProductDetailMapper saleProductDetailMapper;
+
+    private final OrderSimpleService orderSimpleService;
 
     public StockServiceImpl(
             OrderMapper orderMapper,
-            RedisUtils redisUtils,
-            SaleProductDetailMapper saleProductDetailMapper
+            SaleProductDetailMapper saleProductDetailMapper,
+            OrderSimpleService orderSimpleService
     ) {
         this.orderMapper = orderMapper;
-        this.redisUtils = redisUtils;
         this.saleProductDetailMapper = saleProductDetailMapper;
+        this.orderSimpleService = orderSimpleService;
     }
 
     @Transactional
@@ -57,7 +59,7 @@ public class StockServiceImpl implements StockService {
 
             //缓存重设
             order.setStatus(OrderStatus.NORMAL);
-            redisUtils.set("order::" + order.getId() + "::" + order.getFinancialProductId() + "::" +order.getSeckillActivityId() + "::" + order.getUserId(), order);
+            orderSimpleService.setCache(order);
             logger.debug("订单{}创建成功", order.getId());
         }
         catch (Exception e) {
@@ -65,11 +67,9 @@ public class StockServiceImpl implements StockService {
 
             //设置订单失败
             order.setStatus(OrderStatus.ERROR);
-            String key = "order::" + order.getId() + "::" + order.getFinancialProductId() + "::" +order.getSeckillActivityId() + "::" + order.getUserId();
+
             //错误信息4小时后删除
-            redisUtils.set(key, order, 4 * 60 * 60);
-
-
+            orderSimpleService.setCache(order, 4 * 60 * 60);
 
             //开始回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

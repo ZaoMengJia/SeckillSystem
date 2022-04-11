@@ -27,14 +27,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserInfo(UserInfoDto userInfoDto) {
+    public void updateUserInfo(UserInfoDto userInfoDto, String userId) {
         String openid = userInfoDto.getOpenid();
         WeixinUser user = Optional.of(weixinUserMapper.findByOpenid(openid)).orElseThrow(() -> new AppException(ResultCode.NO_SUCH_USER));
-
+        user.setId(userId);
         user.setNickname(userInfoDto.getNickname());
         user.setGender(userInfoDto.getGender());
         user.setAvatarUrl(userInfoDto.getAvatarUrl());
-
+        user.setIdCard(userInfoDto.getIdCard());
+        user.setRealName(userInfoDto.getRealName());
         weixinUserMapper.save(user);
     }
 

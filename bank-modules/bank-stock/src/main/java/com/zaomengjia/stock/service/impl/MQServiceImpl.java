@@ -9,7 +9,7 @@ import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.stock.service.MQService;
 import com.zaomengjia.stock.service.StockService;
-import com.zaomengjia.stock.utils.RedisUtils;
+import com.zaomengjia.common.utils.RedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.*;

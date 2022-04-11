@@ -9,7 +9,7 @@ import com.zaomengjia.order.dto.UserInfoDto;
  * @date 2022/4/7 22:37
  */
 public interface UserService {
-    void updateUserInfo(UserInfoDto userInfoDto);
+    void updateUserInfo(UserInfoDto userInfoDto, String userId);
 
     WeixinUserVO getUserInfo(String userId);
 }
