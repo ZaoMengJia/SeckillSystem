@@ -148,7 +148,8 @@ public class WebSecurityConfig {
                 .addFilterAfter(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .csrf().disable().exceptionHandling()
                 .and()
-                .cors().configurationSource(urlBasedCorsConfigurationSource());
+                .cors()
+                .configurationSource(urlBasedCorsConfigurationSource());
         return http.build();
     }
 

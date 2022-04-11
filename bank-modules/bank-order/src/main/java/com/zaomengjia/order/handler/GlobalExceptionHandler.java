@@ -4,6 +4,8 @@ import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,6 +19,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResultVO<?> notFound() {
@@ -34,7 +38,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResultVO<?> internalServerError() {
+    public ResultVO<?> internalServerError(Exception e) {
+        logger.error("遇到了错误", e);
         return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR);
     }
 
