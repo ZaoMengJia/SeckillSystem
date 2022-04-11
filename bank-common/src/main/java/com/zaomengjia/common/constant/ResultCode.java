@@ -13,6 +13,11 @@ public enum ResultCode {
     PATTERN_ERROR(20003, "访问接口都不带全部参数都，想要干嘛？"),
     INVALID_REQUEST_ERROR(20004, "你想干嘛？"),
     INVALID_SIGNATURE(20005, "签名错啦大哥，好好回去看代码吧"),
+
+    /**
+     * 在黑名单里，30分钟解禁
+     */
+    HAVE_A_REST_PLEASE(20006, "大哥，喝瓶可乐冷静一下，那么急干嘛"),
     SERVER_UNAVAILABLE(50003,"服务器快要忙死啦奥利给"),
 
 
