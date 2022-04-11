@@ -1,1 +1,9 @@
 /* pages/register/register.wxss */
+.cellClass{
+    width: 100%;
+}
+
+.cellRootClass{
+    margin: 0;
+    padding: 0 !important;
+}

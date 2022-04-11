@@ -1,8 +1,8 @@
+import {BASE_PATH, login} from "./utils/api";
+
 App({
     onLaunch() {
-        this.globalData = {
-            BASE_PATH: 'http://localhost'
-        }
+        this.globalData = {}
         // 获得系统信息
         wx.getSystemInfo({
             success: e => {
@@ -16,34 +16,15 @@ App({
         wx.login({
             success: res => {
                 //发送 res.code 到后台换取 openId, token
-                wx.request({
-                    url: this.globalData.BASE_PATH + ':8811/auth/weixin',
-                    method: 'POST',
-                    data: {
-                        code: res.code
-                    },
-                    header: {
-                        'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-                    },
-                    success: res => {
-                        res = res.data
-                        this.globalData.token = res.data.token
-                        this.globalData.auth = this.globalData.token.replace("Bearer ", "")
-                        this.globalData.userId = res.data.userId
-                        wx.request({
-                            url: this.globalData.BASE_PATH + ':8090/weixin/user/' + this.globalData.userId,
-                            header: {
-                                "Authorization": this.globalData.auth
-                            },
-                            success: res => {
-                                res = res.data
-                                this.globalData.openid = res.data.openid
-                            }
-                        })
-                    },
-                    complete: res => {
-                        console.log(this.globalData)
-                    }
+                login({
+                    code: res.code
+                }).then(res => {
+                    this.globalData.token = res.data.token
+                    this.globalData.auth = this.globalData.token.replace("Bearer ", "")
+                    this.globalData.userId = res.data.userId
+                    this.globalData.openId = res.data.openId
+                }).then(res => {
+                    console.log(this.globalData)
                 })
             }
         })
