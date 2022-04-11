@@ -1,6 +1,8 @@
 auth:
+  app-key: IZe37zbJnGpPrZ5u
   secret: 123
   expired-time: 3000
+  sign-expired-time: 60 # 分
 
 weixin:
   appid: wx3f7f4b71b02fb7ab
@@ -27,11 +29,11 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: web-service
+        - id: bank-manager-service
           uri: lb://bank-manager
           predicates:
             - Path=/web/**
-        - id: order-service
+        - id: bank-order-service
           uri: lb://bank-order
           predicates:
             - Path=/weixin/**

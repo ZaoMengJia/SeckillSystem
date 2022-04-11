@@ -12,6 +12,7 @@ public enum ResultCode {
     INTERNAL_SERVER_ERROR(20002, "服务器抛给你一个错误"),
     PATTERN_ERROR(20003, "访问接口都不带全部参数都，想要干嘛？"),
     INVALID_REQUEST_ERROR(20004, "你想干嘛？"),
+    INVALID_SIGNATURE(20005, "签名错啦大哥，好好回去看代码吧"),
     SERVER_UNAVAILABLE(50003,"服务器快要忙死啦奥利给"),
 
 

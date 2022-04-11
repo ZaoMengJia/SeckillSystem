@@ -1,32 +1,24 @@
 package com.zaomengjia.gateway.config;
 
-import com.alibaba.fastjson.JSONObject;
-import com.zaomengjia.common.entity.AdminUser;
-import com.zaomengjia.gateway.constant.AuthorityGroup;
 import com.zaomengjia.gateway.filter.JwtFilter;
+import com.zaomengjia.gateway.filter.SignatureFilter;
 import com.zaomengjia.gateway.filter.UsernamePasswordManager;
+import com.zaomengjia.gateway.filter.WeixinLoginManager;
 import com.zaomengjia.gateway.handler.LoginSuccessHandler;
 import com.zaomengjia.gateway.pojo.WeixinToken;
-import com.zaomengjia.gateway.filter.WeixinLoginManager;
 import com.zaomengjia.gateway.utils.JwtUtils;
-import com.zaomengjia.gateway.utils.ResponseWriter;
-import com.zaomengjia.common.entity.User;
-import com.zaomengjia.common.entity.WeixinUser;
-import com.zaomengjia.common.utils.ResultUtils;
 import io.netty.util.internal.StringUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.cors.CorsConfiguration;
@@ -36,7 +28,6 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
-import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -114,23 +105,31 @@ public class WebSecurityConfig {
 
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager reactiveAuthenticationManager, JwtFilter jwtFilter, JwtUtils jwtUtils) {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager reactiveAuthenticationManager, JwtFilter jwtFilter, JwtUtils jwtUtils, SignatureFilter signatureFilter) {
         http
                 .authenticationManager(reactiveAuthenticationManager)
                 .exceptionHandling()
+
+                //未授权的处理（交给失败控制器）
                 .accessDeniedHandler((exchange, denied) -> responseStatusExceptionHandler.handle(exchange, denied))
                 .authenticationEntryPoint((exchange, ex) -> responseStatusExceptionHandler.handle(exchange, ex))
 
+                //配置路径权限
                 .and()
                 .authorizeExchange()
+                //1. 认证服务，放行
                 .pathMatchers("/auth/**").permitAll()
+
+                //2. 管理员服务，需要ADMIN的角色
                 .pathMatchers("/web/**").permitAll()
 //                    .hasRole(AuthorityGroup.ADMIN.raw)
+
+                //3. 用户订单服务，需要USER的角色
                 .pathMatchers("/weixin/**")
                 .permitAll()
 //                    .hasRole(AuthorityGroup.USER.raw)
 
-                //OpenApi
+                //4. OpenAPI，放行
                 .pathMatchers(
                         "/swagger-ui.html",
                         "/v3/api-docs-gateway",
@@ -139,14 +138,27 @@ public class WebSecurityConfig {
                         "/swagger-resources/**",
                         "/v3/api-docs",
                         "/webjars/**").permitAll()
+
+                //5. 服务状态，放行
                 .pathMatchers("/actuator/**").permitAll()
+
+                //6. 其它，拦截
                 .anyExchange().permitAll()
 
+                //配置过滤器
                 .and()
+                //1. 微信登录
                 .addFilterAt(weixinFilter(reactiveAuthenticationManager, jwtUtils), SecurityWebFiltersOrder.AUTHENTICATION)
+                //2. 管理员用户名密码验证
                 .addFilterAt(usernamePasswordFilter(reactiveAuthenticationManager, jwtUtils), SecurityWebFiltersOrder.AUTHENTICATION)
+                //3. token验证
                 .addFilterAfter(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                //4. 签名验证
+                .addFilterBefore(signatureFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+
                 .csrf().disable().exceptionHandling()
+
+                //跨域配置
                 .and()
                 .cors()
                 .configurationSource(urlBasedCorsConfigurationSource());

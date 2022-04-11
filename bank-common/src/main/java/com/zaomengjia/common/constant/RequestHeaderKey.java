@@ -7,4 +7,7 @@ package com.zaomengjia.common.constant;
  */
 public class RequestHeaderKey {
     public static final String AUTHORIZATION = "Authorization";
+    public static final String SIGNATURE = "signature";
+    public static final String NONCE = "nonce";
+    public static final String TIMESTAMP = "timestamp";
 }

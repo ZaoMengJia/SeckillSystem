@@ -28,6 +28,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     @Override
     public Mono<Void> handle(@NotNull ServerWebExchange exchange, @NotNull Throwable ex) {
         if(ex instanceof AppException) {
+            logger.debug("遇到了应用层面错误", ex);
             return ResponseWriter.writeResponse(exchange, ResultUtils.error(((AppException) ex).getResultCode()));
         }
         else if(ex instanceof ResponseStatusException) {

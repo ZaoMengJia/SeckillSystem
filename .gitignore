@@ -32,4 +32,5 @@ nbdist/
 */log
 docker-compose/temp
 docker-compose/init.d/
-logs/
+logs*/
+/seckill/miniprogram_npm/

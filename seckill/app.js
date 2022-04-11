@@ -1,5 +1,11 @@
+const api = require("./utils/api");
+const { sign, RequestType } = require("./utils/signUtils");
+
 App({
     onLaunch() {
+        api.login({
+            a: '1'
+        });
         this.globalData = {}
         // 获得系统信息
         wx.getSystemInfo({
