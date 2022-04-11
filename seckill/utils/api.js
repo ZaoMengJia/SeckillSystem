@@ -59,5 +59,8 @@ module.exports = {
     },
     saveInfo: (data , header) =>{//注册
         return request('/weixin/user/'+data.userId, 'PUT', data.body, header, false)
+    },
+    secKillList:(data) =>{//秒杀活动列表
+        return request('/weixin/sec-kill/list?pageNum='+data.pageNum+'&pageSize='+data.pageSize, 'GET', {},null,true)
     }
 }
