@@ -32,14 +32,22 @@ const request = (url, method, data, header, showLoading) => {
             data: data,
             header: headers,
             success(res) {
-                console.log(res.data)
-                resolve(res.data)
+                if(res.data.code == 10000){
+                    resolve(res.data)
+                }else{
+                    wx.showModal({
+                        title: '提示',
+                        content: '接口异常错误!',
+                        success(res) {}
+                    })
+                    reject(res.data.message)
+                }
             },
             fail(error) {
                 console.log(error)
                 wx.showModal({
                     title: '提示',
-                    content: '接口请求出错!',
+                    content: '接口请求失败!',
                     success(res) {}
                 })
                 reject(error)
@@ -62,5 +70,20 @@ module.exports = {
     },
     secKillList:(data) =>{//秒杀活动列表
         return request('/weixin/sec-kill/list?pageNum='+data.pageNum+'&pageSize='+data.pageSize, 'GET', {},null,true)
+    },
+    getProductDetail:(data)=>{//秒杀活动详情
+        return request('/weixin/sec-kill/'+data.id, 'GET', {}, null, false)
+    },
+    secKillPath:(data , header) =>{//秒杀链接
+        return request('/weixin/sec-kill/url/'+data.id, 'GET', {}, header, false)
+    },
+    secKill: (data) =>{//秒杀接口
+        return request('/weixin/sec-kill/'+data.path+'?seckillActivityId='+data.id+'&financialProductId='+data.pid, 'POST', {}, header, false)
+    },
+    getSecKillResult: (data, header) =>{//获取秒杀结果
+
+    },
+    getSecKillResultListByUser: (data, header) =>{//获取个人所有秒杀结果列表
+
     }
 }

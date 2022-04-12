@@ -1,5 +1,0 @@
-<!--pages/seckill_result/seckill_result.wxml-->
-<cu-custom bgColor="bg-yellow" isBack="{{true}}">
-    <view slot="backText" catch:tap="onRedirectList">返回</view>
-    <view slot="content">秒杀结果</view>
-</cu-custom>
