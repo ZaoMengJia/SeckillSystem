@@ -32,14 +32,22 @@ const request = (url, method, data, header, showLoading) => {
             data: data,
             header: headers,
             success(res) {
-                console.log(res.data)
-                resolve(res.data)
+                if(res.data.code == 10000){
+                    resolve(res.data)
+                }else{
+                    wx.showModal({
+                        title: '提示',
+                        content: '接口异常错误!',
+                        success(res) {}
+                    })
+                    reject(res.data.message)
+                }
             },
             fail(error) {
                 console.log(error)
                 wx.showModal({
                     title: '提示',
-                    content: '接口请求出错!',
+                    content: '接口请求失败!',
                     success(res) {}
                 })
                 reject(error)
