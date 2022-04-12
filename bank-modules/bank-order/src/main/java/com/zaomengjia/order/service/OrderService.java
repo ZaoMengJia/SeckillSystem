@@ -1,5 +1,6 @@
 package com.zaomengjia.order.service;
 
+import com.zaomengjia.common.constant.OrderStatus;
 import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.entity.SaleProductDetail;
@@ -35,4 +36,6 @@ public interface OrderService {
     List<FinancialProduct> getFinancialProductEntityList(List<String> idList);
 
     OrderVO getOrderDetail(String id);
+
+    OrderStatus getOrderStatus(String id);
 }

@@ -1,6 +1,7 @@
 package com.zaomengjia.order.controller;
 
 import cn.hutool.jwt.JWT;
+import com.alibaba.fastjson.JSONObject;
 import com.mysql.cj.util.StringUtils;
 import com.zaomengjia.common.constant.RequestHeaderKey;
 import com.zaomengjia.common.constant.ResultCode;
@@ -13,6 +14,7 @@ import com.zaomengjia.common.vo.user.WeixinUserVO;
 import com.zaomengjia.order.dto.UserInfoDto;
 import com.zaomengjia.order.service.OrderService;
 import com.zaomengjia.order.service.UserService;
+import io.netty.util.internal.StringUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
@@ -71,5 +73,30 @@ public class UserController {
 
         PageVO<OrderVO> userOrderList = orderService.getUserOrderList(userId, pageNum, pageSize);
         return ResultUtils.success(userOrderList);
+    }
+
+    @Operation(summary = "用户状态")
+    @GetMapping("/status/{userId}")
+    public ResultVO<?> getUserStatus(@PathVariable String userId, @RequestHeader(RequestHeaderKey.AUTHORIZATION) String token) {
+        String tokenUserId = (String) JWT.of(token).getPayload().getClaim("userId");
+        if(!tokenUserId.equals(userId)) {
+            throw new AppException(ResultCode.INVALID_REQUEST_ERROR);
+        }
+
+        boolean isAudited = false;
+        boolean isRegistered = false;
+
+        WeixinUserVO userInfo = userService.getUserInfo(userId);
+        if(!StringUtil.isNullOrEmpty(userInfo.getIdCard())) {
+            isRegistered = true;
+        }
+
+        //Todo: 审核还没写
+        isAudited = true;
+
+        JSONObject json = new JSONObject();
+        json.put("isAudited", isAudited);
+        json.put("isRegistered", isRegistered);
+        return ResultUtils.success(json);
     }
 }

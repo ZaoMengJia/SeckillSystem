@@ -4,6 +4,9 @@ server:
     context-path: /weixin
   tomcat:
     uri-encoding: UTF-8
+    max-connections: 10000
+    max-threads: 500
+    min-spare-threads: 50
 
 spring:
   application:

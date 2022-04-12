@@ -4,6 +4,8 @@ import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.utils.RedisUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +20,13 @@ import static com.zaomengjia.common.constant.RedisKey.*;
  * @date 2022/4/12 00:02
  */
 @Service
-@Transactional
 public class SaleProductDetailSimpleService {
 
     private final SaleProductDetailMapper saleProductDetailMapper;
 
     private final RedisUtils redisUtils;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public SaleProductDetailSimpleService(SaleProductDetailMapper saleProductDetailMapper, RedisUtils redisUtils) {
         this.saleProductDetailMapper = saleProductDetailMapper;
@@ -66,6 +69,7 @@ public class SaleProductDetailSimpleService {
         String key = getKey(seckillActivityId, financialProductId);
         SaleProductDetail detail;
         if(key == null) {
+            logger.info("没有命中缓存，查找数据库 => {}::{}", financialProductId, seckillActivityId);
             detail = saleProductDetailMapper.findByFinancialProductIdAndSeckillActivityId(financialProductId, seckillActivityId);
             if(detail == null) {
                 return null;
@@ -80,6 +84,7 @@ public class SaleProductDetailSimpleService {
         return detail;
     }
 
+    @Transactional
     public void save(SaleProductDetail detail) {
         detail = saleProductDetailMapper.save(detail);
         redisUtils.hset(saleProductDetailMapKey(), saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);

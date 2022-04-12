@@ -57,9 +57,8 @@ public class StockSimpleService {
         }
     }
 
-    public boolean consumeToken(String financialProductId, String seckillActivityId, String token) {
-        long l = redisUtils.setRemove(tokenBucketMapKey(financialProductId, seckillActivityId), token);
-        return l > 0;
+    public String attemptGetToken(String financialProductId, String seckillActivityId) {
+        return (String) redisUtils.sPop(tokenBucketMapKey(financialProductId, seckillActivityId));
     }
 
     public Set<String> getDirtyStockKeySet() {

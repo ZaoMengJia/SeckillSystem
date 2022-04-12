@@ -379,6 +379,15 @@ public final class RedisUtils {
         }
     }
 
+    public Object sPop(String key) {
+        try {
+            return redisTemplate.opsForSet().pop(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     /**
      * 将set数据放入缓存

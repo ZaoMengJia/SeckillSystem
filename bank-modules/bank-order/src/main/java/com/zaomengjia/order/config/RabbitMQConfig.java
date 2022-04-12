@@ -6,12 +6,12 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -36,5 +36,19 @@ public class RabbitMQConfig {
     @Bean
     Binding binding() {
         return BindingBuilder.bind(orderQueue()).to(directExchange()).with(RabbitMQConstant.CREATE_ORDER_ROUTING_NAME);
+    }
+
+    @Bean
+    public ThreadPoolExecutor rabbitMqAsyncServiceExecutor() {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                16,
+                300,
+                1,
+                TimeUnit.MINUTES,
+                new LinkedBlockingQueue<>(50)
+        );
+
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        return executor;
     }
 }

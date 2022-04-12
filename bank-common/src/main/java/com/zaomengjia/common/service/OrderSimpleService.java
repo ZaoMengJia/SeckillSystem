@@ -14,7 +14,6 @@ import static com.zaomengjia.common.constant.RedisKey.*;
  * @date 2022/4/12 01:11
  */
 @Service
-@Transactional
 public class OrderSimpleService {
     private final OrderMapper orderMapper;
 

@@ -23,11 +23,11 @@ public class DatabaseConfig {
     @Bean
     public ThreadPoolExecutor asyncServiceExecutor() {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                200,
-                10000,
-                2,
-                TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(500)
+                16,
+                300,
+                1,
+                TimeUnit.MINUTES,
+                new LinkedBlockingQueue<>(50)
         );
 
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
