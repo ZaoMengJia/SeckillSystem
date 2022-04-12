@@ -1,5 +1,6 @@
 package com.zaomengjia.stock.service.impl;
 
+import cn.hutool.core.thread.ThreadFactoryBuilder;
 import com.alibaba.fastjson.JSON;
 import com.rabbitmq.client.Channel;
 import com.zaomengjia.common.constant.RabbitMQConstant;
@@ -16,11 +17,16 @@ import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author orangeboyChen
@@ -39,15 +45,25 @@ public class MQServiceImpl implements MQService {
 
     private final StockService stockService;
 
+    private final ThreadPoolExecutor asyncServiceExecutor;
+
+
     public MQServiceImpl(
-            StockService stockService
+            StockService stockService,
+            ThreadPoolExecutor asyncServiceExecutor
     ) {
         this.stockService = stockService;
+        this.asyncServiceExecutor = asyncServiceExecutor;
     }
 
     @RabbitHandler
     public void onReceivedCreateOrderMessage(Order order)  {
-        stockService.saveOrder(order);
+        saveOrder(order);
+    }
+
+//    @Async("asyncServiceExecutor")
+    public void saveOrder(Order order) {
+        asyncServiceExecutor.execute(() -> stockService.saveOrder(order));
     }
 
 

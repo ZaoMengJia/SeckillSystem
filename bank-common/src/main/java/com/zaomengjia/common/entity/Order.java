@@ -21,7 +21,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Entity(name = "user_order")
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-@EnableJpaAuditing
 public class Order implements Serializable {
     /**
      * 订单号

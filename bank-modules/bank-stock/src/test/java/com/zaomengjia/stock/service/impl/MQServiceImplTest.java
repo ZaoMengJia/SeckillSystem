@@ -2,6 +2,7 @@ package com.zaomengjia.stock.service.impl;
 
 import com.alibaba.nacos.common.utils.UuidUtils;
 import com.zaomengjia.common.entity.Order;
+import com.zaomengjia.common.service.StockSimpleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 class MQServiceImplTest {
+//    @Autowired
+//    private MQServiceImpl mqService;
+
     @Autowired
-    private MQServiceImpl mqService;
+    private StockSimpleService stockSimpleService;
 
 //    @Test
 //    void test() throws InterruptedException {
@@ -27,4 +31,11 @@ class MQServiceImplTest {
 //        order.setUserId("test");
 ////        mqService.saveOrder(order);
 //    }
+
+    @Test
+    void test() {
+//        stockSimpleService.deleteTokenBucket("f1", "s1");
+//        stockSimpleService.addTokenBucket("f1", "s1", 10000);
+//        stockSimpleService.setStock("f1", "s1", 10000);
+    }
 }

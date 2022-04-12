@@ -40,6 +40,14 @@ public final class RedisKey {
         return MessageFormat.format("seckill-token-bucket::{0}::{1}", financialProductId, seckillActivityId);
     }
 
+    public static String stockMapKey() {
+        return "stock";
+    }
+
+    public static String stockDirtyKey() {
+        return "stock::dirty";
+    }
+
     public static String[] getOrderFullKeyComponents(String key) {
         return key.substring(7).split("::");
     }

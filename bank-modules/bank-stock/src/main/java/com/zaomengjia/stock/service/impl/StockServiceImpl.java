@@ -7,14 +7,22 @@ import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.service.OrderSimpleService;
-import com.zaomengjia.common.service.SaleProductDetailSimpleService;
+import com.zaomengjia.common.service.StockSimpleService;
 import com.zaomengjia.stock.service.StockService;
 import com.zaomengjia.common.utils.RedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author orangeboyChen
@@ -22,6 +30,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
  * @date 2022/4/10 17:09
  */
 @Service
+@EnableAsync
 public class StockServiceImpl implements StockService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -32,15 +41,27 @@ public class StockServiceImpl implements StockService {
 
     private final OrderSimpleService orderSimpleService;
 
+    private final ConcurrentHashMap<String, SaleProductDetail> needUpdateDetailMap = new ConcurrentHashMap<>();
+
+    private final StockSimpleService stockSimpleService;
+
+    private final RedisUtils redisUtils;
+
     public StockServiceImpl(
             OrderMapper orderMapper,
             SaleProductDetailMapper saleProductDetailMapper,
-            OrderSimpleService orderSimpleService
+            OrderSimpleService orderSimpleService,
+            RedisUtils redisUtils,
+            StockSimpleService stockSimpleService
     ) {
         this.orderMapper = orderMapper;
         this.saleProductDetailMapper = saleProductDetailMapper;
         this.orderSimpleService = orderSimpleService;
+        this.redisUtils = redisUtils;
+        this.stockSimpleService = stockSimpleService;
     }
+
+
 
     @Transactional
     public void saveOrder(Order order) {
@@ -51,8 +72,12 @@ public class StockServiceImpl implements StockService {
                 throw new Exception();
             }
 
-            detail.setQuantity(detail.getQuantity() - order.getQuantity());
-            saleProductDetailMapper.save(detail);
+
+            boolean isSuccess = stockSimpleService.decrStock(order.getFinancialProductId(), order.getSeckillActivityId(), order.getQuantity());
+            if(!isSuccess) {
+                throw new Exception();
+            }
+            needUpdateDetailMap.put(order.getFinancialProductId()+ "::" + order.getSeckillActivityId(), detail);
 
             //创建订单
             order = orderMapper.save(order);
@@ -60,7 +85,7 @@ public class StockServiceImpl implements StockService {
             //缓存重设
             order.setStatus(OrderStatus.NORMAL);
             orderSimpleService.setCache(order);
-            logger.debug("订单{}创建成功", order.getId());
+            logger.info("订单{}创建成功 {}", order.getId(), Thread.currentThread().getName());
         }
         catch (Exception e) {
             logger.error("订单{}创建失败，订单内容为\n{}，错误", order.getId(), JSON.toJSONString(order), e);

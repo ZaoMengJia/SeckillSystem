@@ -1,5 +1,6 @@
 package com.zaomengjia.order.controller;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.jwt.JWT;
 import com.alibaba.fastjson.JSONObject;
 import com.zaomengjia.common.constant.RequestHeaderKey;
@@ -29,7 +30,7 @@ import java.util.Date;
  */
 @RestController
 @Tag(name = "抢购活动")
-@RequestMapping("/sec-kill")
+@RequestMapping("/seckill")
 public class SeckillActivityController {
 
     private final SeckillService seckillService;
@@ -91,14 +92,15 @@ public class SeckillActivityController {
     @PostMapping("/{path}")
     public ResultVO<?> seckill(@PathVariable @Parameter(description = "抢购链接中的随机参数") String path,
                                @RequestParam String seckillActivityId, @RequestParam String financialProductId, @RequestHeader(RequestHeaderKey.AUTHORIZATION) String token) {
-        String userId = (String) JWT.of(token).getPayload().getClaim("userId");
-        String correctPath = generateSeckillPath(seckillActivityId, userId);
-        if(!correctPath.equals(path)) {
-            //迷惑非法接口调用者
-            throw new AppException(ResultCode.ACTIVITY_NOT_STARTED);
-        }
+        //测试
+//        String userId = (String) JWT.of(token).getPayload().getClaim("userId");
+//        String correctPath = generateSeckillPath(seckillActivityId, userId);
+//        if(!correctPath.equals(path)) {
+//            //迷惑非法接口调用者
+//            throw new AppException(ResultCode.ACTIVITY_NOT_STARTED);
+//        }
 
-        String orderId = orderService.createOrder(userId, seckillActivityId, financialProductId);
+        String orderId = orderService.createOrder(UUID.fastUUID().toString(true), seckillActivityId, financialProductId);
         JSONObject json = new JSONObject();
         json.put("orderId", orderId);
         return ResultUtils.success(json);

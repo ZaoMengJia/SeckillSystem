@@ -37,9 +37,6 @@ spring:
           uri: lb://bank-order
           predicates:
             - Path=/weixin/**
-logging:
-  level:
-    org.springframework.cloud.gateway: trace
 
 
 springdoc:

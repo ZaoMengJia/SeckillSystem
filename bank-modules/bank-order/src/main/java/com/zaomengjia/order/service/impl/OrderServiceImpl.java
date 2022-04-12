@@ -145,13 +145,14 @@ public class OrderServiceImpl implements OrderService {
 
         //看看这个用户买过没有
         //这里就可以对买对数量判断了，目前是从订单数推购买数量，实在不行可以拿数据取和
-        List<Order> orders = orderMapper.findByUserIdAndFinancialProductIdAndSeckillActivityId(userId, saleProductDetail.getFinancialProductId(), saleProductDetail.getSeckillActivityId());
-        if(orders.size() >= 1) {
-            throw new AppException(ResultCode.ORDER_EXCEED_LIMIT);
-        }
-        if(orderSimpleService.containCache(order)) {
-            throw new AppException(ResultCode.ORDER_EXCEED_LIMIT);
-        }
+        //Todo: 压测暂时注释
+//        List<Order> orders = orderMapper.findByUserIdAndFinancialProductIdAndSeckillActivityId(userId, saleProductDetail.getFinancialProductId(), saleProductDetail.getSeckillActivityId());
+//        if(orders.size() >= 1) {
+//            throw new AppException(ResultCode.ORDER_EXCEED_LIMIT);
+//        }
+//        if(orderSimpleService.containCache(order)) {
+//            throw new AppException(ResultCode.ORDER_EXCEED_LIMIT);
+//        }
 
         //从令牌桶找一个令牌
         String token = stockSimpleService.getToken(financialProductId, seckillActivityId);

@@ -2,6 +2,7 @@ package com.zaomengjia.common.config;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
@@ -12,5 +13,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories(basePackages = "com.zaomengjia.common.dao")
 @EntityScan(basePackages = "com.zaomengjia.common.entity")
+@EnableJpaAuditing
 public class JpaConfig {
 }

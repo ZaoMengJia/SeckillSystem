@@ -2,6 +2,8 @@ server:
   port: 8090
   servlet:
     context-path: /weixin
+  tomcat:
+    uri-encoding: UTF-8
 
 spring:
   application:
@@ -17,6 +19,12 @@ spring:
         metadata:
           management:
             context-path: ${server.servlet.context-path}/actuator
+
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
 sec-kill:
   url:
     key: 33oWwIws6iQnZWZc
