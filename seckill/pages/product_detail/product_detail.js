@@ -2,10 +2,14 @@
 Page({
 
   data: {
-
+    productId: -1,
+    secKillPath: null
   },
 
   onLoad: function (options) {
+    this.setData({
+      productId:options.id
+    })
   },
 
   onNavigateBack(){

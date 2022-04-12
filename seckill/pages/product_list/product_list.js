@@ -1,4 +1,6 @@
 // pages/product_list/product_list.js
+import {secKillList} from "../../utils/api";
+
 const app = getApp()
 
 const MAX_PAGE_SIZE = 4
@@ -49,17 +51,18 @@ Page({
       url: '../seckill_result_list/seckill_result_list'
     })
   },
-  onEnterDetail(){
-
+  onEnterDetail(e){
+    let id = e.currentTarget.id;
+    wx.navigateTo({
+      url: '../product_detail/product_detail?id='+id
+    })
   },
   initProductList() {
-    wx.request({
-      url: app.globalData.BASE_PATH + ":8090/weixin/sec-kill/list?pageNum="+this.data.pageIndex+"&pageSize="+MAX_PAGE_SIZE,
-      method: 'GET',
-      success :res =>{
-        res = res.data
-        console.log(res)
-      }
+    secKillList({
+      pageNum: this.data.pageIndex,
+      pageSize: MAX_PAGE_SIZE
+    }).then(res => {
+      console.log(res)
     })
   }
 })

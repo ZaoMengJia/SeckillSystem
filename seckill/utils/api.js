@@ -62,5 +62,20 @@ module.exports = {
     },
     secKillList:(data) =>{//秒杀活动列表
         return request('/weixin/sec-kill/list?pageNum='+data.pageNum+'&pageSize='+data.pageSize, 'GET', {},null,true)
+    },
+    getProductDetail:(data)=>{//秒杀活动详情
+        return request('/weixin/sec-kill/'+data.id, 'GET', {}, null, false)
+    },
+    secKillPath:(data , header) =>{//秒杀链接
+        return request('/weixin/sec-kill/url/'+data.id, 'GET', {}, header, false)
+    },
+    secKill: (data) =>{//秒杀接口
+        return request('/weixin/sec-kill/'+data.path+'?seckillActivityId='+data.id+'&financialProductId='+data.pid, 'POST', {}, header, false)
+    },
+    getSecKillResult: (data, header) =>{//获取秒杀结果
+
+    },
+    getSecKillResultListByUser: (data, header) =>{//获取个人所有秒杀结果列表
+
     }
 }
