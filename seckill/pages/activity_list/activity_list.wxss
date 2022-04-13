@@ -1,4 +1,3 @@
-/* pages/product_list/product_list.wxss */
 .last_text {
     width: 100%;
     text-align: center;
@@ -7,7 +6,7 @@
     margin: 90rpx 0 30rpx;
 }
 
-.product-card{
+.activity-card{
     background-color: #ffffff !important;
     border-radius: 20rpx;
     margin:3px 6px;

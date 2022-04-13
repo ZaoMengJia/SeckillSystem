@@ -1,0 +1,14 @@
+.btnClass {
+    background: linear-gradient(to right, #FFB700FF, #ED8B1CFF);
+}
+
+.product-card {
+    background-color: #ffffff !important;
+    border-radius: 20rpx;
+    margin: 3px 6px;
+}
+
+.image-img {
+    min-height: 300rpx;
+    width: 100%;
+}

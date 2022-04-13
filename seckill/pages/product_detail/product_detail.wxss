@@ -1,4 +1,0 @@
-/* pages/product_detail/product_detail.wxss */
-.btnClass{
-    background: linear-gradient(to right, #FFB700FF, #ED8B1CFF);
-}

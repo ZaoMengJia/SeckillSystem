@@ -87,9 +87,9 @@ Page({
             birthday: event.detail,
         })
     },
-    onSaveInfo(){
+    onSaveInfo() {
         const validation = validateIdCard(this.data.idCard)
-        if(!validation.pass) {
+        if (!validation.pass) {
             Toast.fail(validation.msg)
             return
         }
@@ -108,9 +108,9 @@ Page({
         }
         saveInfo(data).then(res => {
             console.log(res)
-        }).then(res =>{
+        }).then(res => {
             wx.redirectTo({
-                url: '../product_list/product_list'
+                url: '../activity_list/activity_list'
             })
         })
     }

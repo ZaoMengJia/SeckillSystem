@@ -1,0 +1,44 @@
+<cu-custom bgColor="bg-yellow" isBack="{{true}}">
+    <view slot="backText" catch:tap="onNavigateBack">返回</view>
+    <view slot="content">秒杀活动详情</view>
+</cu-custom>
+<image class="image-img" mode="aspectFill" width="100%" src="{{url}}" bind:tap="onPreviewImg"/>
+
+<view class="cu-card article no-card">
+    <view class="cu-item shadow">
+        <view class="title flex align-center justify-between">
+            <view class="text-cut text-xxl">
+                {{title}}
+            </view>
+        </view>
+        <view class="content">
+            <view class="desc">
+                <view class="cu-bar bg-white">
+                    <view class="action">
+                        <text>
+                            {{detail}}
+                        </text>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>
+<view wx:for="{{productList}}" wx:key="id" style="margin-top:20px;">
+    <van-card custom-class="product-card shadow-warp" thumb-mode="aspectFill"
+              title-class="text-cut"
+              title="{{item.name}}"
+              price="{{item.price}}"
+              desc="剩余：{{item.quantity}}份"
+              data-id="{{item.id}}">
+    </van-card>
+</view>
+<view style="height:160rpx;"></view>
+
+<van-submit-bar
+        price="{{price}}"
+        button-text="立即抢购"
+        button-class="btnClass"
+        bind:submit="onSecKill"
+/>
+<van-toast id="van-toast"/>

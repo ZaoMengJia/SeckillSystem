@@ -1,8 +1,11 @@
 <!--index.wxml-->
 <cu-custom bgColor="bg-yellow" isBack="{{false}}">
-  <view slot="content">首页</view>
+    <view slot="content">首页</view>
 </cu-custom>
 <view class="container">
-  <van-image class="indexImg" width="560rpx" height="300rpx" fit="contain" src="/images/logo.png"/>
-  <van-button class="indexBtn" round color="linear-gradient(to right, #ff9700, #ed1c24)" type="info" bindtap="onEnterList"><text style="width: 320rpx;">开始秒杀！</text></van-button>
+    <van-image class="indexImg" width="560rpx" height="300rpx" fit="contain" src="/images/logo.png"/>
+    <van-button class="indexBtn" round color="linear-gradient(to right, #ff9700, #ed1c24)" type="info"
+                bindtap="onEnterList">
+        <text style="width: 320rpx;">开始秒杀！</text>
+    </van-button>
 </view>
