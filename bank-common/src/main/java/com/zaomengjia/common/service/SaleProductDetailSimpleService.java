@@ -1,7 +1,7 @@
 package com.zaomengjia.common.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
-import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.utils.RedisUtils;
 import org.slf4j.Logger;
@@ -56,11 +56,11 @@ public class SaleProductDetailSimpleService {
                 return null;
             }
             detail = optional.get();
-            redisUtils.hset(saleProductDetailMapKey(), saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);
+            redisUtils.set(saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);
             setKey(detail);
         }
         else {
-            detail = (SaleProductDetail) redisUtils.hget(saleProductDetailMapKey(), key);
+            detail = ((JSONObject)redisUtils.get(key)).toJavaObject(SaleProductDetail.class);
         }
         return detail;
     }
@@ -75,11 +75,11 @@ public class SaleProductDetailSimpleService {
                 return null;
             }
 
-            redisUtils.hset(saleProductDetailMapKey(), saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);
+            redisUtils.set(saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);
             setKey(detail);
         }
         else {
-            detail = (SaleProductDetail) redisUtils.hget(saleProductDetailMapKey(), key);
+            detail = ((JSONObject)redisUtils.get(key)).toJavaObject(SaleProductDetail.class);
         }
         return detail;
     }
@@ -87,7 +87,7 @@ public class SaleProductDetailSimpleService {
     @Transactional
     public void save(SaleProductDetail detail) {
         detail = saleProductDetailMapper.save(detail);
-        redisUtils.hset(saleProductDetailMapKey(), saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);
+        redisUtils.set(saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);
         setKey(detail);
     }
 
@@ -96,7 +96,7 @@ public class SaleProductDetailSimpleService {
         String key = getKey(id);
         if(key != null) {
             String[] orderFullKeyComponents = getSaleProductDetailKeyComponents(key);
-            redisUtils.hdel(saleProductDetailMapKey(), key);
+            redisUtils.del(key);
             if(orderFullKeyComponents.length >= 3) {
                 redisUtils.hdel(saleProductDetailActivityIdProductIdKeyMapKey(), orderFullKeyComponents[1] + "::" + orderFullKeyComponents[2]);
                 redisUtils.hdel(saleProductDetailIdKeyMapKey(), orderFullKeyComponents[0]);

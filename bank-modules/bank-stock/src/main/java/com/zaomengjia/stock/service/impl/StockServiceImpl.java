@@ -93,7 +93,11 @@ public class StockServiceImpl implements StockService {
         }
         catch (Exception e) {
             //手动回滚
-            orderMapper.deleteById(order.getId());
+            try {
+                orderMapper.deleteById(order.getId());
+            }
+            catch (Exception ignored) {}
+
             logger.error("订单{}创建失败，订单内容为\n{}，错误", order.getId(), JSON.toJSONString(order), e);
 
             //设置订单失败

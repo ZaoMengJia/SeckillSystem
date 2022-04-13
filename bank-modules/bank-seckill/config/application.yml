@@ -1,0 +1,25 @@
+jwt:
+  key: 123
+  expired-time: 100
+
+seckill:
+  path-key: 33oWwIws6iQnZWZc
+
+rabbitmq:
+  username: admin
+  password: admin
+  url: localhost:5672
+
+redis:
+  password: 73wjWEqnrcPG1fJd
+  url: localhost
+  port: 6379
+
+server:
+  port: 8090
+
+datasource:
+  username: zmj
+  password: by5ovOkw@m@S50Fo
+  url: nowcent-database.mysql.rds.aliyuncs.com
+  database: zmj

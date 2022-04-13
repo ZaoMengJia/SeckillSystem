@@ -22,6 +22,7 @@ import com.zaomengjia.common.vo.page.PageVO;
 import com.zaomengjia.order.service.OrderService;
 import com.zaomengjia.order.service.SeckillService;
 import com.zaomengjia.common.utils.RedisUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -158,18 +159,18 @@ public class OrderServiceImpl implements OrderService {
 //            throw new AppException(ResultCode.ORDER_EXCEED_LIMIT);
 //        }
 
-//        long l1 = System.currentTimeMillis();
-//        LoggerFactory.getLogger(getClass()).info("=> {}", System.currentTimeMillis() - l1);
 
         //尝试把一个令牌从令牌桶里拿出来
         if(stockSimpleService.attemptGetToken(financialProductId, seckillActivityId) == null) {
             //消费失败
-            throw new AppException(ResultCode.SELL_OUT);
+            //Todo: 压测暂时注释
+//            throw new AppException(ResultCode.SELL_OUT);
         }
 
         //拿到了令牌，开始创建订单
         order.setId(UUID.fastUUID().toString(true));
         order.setStatus(OrderStatus.CREATING);
+
 
         //预订单保存在redis中
         orderSimpleService.setCache(order);
@@ -178,6 +179,7 @@ public class OrderServiceImpl implements OrderService {
         rabbitMqAsyncServiceExecutor.execute(() -> {
             rabbitTemplate.convertAndSend(RabbitMQConstant.DEFAULT_EXCHANGE_NAME, RabbitMQConstant.CREATE_ORDER_ROUTING_NAME, order);
         });
+
 
         //给前端一个订单号，供查询订单是否创建成功
         return order.getId();

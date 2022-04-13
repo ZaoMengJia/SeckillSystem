@@ -1,5 +1,6 @@
 package com.zaomengjia.common.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zaomengjia.common.dao.OrderMapper;
 import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.utils.RedisUtils;
@@ -55,7 +56,7 @@ public class OrderSimpleService {
             return null;
         }
 
-        return (Order) redisUtils.get(key);
+        return ((JSONObject) redisUtils.get(key)).toJavaObject(Order.class);
     }
 
     public void deleteCache(String orderId) {

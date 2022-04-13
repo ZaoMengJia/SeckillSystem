@@ -2,6 +2,11 @@ spring:
   redis:
     host: localhost
     password: 73wjWEqnrcPG1fJd
+    lettuce:
+      pool:
+        max-active: 200
+        max-idle: 160
+        min-idle: 4
 
   cloud:
     nacos:

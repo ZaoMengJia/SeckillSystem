@@ -24,10 +24,10 @@ public class DatabaseConfig {
     public ThreadPoolExecutor asyncServiceExecutor() {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 16,
-                300,
+                500,
                 1,
                 TimeUnit.MINUTES,
-                new LinkedBlockingQueue<>(50)
+                new LinkedBlockingQueue<>(500)
         );
 
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());

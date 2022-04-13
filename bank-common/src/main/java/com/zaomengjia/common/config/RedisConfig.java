@@ -1,5 +1,6 @@
 package com.zaomengjia.common.config;
 
+import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,19 +31,21 @@ public class RedisConfig {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        objectJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+//        objectJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
         // String 的序列化
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+
+        FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
 
         // key 采用String的序列化方式
         template.setKeySerializer(stringRedisSerializer);
         // hash 的key也采用 String 的序列化方式
         template.setHashKeySerializer(stringRedisSerializer);
         // value 序列化方式采用 jackson
-        template.setValueSerializer(objectJackson2JsonRedisSerializer);
+        template.setValueSerializer(fastJsonRedisSerializer);
         // hash 的 value 采用 jackson
-        template.setHashValueSerializer(objectJackson2JsonRedisSerializer);
+        template.setHashValueSerializer(stringRedisSerializer);
         template.afterPropertiesSet();
 
         return template;
