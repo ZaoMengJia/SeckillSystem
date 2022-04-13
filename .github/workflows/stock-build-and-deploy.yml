@@ -69,5 +69,5 @@ jobs:
             fi
             
             docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-stock:latest
-            docker run --name zmj-stock -p 8092:8092 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-stock:latest
+            docker run --add-host=host.docker.internal:host-gateway  --name zmj-stock -p 8092:8092 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-stock:latest
             docker ps -a | grep zmj-stock

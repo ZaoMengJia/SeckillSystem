@@ -69,5 +69,5 @@ jobs:
             fi
             
             docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-manager:latest
-            docker run --name zmj-manager -p 8001:8001 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-manager:latest
+            docker run --add-host=host.docker.internal:host-gateway  --name zmj-manager -p 8001:8001 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-manager:latest
             docker ps -a | grep zmj-manager

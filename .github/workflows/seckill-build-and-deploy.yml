@@ -66,5 +66,5 @@ jobs:
             fi
             
             docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-seckill:latest
-            docker run --name zmj-seckill -p 8099:8099 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-seckill:latest
+            docker run --add-host=host.docker.internal:host-gateway  --name zmj-seckill -p 8099:8099 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-seckill:latest
             docker ps -a | grep zmj-seckill
