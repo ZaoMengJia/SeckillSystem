@@ -1,6 +1,8 @@
 auth:
+  app-key: IZe37zbJnGpPrZ5u
   secret: 123
   expired-time: 3000
+  sign-expired-time: 60 # 分
 
 weixin:
   appid: wx3f7f4b71b02fb7ab
@@ -13,27 +15,31 @@ server:
 spring:
   application:
     name: bank-gateway
-    url: localhost:8811
+    url: host.docker.internal:8811
+
   boot:
     admin:
       client:
-        url: http://112.74.189.224:8812
+        url: http://host.docker.internal:8812
 
   cloud:
-    nacos:
-      discovery:
-        server-addr: 112.74.189.224:8848
     gateway:
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: path_route
+        - id: bank-manager-service
           uri: lb://bank-manager
           predicates:
             - Path=/web/**
+        - id: bank-order-service
+          uri: lb://bank-order
+          predicates:
+            - Path=/weixin/**
+
 
 springdoc:
   swagger-ui:
     configUrl: /swagger-config.json
+

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bank-seckill/common"
+	"bank-seckill/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"os"
@@ -15,7 +16,7 @@ func main() {
 	common.InitRabbitMQ()
 	common.NacosInit()
 	r := gin.Default()
-	r = CollectRoute(r)
+	r = routes.CollectRoute(r)
 
 	port := viper.GetInt("server.port")
 	defer common.MQPublisher.Close()
@@ -42,9 +43,13 @@ func initConfig() {
 	workDir, _ := os.Getwd()
 	viper.SetConfigName("application")
 	viper.SetConfigType("yml")
-	viper.AddConfigPath(workDir + "/config")
+	viper.SetConfigFile(workDir + "/application.yml")
+	viper.ReadInConfig()
+
+	active := viper.GetString("active")
+	viper.SetConfigFile(workDir + "/application-" + active + ".yml")
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic("")
+		panic(err)
 	}
 }

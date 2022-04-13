@@ -1,0 +1,33 @@
+server:
+  port: 8090
+  servlet:
+    context-path: /weixin
+  tomcat:
+    uri-encoding: UTF-8
+    max-connections: 10000
+    max-threads: 500
+    min-spare-threads: 50
+
+spring:
+  application:
+    name: bank-order
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  cloud:
+    nacos:
+      discovery:
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
+sec-kill:
+  url:
+    key: 33oWwIws6iQnZWZc

@@ -1,0 +1,73 @@
+name: Order CI/CD
+
+on:
+  push:
+    tags:
+      - 'order-*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      FILE_FOLDER_NAME: bank-order
+      IMAGE_NAME: zmj-order
+      CONTAINER_PORT: 8090
+      PORT: 8090
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Build module
+        run: |
+          mvn -B install --file pom.xml
+          cd ./bank-modules/$FILE_FOLDER_NAME/
+          pwd
+          mvn -B package --file pom.xml
+      - name: Build docker image
+        run: |
+          cd ./bank-modules/$IMAGE_NAME/
+          docker build . --file Dockerfile --tag $IMAGE_NAME:$(date +%s)
+
+      - name: Publish to docker repository
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: orangeboy/$IMAGE_NAME
+          username: ${{ secrets.ALI_DOCKER_HUB_USN }}
+          password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
+          registry: registry.cn-shenzhen.aliyuncs.com
+          workdir: ./bank-modules/$IMAGE_NAME/
+          tags: latest
+
+      - name: Set ssh environment
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.RSA }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.RSA_PUB }}" > ~/.ssh/id_rsa.pub
+          cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+          cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys2
+          chmod 640 ~/.ssh/authorized_keys
+          chmod 640 ~/.ssh/authorized_keys2
+          chmod 700 ~/.ssh && chmod 700 ~/.ssh/*
+          ls -l ~/.ssh/
+      - name: Deploy docker image to target server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            if docker ps -a|grep -i $IMAGE_NAME;then 
+             docker rm -f $IMAGE_NAME
+            fi
+            
+            if docker images -a|grep -i $IMAGE_NAME;then
+            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/$IMAGE_NAME
+            fi
+            
+            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/$IMAGE_NAME:latest
+            docker run --name $IMAGE_NAME -p $PORT:$CONTAINER_PORT -d registry.cn-shenzhen.aliyuncs.com/orangeboy/$IMAGE_NAME:latest
+            docker ps -a | grep $IMAGE_NAME

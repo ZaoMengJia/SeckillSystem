@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"bank-seckill/common"
+	"bank-seckill/response"
 	"bytes"
 	"crypto/md5"
 	"encoding/base64"
@@ -10,8 +12,6 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/golang-jwt/jwt"
 	"github.com/spf13/viper"
-	"goweb/common"
-	"goweb/response"
 	"io/ioutil"
 	"log"
 	"net/http"

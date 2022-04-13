@@ -1,0 +1,17 @@
+server:
+  port: 8092
+
+spring:
+  application:
+    name: bank-stock
+  datasource:
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+      connection-timeout: 600000
+      maximum-pool-size: 500
+      max-lifetime: 1800000
+      minimum-idle: 20
+      validation-timeout: 3000
+      idle-timeout: 60000
+
+

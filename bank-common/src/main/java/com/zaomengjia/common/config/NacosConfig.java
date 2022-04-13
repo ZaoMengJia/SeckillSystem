@@ -27,30 +27,30 @@ public class NacosConfig {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Bean
-    @Primary
-    @Profile("dev")
-    public NacosDiscoveryProperties nacosPropertiesOnDev() {
-        //获取公网ip
-        String ip = getIp();
-        logger.info("当前ip为{}", ip);
-
-        //        nacosDiscoveryProperties.setIp(ip);
-        return new NacosDiscoveryProperties();
-    }
-
-    @Bean
-    @Primary
-    @Profile("prod")
-    public NacosDiscoveryProperties nacosPropertiesOnProd() {
-        //获取公网ip
-        String ip = getIp();
-        logger.info("当前ip为{}", ip);
-
-        NacosDiscoveryProperties nacosDiscoveryProperties = new NacosDiscoveryProperties();
-        nacosDiscoveryProperties.setIp(ip);
-        return nacosDiscoveryProperties;
-    }
+//    @Bean
+//    @Primary
+//    @Profile("dev")
+//    public NacosDiscoveryProperties nacosPropertiesOnDev() {
+//        //获取公网ip
+//        String ip = getIp();
+//        logger.info("当前ip为{}", ip);
+//
+//        //        nacosDiscoveryProperties.setIp(ip);
+//        return new NacosDiscoveryProperties();
+//    }
+//
+//    @Bean
+//    @Primary
+//    @Profile("prod")
+//    public NacosDiscoveryProperties nacosPropertiesOnProd() {
+//        //获取公网ip
+//        String ip = getIp();
+//        logger.info("当前ip为{}", ip);
+//
+//        NacosDiscoveryProperties nacosDiscoveryProperties = new NacosDiscoveryProperties();
+//        nacosDiscoveryProperties.setIp(ip);
+//        return nacosDiscoveryProperties;
+//    }
 
     @SneakyThrows
     private String getIp() {

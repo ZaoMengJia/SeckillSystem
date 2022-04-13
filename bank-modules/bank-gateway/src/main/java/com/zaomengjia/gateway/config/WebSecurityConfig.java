@@ -154,7 +154,7 @@ public class WebSecurityConfig {
                 //3. token验证
                 .addFilterAfter(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 //4. 签名验证
-                //.addFilterBefore(signatureFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterBefore(signatureFilter, SecurityWebFiltersOrder.AUTHENTICATION)
 
                 .csrf().disable().exceptionHandling()
 

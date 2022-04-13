@@ -8,18 +8,22 @@ seckill:
 rabbitmq:
   username: admin
   password: admin
-  url: localhost:5672
+  url: host.docker.internal:5672
 
 redis:
   password: 73wjWEqnrcPG1fJd
-  url: localhost
+  url: host.docker.internal
   port: 6379
 
 server:
-  port: 8090
+  port: 8099
 
 datasource:
   username: zmj
   password: by5ovOkw@m@S50Fo
-  url: nowcent-database.mysql.rds.aliyuncs.com
-  database: zmj
+  url: 172.31.32.230
+  database: sxfcds2104046
+
+nacos:
+  url: host.docker.internal
+  port: 8848
