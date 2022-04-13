@@ -11,8 +11,6 @@ jobs:
     env:
       FILE_FOLDER_NAME: bank-stock
       IMAGE_NAME: zmj-stock
-      CONTAINER_PORT: 8092
-      PORT: 8092
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 1.8

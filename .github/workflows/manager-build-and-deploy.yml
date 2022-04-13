@@ -11,8 +11,6 @@ jobs:
     env:
       FILE_FOLDER_NAME: bank-manager
       IMAGE_NAME: zmj-manager
-      CONTAINER_PORT: 8001
-      PORT: 8001
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 1.8
