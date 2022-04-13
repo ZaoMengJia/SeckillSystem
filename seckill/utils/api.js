@@ -2,17 +2,17 @@ const { sign, RequestType } = require("./signUtils");
 
 const BASE_PATH ='http://localhost:8811';
 
-const request = (url, method, data, header, showLoading, isForm = false) => {
+const request = (url, method, data, header, showLoading) => {
     return new Promise((resolve, reject) => {
         if (showLoading){
             wx.showLoading({
                 title: '加载中',
             })
         }
-        let isJson = false;
-        if(method === 'POST' || method === 'post') {
+        let isJson = true;
+        if(method === 'GET' || method === 'get' || header['content-type'] === 'x-www-form-urlencoded') {
             //微信默认POST传json
-            isJson = true;
+            isJson = false;
         }
         let signData = sign(isJson ? RequestType.json : RequestType.query, data);
         
@@ -64,7 +64,7 @@ module.exports = {
     request,
     //用户
     login: (data) => {//登录
-        return request('/auth/weixin', 'POST', data, {'content-type':'application/x-www-form-urlencoded'}, false)
+        return request('/auth/weixin', 'POST', data, {'content-type':'application/x-www-form-urlencoded'}, false, false)
     },
     saveInfo: (data) =>{//注册
         return request('/weixin/user/'+data.userId, 'PUT', data.body, {'Authorization': data.token}, false)

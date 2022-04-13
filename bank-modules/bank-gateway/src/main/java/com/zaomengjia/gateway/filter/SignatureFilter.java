@@ -18,6 +18,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -85,11 +86,31 @@ public class SignatureFilter implements WebFilter {
             return chain.filter(exchange.mutate().request(decorator).build());
         }
         else {
-            Map<String, String> map = request.getQueryParams().toSingleValueMap();
-            map.remove("t");
-            String input = JSON.toJSONString(new TreeMap<>(map));
-            verifySignature(input, requestNonce, requestTimestamp, requestSignature);
-            return chain.filter(exchange);
+            ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                @NotNull
+                @Override
+                public Flux<DataBuffer> getBody() {
+                    return super.getBody().doOnNext(buffer -> {
+                        Map<String, String> map = request.getQueryParams().toSingleValueMap();
+
+                        String body = String.valueOf(StandardCharsets.UTF_8.decode(buffer.asByteBuffer()));
+                        for (String s : body.split("&")) {
+                            String[] split = s.split("=");
+                            if(split.length != 2) {
+                                throw new AppException(ResultCode.INVALID_SIGNATURE);
+                            }
+                            map.put(split[0], split[1]);
+                        }
+
+                        map.remove("t");
+                        String input = JSON.toJSONString(new TreeMap<>(map));
+                        verifySignature(input, requestNonce, requestTimestamp, requestSignature);
+                    });
+                }
+            };
+
+
+            return chain.filter(exchange.mutate().request(decorator).build());
         }
     }
 
