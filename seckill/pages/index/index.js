@@ -21,13 +21,12 @@ Page({
         }).then(res => {
           wx.setStorageSync("isRegistered", res.data.isRegistered)
           wx.setStorageSync("isAudited", res.data.isAudited)
-          console.log(res.data)
           wx.redirectTo({
-            url: '../product_list/product_list'
+            url: '../activity_list/activity_list'
           })
           // if(res.data.isRegistered){
           //   wx.redirectTo({
-          //     url: '../product_list/product_list'
+          //     url: '../activity_list/activity_list'
           //   })
           // }else{
           //   wx.redirectTo({

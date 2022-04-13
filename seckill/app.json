@@ -2,8 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/register/register",
-    "pages/product_detail/product_detail",
-    "pages/product_list/product_list",
+    "pages/activity_detail/activity_detail",
+    "pages/activity_list/activity_list",
     "pages/seckill_result_list/seckill_result_list"
   ],
   "window": {

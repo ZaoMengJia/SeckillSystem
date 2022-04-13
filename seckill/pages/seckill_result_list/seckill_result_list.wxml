@@ -28,7 +28,7 @@
 
 
 <view class="cu-bar tabbar bg-white bar-wrapper">
-    <view class="action {{barIndex===0?'text-orange':'text-grey'}}" bind:tap="onProductListTab">
+    <view class="action {{barIndex===0?'text-orange':'text-grey'}}" bind:tap="onActivityListTab">
         <view class="cuIcon-homefill"></view>
         秒杀活动
     </view>

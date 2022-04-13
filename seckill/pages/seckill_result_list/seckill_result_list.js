@@ -1,4 +1,5 @@
 import {getSecKillResultListByUser} from "../../utils/api";
+
 const app = getApp()
 
 Page({
@@ -18,16 +19,16 @@ Page({
     onPullDownRefresh() {
         this.getUserAllResult()
     },
-    onProductListTab() {
+    onActivityListTab() {
         wx.redirectTo({
-            url: '../product_list/product_list'
+            url: '../activity_list/activity_list'
         })
     },
     getUserAllResult() {
         getSecKillResultListByUser({
             userId: app.globalData.userId,
             token: app.globalData.token
-        }).then(res =>{
+        }).then(res => {
             console.log(res)
             this.setData({
                 resultList: res.data.data

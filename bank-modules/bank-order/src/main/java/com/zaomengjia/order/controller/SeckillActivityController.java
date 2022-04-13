@@ -78,9 +78,9 @@ public class SeckillActivityController {
 
     @Operation(summary = "抢购活动列表")
     @GetMapping("/list")
-    public ResultVO<?> getSeckillList() {
-        List<SeckillActivityVO> list = seckillService.getSeckillActivityList();
-        return ResultUtils.success(list);
+    public ResultVO<?> getSeckillList(@RequestParam int pageNum,@RequestParam int pageSize) {
+        PageVO<SeckillActivityVO> activityListPage = seckillService.getSeckillActivityListPage(pageNum, pageSize);
+        return ResultUtils.success(activityListPage);
     }
 
     @Operation(summary = "抢购活动详情")
