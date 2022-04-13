@@ -21,6 +21,8 @@ public interface OrderService {
 
     FinancialProductVO modelToVO(FinancialProduct financialProduct);
 
+    PageVO<OrderVO> getUserOrderList(String userId);
+
     PageVO<OrderVO> getUserOrderList(String userId, int pageNum, int pageSize);
 
     Order getOrder(String orderId);
@@ -38,4 +40,6 @@ public interface OrderService {
     OrderVO getOrderDetail(String id);
 
     OrderStatus getOrderStatus(String id);
+
+
 }

@@ -65,13 +65,13 @@ public class UserController {
 
     @Operation(summary = "用户订单", tags = "订单")
     @GetMapping("/order/{userId}")
-    public ResultVO<?> getUserOrder(@PathVariable String userId, @RequestParam int pageNum, @RequestParam int pageSize, @RequestHeader(RequestHeaderKey.AUTHORIZATION) String token) {
+    public ResultVO<?> getUserOrder(@PathVariable String userId, @RequestHeader(RequestHeaderKey.AUTHORIZATION) String token) {
         String tokenUserId = (String) JWT.of(token).getPayload().getClaim("userId");
         if(!tokenUserId.equals(userId)) {
             throw new AppException(ResultCode.INVALID_REQUEST_ERROR);
         }
 
-        PageVO<OrderVO> userOrderList = orderService.getUserOrderList(userId, pageNum, pageSize);
+        PageVO<OrderVO> userOrderList = orderService.getUserOrderList(userId);
         return ResultUtils.success(userOrderList);
     }
 
