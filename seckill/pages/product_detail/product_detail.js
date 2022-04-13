@@ -1,5 +1,6 @@
 // pages/product_detail/product_detail.js
 import {getProductDetail} from "../../utils/api";
+import Toast from "../../miniprogram_npm/@vant/weapp/toast/toast";
 
 Page({
 
@@ -29,6 +30,11 @@ Page({
   },
 
   onSecKill(){
-
+    const isAudited = wx.getStorageSync("isAudited")
+    if(isAudited){
+      //TODO 秒杀
+    }else{
+      Toast.fail("无抢购资格!")
+    }
   }
 })

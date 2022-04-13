@@ -1,10 +1,6 @@
 package com.zaomengjia.common.constant;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @author orangeboyChen
@@ -12,9 +8,6 @@ import java.util.Optional;
  * @date 2022/4/12 00:07
  */
 public final class RedisKey {
-    public static String saleProductDetailKey(String orderId, String financialId, String activityId) {
-        return MessageFormat.format("{0}::{1}::{2}", Optional.ofNullable(orderId).orElse("-"), Optional.ofNullable(financialId).orElse("-"), Optional.of(activityId).orElse("-"));
-    }
 
     public static String saleProductDetailActivityIdProductIdKeyMapKey() {
         return "sale-product-detail-activity-id-product-id-key-map";
@@ -24,8 +17,8 @@ public final class RedisKey {
         return "sale-product-detail-id-key-map";
     }
 
-    public static String saleProductDetailMapKey() {
-        return "sale-product-detail";
+    public static String saleProductDetailKey(String id, String financialProductId, String seckillActivityId) {
+        return MessageFormat.format("sale-product-detail::{0}::{1}::{2}", id, financialProductId, seckillActivityId);
     }
 
     public static String orderIdKeyMapKey() {
@@ -40,8 +33,8 @@ public final class RedisKey {
         return MessageFormat.format("seckill-token-bucket::{0}::{1}", financialProductId, seckillActivityId);
     }
 
-    public static String stockMapKey() {
-        return "stock";
+    public static String stockMapKey(String financialProductId, String seckillActivityId) {
+        return "stock-detail::" + financialProductId + "::" + seckillActivityId;
     }
 
     public static String stockDirtyKey() {

@@ -125,8 +125,13 @@ public class SeckillServiceImpl implements SeckillService {
     }
 
     @Override
-    public PageVO<SeckillActivityVO> getSeckillActivityList(int pageNum, int pageSize) {
+    public PageVO<SeckillActivityVO> getSeckillActivityListPage(int pageNum, int pageSize) {
         Page<SeckillActivity> entityPage = seckillActivityMapper.findAll(PageRequest.of(pageNum, pageSize));
         return new PageVO<>(entityPage.map(this::modelToVO));
+    }
+
+    @Override
+    public List<SeckillActivityVO> getSeckillActivityList() {
+        return seckillActivityMapper.findAll().stream().map(this::modelToVO).collect(Collectors.toList());
     }
 }

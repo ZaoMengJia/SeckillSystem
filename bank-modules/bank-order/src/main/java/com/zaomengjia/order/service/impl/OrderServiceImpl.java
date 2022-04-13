@@ -1,6 +1,6 @@
 package com.zaomengjia.order.service.impl;
 
-import com.alibaba.nacos.common.utils.UuidUtils;
+import cn.hutool.core.lang.UUID;
 import com.zaomengjia.common.constant.OrderStatus;
 import com.zaomengjia.common.constant.RabbitMQConstant;
 import com.zaomengjia.common.constant.ResultCode;
@@ -22,14 +22,15 @@ import com.zaomengjia.common.vo.page.PageVO;
 import com.zaomengjia.order.service.OrderService;
 import com.zaomengjia.order.service.SeckillService;
 import com.zaomengjia.common.utils.RedisUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author orangeboyChen
@@ -59,6 +60,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final StockSimpleService stockSimpleService;
 
+    private final ThreadPoolExecutor rabbitMqAsyncServiceExecutor;
+
     public OrderServiceImpl(
             OrderMapper orderMapper,
             RabbitTemplate rabbitTemplate,
@@ -69,7 +72,8 @@ public class OrderServiceImpl implements OrderService {
             SaleProductDetailSimpleService saleProductDetailSimpleService,
             SeckillService seckillService,
             FinancialProductSimpleService financialProductSimpleService,
-            StockSimpleService stockSimpleService
+            StockSimpleService stockSimpleService,
+            ThreadPoolExecutor rabbitMqAsyncServiceExecutor
     ) {
         this.rabbitTemplate = rabbitTemplate;
         this.orderMapper = orderMapper;
@@ -81,6 +85,7 @@ public class OrderServiceImpl implements OrderService {
         this.saleProductDetailSimpleService = saleProductDetailSimpleService;
         this.financialProductSimpleService = financialProductSimpleService;
         this.stockSimpleService = stockSimpleService;
+        this.rabbitMqAsyncServiceExecutor = rabbitMqAsyncServiceExecutor;
     }
 
     @Override
@@ -102,9 +107,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public FinancialProductVO modelToVO(FinancialProduct financialProduct) {
         return new FinancialProductVO()
-                .setId(financialProduct.getName())
+                .setId(financialProduct.getId())
                 .setPrice((double) financialProduct.getPrice() / 100)
                 .setName(financialProduct.getName());
+    }
+
+    @Override
+    public PageVO<OrderVO> getUserOrderList(String userId) {
+        Page<Order> entityPage = orderMapper.findByUserId(userId, null);
+        return new PageVO<>(entityPage.map(this::modelToVO));
     }
 
     @Override
@@ -131,13 +142,13 @@ public class OrderServiceImpl implements OrderService {
     public String createOrder(String userId, String seckillActivityId, String financialProductId) {
         //看看这个秒杀活动在不在
         SaleProductDetail saleProductDetail = getSaleProductDetailEntity(financialProductId, seckillActivityId);
+
         if(saleProductDetail == null) {
             throw new AppException(ResultCode.NO_SUCH_ACTIVITY_ERROR);
         }
 
         //组建订单
         Order order = new Order();
-        order.setId(UuidUtils.generateUuid());
         order.setFinancialProductId(saleProductDetail.getFinancialProductId());
         order.setSeckillActivityId(saleProductDetail.getSeckillActivityId());
         order.setUserId(userId);
@@ -154,27 +165,27 @@ public class OrderServiceImpl implements OrderService {
 //            throw new AppException(ResultCode.ORDER_EXCEED_LIMIT);
 //        }
 
-        //从令牌桶找一个令牌
-        String token = stockSimpleService.getToken(financialProductId, seckillActivityId);
-        if(token == null) {
-            //没有令牌了，说明卖光了
-            throw new AppException(ResultCode.SELL_OUT);
-        }
 
-        //尝试把令牌从令牌桶里拿出来
-        if(!stockSimpleService.consumeToken(financialProductId, seckillActivityId, token)) {
+        //尝试把一个令牌从令牌桶里拿出来
+        if(stockSimpleService.attemptGetToken(financialProductId, seckillActivityId) == null) {
             //消费失败
-            throw new AppException(ResultCode.SECKILL_RETRY);
+            //Todo: 压测暂时注释
+//            throw new AppException(ResultCode.SELL_OUT);
         }
 
         //拿到了令牌，开始创建订单
+        order.setId(UUID.fastUUID().toString(true));
         order.setStatus(OrderStatus.CREATING);
+
 
         //预订单保存在redis中
         orderSimpleService.setCache(order);
 
         //创建消息队列，让库存服务进行持久化
-        rabbitTemplate.convertAndSend(RabbitMQConstant.DEFAULT_EXCHANGE_NAME, RabbitMQConstant.CREATE_ORDER_ROUTING_NAME, order);
+        rabbitMqAsyncServiceExecutor.execute(() -> {
+            rabbitTemplate.convertAndSend(RabbitMQConstant.DEFAULT_EXCHANGE_NAME, RabbitMQConstant.CREATE_ORDER_ROUTING_NAME, order);
+        });
+
 
         //给前端一个订单号，供查询订单是否创建成功
         return order.getId();
@@ -204,6 +215,12 @@ public class OrderServiceImpl implements OrderService {
     public OrderVO getOrderDetail(String id) {
         Order order = getOrder(id);
         return modelToVO(order);
+    }
+
+    @Override
+    public OrderStatus getOrderStatus(String id) {
+        Order order = getOrder(id);
+        return order.getStatus();
     }
 
 

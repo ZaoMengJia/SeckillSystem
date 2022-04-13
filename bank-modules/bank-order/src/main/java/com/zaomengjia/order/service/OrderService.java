@@ -1,5 +1,6 @@
 package com.zaomengjia.order.service;
 
+import com.zaomengjia.common.constant.OrderStatus;
 import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.entity.SaleProductDetail;
@@ -20,6 +21,8 @@ public interface OrderService {
 
     FinancialProductVO modelToVO(FinancialProduct financialProduct);
 
+    PageVO<OrderVO> getUserOrderList(String userId);
+
     PageVO<OrderVO> getUserOrderList(String userId, int pageNum, int pageSize);
 
     Order getOrder(String orderId);
@@ -35,4 +38,8 @@ public interface OrderService {
     List<FinancialProduct> getFinancialProductEntityList(List<String> idList);
 
     OrderVO getOrderDetail(String id);
+
+    OrderStatus getOrderStatus(String id);
+
+
 }

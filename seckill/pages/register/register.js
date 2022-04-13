@@ -103,12 +103,10 @@ Page({
                 "idCard": this.data.idCard,
                 "birthday": this.data.birthday,
                 "realName": this.data.realName
-            }
+            },
+            token: app.globalData.token
         }
-        const header = {
-            'Authorization': app.globalData.token
-        }
-        saveInfo(data, header).then(res => {
+        saveInfo(data).then(res => {
             console.log(res)
         }).then(res =>{
             wx.redirectTo({

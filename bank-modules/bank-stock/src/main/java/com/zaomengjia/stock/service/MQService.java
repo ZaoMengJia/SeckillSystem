@@ -12,12 +12,5 @@ import java.util.List;
  * @date 2022/4/10 01:28
  */
 public interface MQService {
-
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(RabbitMQConstant.ORDER_QUEUE_NAME),
-            exchange = @Exchange(RabbitMQConstant.ORDER_QUEUE_NAME),
-            key = {RabbitMQConstant.CREATE_ORDER_ROUTING_NAME}
-    ))
-    @RabbitHandler
     void onReceivedCreateOrderMessage(Order order);
 }

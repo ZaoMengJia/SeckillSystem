@@ -24,6 +24,8 @@ export function sign(requestType = RequestType.query, body = {}) {
     let data = requestType != RequestType.body ? sortObject(body) : body;
     let input = JSON.stringify(data) + nonce + timestamp + appKey;
     let signature = Base64.encode(MD5.md5(input)).replaceAll(/[/=+]/g, '');
+    console.log(input);
+    console.log({nonce, timestamp, signature});
     return {nonce, timestamp, signature};
 }
 

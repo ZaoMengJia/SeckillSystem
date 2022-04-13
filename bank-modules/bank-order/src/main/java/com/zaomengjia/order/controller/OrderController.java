@@ -1,6 +1,8 @@
 package com.zaomengjia.order.controller;
 
 import cn.hutool.jwt.JWT;
+import com.alibaba.fastjson.JSONObject;
+import com.zaomengjia.common.constant.OrderStatus;
 import com.zaomengjia.common.constant.RequestHeaderKey;
 import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.exception.AppException;
@@ -33,5 +35,14 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResultVO<?> getOrderDetail(@PathVariable String orderId) {
         return ResultUtils.success(orderService.getOrderDetail(orderId));
+    }
+
+    @Operation(summary = "订单状态")
+    @GetMapping("/status/{orderId}")
+    public ResultVO<?> getOrderStatus(@PathVariable String orderId) {
+        OrderStatus orderStatus = orderService.getOrderStatus(orderId);
+        JSONObject json = new JSONObject();
+        json.put("status", orderStatus);
+        return ResultUtils.success(json);
     }
 }

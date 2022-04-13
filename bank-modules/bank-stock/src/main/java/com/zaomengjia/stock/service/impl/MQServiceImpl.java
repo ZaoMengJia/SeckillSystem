@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -56,8 +57,16 @@ public class MQServiceImpl implements MQService {
         this.asyncServiceExecutor = asyncServiceExecutor;
     }
 
-    @RabbitHandler
+//    @RabbitHandler
     public void onReceivedCreateOrderMessage(Order order)  {
+        saveOrder(order);
+    }
+
+    @RabbitHandler
+    public void onReceived(@Payload byte[] bytes) {
+        String s = new String(bytes);
+        Order order = JSON.parseObject(s, Order.class);
+
         saveOrder(order);
     }
 

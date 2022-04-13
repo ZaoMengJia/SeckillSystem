@@ -169,6 +169,10 @@ public final class RedisUtils {
         return redisTemplate.opsForValue().decrement(key, delta);
     }
 
+    public long decr(String key) {
+        return redisTemplate.opsForValue().decrement(key);
+    }
+
 
     // ================================Map=================================
 
@@ -239,7 +243,7 @@ public final class RedisUtils {
      * @param value 值
      * @return true 成功 false失败
      */
-    public boolean hset(String key, String item, Object value) {
+    public boolean hset(String key, String item, String value) {
         try {
             redisTemplate.opsForHash().put(key, item, value);
             return true;
@@ -376,6 +380,15 @@ public final class RedisUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public Object sPop(String key) {
+        try {
+            return redisTemplate.opsForSet().pop(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

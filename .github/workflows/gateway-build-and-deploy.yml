@@ -41,8 +41,8 @@ jobs:
       - name: Set ssh environment
         run: |
           mkdir -p ~/.ssh/
-          echo "${{ secrets.GATEWAY_RSA }}" > ~/.ssh/id_rsa
-          echo "${{ secrets.GATEWAY_RSA_PUB }}" > ~/.ssh/id_rsa.pub
+          echo "${{ secrets.RSA }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.RSA_PUB }}" > ~/.ssh/id_rsa.pub
           cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
           cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys2
           chmod 640 ~/.ssh/authorized_keys
@@ -52,9 +52,9 @@ jobs:
       - name: Deploy docker image to target server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.GATEWAY_HOST }} #服务器ip地址
-          username: ${{ secrets.GATEWAY_USERNAME }} #服务器ssh用户名
-          password: ${{ secrets.GATEWAY_PASSWORD }} #服务器ssh证书密码
+          host: ${{ secrets.HOST }} #服务器ip地址
+          username: ${{ secrets.USERNAME }} #服务器ssh用户名
+          password: ${{ secrets.PASSWORD }} #服务器ssh证书密码
           port: 22
           script: |
             if docker ps -a|grep -i zmj-gateway;then 

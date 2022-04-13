@@ -18,10 +18,13 @@ import io.netty.util.internal.StringUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author orangeboyChen
@@ -36,6 +39,8 @@ public class SeckillActivityController {
     private final SeckillService seckillService;
 
     private final OrderService orderService;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${sec-kill.url.key}")
     private String key;
@@ -73,8 +78,8 @@ public class SeckillActivityController {
 
     @Operation(summary = "抢购活动列表")
     @GetMapping("/list")
-    public ResultVO<?> getSeckillList(@RequestParam int pageNum, @RequestParam int pageSize) {
-        PageVO<SeckillActivityVO> list = seckillService.getSeckillActivityList(pageNum, pageSize);
+    public ResultVO<?> getSeckillList() {
+        List<SeckillActivityVO> list = seckillService.getSeckillActivityList();
         return ResultUtils.success(list);
     }
 

@@ -57,9 +57,8 @@ public class StockSimpleService {
         }
     }
 
-    public boolean consumeToken(String financialProductId, String seckillActivityId, String token) {
-        long l = redisUtils.setRemove(tokenBucketMapKey(financialProductId, seckillActivityId), token);
-        return l > 0;
+    public String attemptGetToken(String financialProductId, String seckillActivityId) {
+        return (String) redisUtils.sPop(tokenBucketMapKey(financialProductId, seckillActivityId));
     }
 
     public Set<String> getDirtyStockKeySet() {
@@ -86,20 +85,20 @@ public class StockSimpleService {
     }
 
     public long getStock(String financialProductId, String seckillActivityId) {
-        Integer get = (Integer) redisUtils.hget(stockMapKey(), financialProductId + "::" + seckillActivityId);
+        Integer get = (Integer) redisUtils.get(stockMapKey(financialProductId, seckillActivityId));
         return get != null ? get : 0;
     }
 
     public void setStock(String financialProductId, String seckillActivityId, long quantity) {
-        redisUtils.hset(stockMapKey(), financialProductId + "::" + seckillActivityId, quantity);
+        redisUtils.set(stockMapKey(financialProductId, seckillActivityId), quantity);
     }
 
     public boolean decrStock(String financialProductId, String seckillActivityId, long quantity) {
-        long newValue = redisUtils.hdecr(stockMapKey(), financialProductId + "::" + seckillActivityId, quantity);
+        long newValue = redisUtils.decr(stockMapKey(financialProductId, seckillActivityId));
         setDirtyStock(financialProductId, seckillActivityId, true);
         if(newValue < 0) {
             //相当于事务回滚
-            redisUtils.hincr(stockMapKey(), financialProductId + "::" + seckillActivityId, quantity);
+            redisUtils.incr(stockMapKey(financialProductId, seckillActivityId), quantity);
             return false;
         }
         return true;

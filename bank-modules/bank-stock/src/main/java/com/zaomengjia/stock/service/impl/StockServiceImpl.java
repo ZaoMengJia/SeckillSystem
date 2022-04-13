@@ -7,6 +7,7 @@ import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.service.OrderSimpleService;
+import com.zaomengjia.common.service.SaleProductDetailSimpleService;
 import com.zaomengjia.common.service.StockSimpleService;
 import com.zaomengjia.stock.service.StockService;
 import com.zaomengjia.common.utils.RedisUtils;
@@ -47,35 +48,38 @@ public class StockServiceImpl implements StockService {
 
     private final RedisUtils redisUtils;
 
+    private final SaleProductDetailSimpleService saleProductDetailSimpleService;
+
     public StockServiceImpl(
             OrderMapper orderMapper,
             SaleProductDetailMapper saleProductDetailMapper,
             OrderSimpleService orderSimpleService,
             RedisUtils redisUtils,
-            StockSimpleService stockSimpleService
+            StockSimpleService stockSimpleService,
+            SaleProductDetailSimpleService saleProductDetailSimpleService
     ) {
         this.orderMapper = orderMapper;
         this.saleProductDetailMapper = saleProductDetailMapper;
         this.orderSimpleService = orderSimpleService;
         this.redisUtils = redisUtils;
         this.stockSimpleService = stockSimpleService;
+        this.saleProductDetailSimpleService = saleProductDetailSimpleService;
     }
 
 
 
-    @Transactional
     public void saveOrder(Order order) {
         try {
             //减商品库存
-            SaleProductDetail detail = saleProductDetailMapper.findByFinancialProductIdAndSeckillActivityId(order.getFinancialProductId(), order.getSeckillActivityId());
+            SaleProductDetail detail = saleProductDetailSimpleService.findByFinancialProductIdAndSeckillActivityId(order.getFinancialProductId(), order.getSeckillActivityId());
             if(detail == null || detail.getQuantity() < order.getQuantity()) {
-                throw new Exception();
+                throw new Exception("无法创建订单：订单余量不满足需求");
             }
 
 
             boolean isSuccess = stockSimpleService.decrStock(order.getFinancialProductId(), order.getSeckillActivityId(), order.getQuantity());
             if(!isSuccess) {
-                throw new Exception();
+                throw new Exception("无法创建订单：已售罄");
             }
             needUpdateDetailMap.put(order.getFinancialProductId()+ "::" + order.getSeckillActivityId(), detail);
 
@@ -85,9 +89,15 @@ public class StockServiceImpl implements StockService {
             //缓存重设
             order.setStatus(OrderStatus.NORMAL);
             orderSimpleService.setCache(order);
-            logger.info("订单{}创建成功 {}", order.getId(), Thread.currentThread().getName());
+            logger.trace("订单{}创建成功 {}", order.getId(), Thread.currentThread().getName());
         }
         catch (Exception e) {
+            //手动回滚
+            try {
+                orderMapper.deleteById(order.getId());
+            }
+            catch (Exception ignored) {}
+
             logger.error("订单{}创建失败，订单内容为\n{}，错误", order.getId(), JSON.toJSONString(order), e);
 
             //设置订单失败
@@ -97,7 +107,7 @@ public class StockServiceImpl implements StockService {
             orderSimpleService.setCache(order, 4 * 60 * 60);
 
             //开始回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
     }
 }

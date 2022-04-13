@@ -23,10 +23,10 @@ public class DatabaseConfig {
     @Bean
     public ThreadPoolExecutor asyncServiceExecutor() {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                200,
-                10000,
-                2,
-                TimeUnit.SECONDS,
+                16,
+                500,
+                1,
+                TimeUnit.MINUTES,
                 new LinkedBlockingQueue<>(500)
         );
 
