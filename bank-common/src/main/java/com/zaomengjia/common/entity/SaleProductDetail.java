@@ -39,13 +39,13 @@ public class SaleProductDetail {
     private String financialProductId;
 
     /**
-     * 活动抢购数量
+     * 活动剩余数量
      */
     @Column(name = "quantity")
     private long quantity;
 
     /**
-     * 总数
+     * 活动总数
      */
     @Column(name = "total")
     private int total;

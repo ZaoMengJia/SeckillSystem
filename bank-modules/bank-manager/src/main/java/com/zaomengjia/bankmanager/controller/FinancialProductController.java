@@ -25,7 +25,7 @@ public class FinancialProductController {
     }
 
     @GetMapping("/getProductById/{id}")
-    public ResultVO<?> getProductById(@PathVariable long id){
+    public ResultVO<?> getProductById(@PathVariable String id){
         try{
             return ResultUtils.success(financialProductService.getFinancialProductById(id));
         }catch (Exception e){
@@ -62,7 +62,7 @@ public class FinancialProductController {
     }
 
     @DeleteMapping("/deleteProduct/{id}")
-    public ResultVO<?> deleteProduct(@PathVariable long id){
+    public ResultVO<?> deleteProduct(@PathVariable String id){
         try{
             financialProductService.deleteFinancialProduct(id);
             return ResultUtils.success();

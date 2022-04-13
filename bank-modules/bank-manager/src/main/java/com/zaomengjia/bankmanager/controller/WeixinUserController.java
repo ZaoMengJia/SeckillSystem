@@ -37,7 +37,6 @@ public class WeixinUserController {
         return ResultUtils.success(result);
     }
 
-
     @Operation(summary = "搜索")
     @GetMapping("/search")
     public ResultVO<?> searchWeixinUser(@RequestParam String keyword,

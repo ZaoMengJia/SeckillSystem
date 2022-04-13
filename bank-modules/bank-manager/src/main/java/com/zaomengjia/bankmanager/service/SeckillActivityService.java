@@ -14,11 +14,11 @@ public interface SeckillActivityService {
 
     SeckillActivity getSeckillActivityByName(String name);
 
-    SeckillActivity getSeckillActivityById(long id);
+    SeckillActivity getSeckillActivityById(String id);
 
     void addSeckillActivity(SeckillActivity seckillActivity);
 
-    void deleteSeckillActivity(long id);
+    void deleteSeckillActivity(String id);
 
     void updateSeckillActivity(SeckillActivity seckillActivity);
 

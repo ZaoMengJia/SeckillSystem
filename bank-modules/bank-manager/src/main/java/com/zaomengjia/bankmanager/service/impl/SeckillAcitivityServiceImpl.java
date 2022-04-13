@@ -19,7 +19,7 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
 
     @Override
     public Boolean seckillActivityExist(String activityName) {
-        return seckillActivityMapper.getByName(activityName) != null;
+        return seckillActivityMapper.findByName(activityName) != null;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
     @Override
     public Map<String, Object> searchSeckillActivity(String keyword, int pageIndex, int pageSize) {
         HashMap<String, Object> map = new HashMap<>();
-        Page<SeckillActivity> result = seckillActivityMapper.getByNameLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<SeckillActivity> result = seckillActivityMapper.findByNameLike(keyword, PageRequest.of(pageIndex, pageSize));
         map.put("records", result.toList());
         map.put("total", result.getTotalElements());
         return map;
@@ -42,11 +42,11 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
 
     @Override
     public SeckillActivity getSeckillActivityByName(String name) {
-        return seckillActivityMapper.getByName(name);
+        return seckillActivityMapper.findByName(name);
     }
 
     @Override
-    public SeckillActivity getSeckillActivityById(long id) {
+    public SeckillActivity getSeckillActivityById(String id) {
         return seckillActivityMapper.findById(id).orElse(null);
     }
 
@@ -56,7 +56,7 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
     }
 
     @Override
-    public void deleteSeckillActivity(long id) {
+    public void deleteSeckillActivity(String id) {
         seckillActivityMapper.deleteById(id);
     }
 

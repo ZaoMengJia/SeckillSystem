@@ -10,9 +10,9 @@ import java.util.List;
 
 @Repository
 public interface FinancialProductMapper extends JpaRepository<FinancialProduct, String> {
-    FinancialProduct getByName(String name);
+    FinancialProduct findByName(String fname);
 
-    FinancialProduct getByPrice(int price);
+    FinancialProduct findByPrice(int price);
 
-    Page<FinancialProduct> getByNameLike(String keyword, Pageable pageable);
+    Page<FinancialProduct> findByNameLike(String keyword, Pageable pageable);
 }

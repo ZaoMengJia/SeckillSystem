@@ -19,12 +19,18 @@ public class FinancialProductServiceImpl implements FinancialProductService {
 
     @Override
     public Boolean financialProductExist(String fname) {
-        return financialProductMapper.getByFname(fname) != null;
+        return financialProductMapper.findByName(fname) != null;
     }
 
+    /**
+     * 获取全部商品
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
     @Override
     public Map<String, Object> getFinancialProduct(int pageIndex, int pageSize) {
-        Page<FinancialProduct> page = financialProductMapper.getByFnameLike("", PageRequest.of(pageIndex, pageSize));
+        Page<FinancialProduct> page = financialProductMapper.findByNameLike("", PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
         map.put("records", page.toList());
         map.put("total", page.getTotalElements());
@@ -33,7 +39,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
 
     @Override
     public Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize) {
-        Page<FinancialProduct> page = financialProductMapper.getByFnameLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<FinancialProduct> page = financialProductMapper.findByNameLike(keyword, PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
         map.put("records", page.toList());
         map.put("total", page.getTotalElements());
@@ -42,18 +48,18 @@ public class FinancialProductServiceImpl implements FinancialProductService {
 
 
     @Override
-    public FinancialProduct getFinancialProductById(long fpid) {
+    public FinancialProduct getFinancialProductById(String fpid) {
         return financialProductMapper.findById(fpid).orElse(null);
     }
 
     @Override
     public FinancialProduct getFinancialProductByPrice(int price) {
-        return financialProductMapper.getByPrice(price);
+        return financialProductMapper.findByPrice(price);
     }
 
     @Override
     public FinancialProduct getFinancialProductByName(String fname) {
-        return financialProductMapper.getByFname(fname);
+        return financialProductMapper.findByName(fname);
     }
 
     @Override
@@ -62,7 +68,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
     }
 
     @Override
-    public void deleteFinancialProduct(long fpid) {
+    public void deleteFinancialProduct(String fpid) {
          financialProductMapper.deleteById(fpid);
     }
 

@@ -49,7 +49,7 @@ public class Order implements Serializable {
     private String seckillActivityId;
 
     /**
-     * 订单数量
+     * 购买产品数量
      */
     @Column(name = "quantity")
     private long quantity;
