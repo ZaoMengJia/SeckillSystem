@@ -17,11 +17,6 @@ spring:
     name: bank-gateway
     url: host.docker.internal:8811
 
-  boot:
-    admin:
-      client:
-        url: http://host.docker.internal:8812
-
   cloud:
     gateway:
       discovery:
