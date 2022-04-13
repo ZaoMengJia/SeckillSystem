@@ -1,4 +1,4 @@
-import {BASE_PATH, login} from "./utils/api";
+    import {BASE_PATH, login} from "./utils/api";
 
 App({
     onLaunch() {

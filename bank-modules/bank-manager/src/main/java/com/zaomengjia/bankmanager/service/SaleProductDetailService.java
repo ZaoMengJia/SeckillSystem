@@ -2,22 +2,23 @@ package com.zaomengjia.bankmanager.service;
 
 import com.zaomengjia.common.entity.SaleProductDetail;
 
+import java.util.List;
 import java.util.Map;
 
 public interface SaleProductDetailService {
-    Boolean saleProductDetailExist(long said,long fpid);
+    Boolean saleProductDetailExist(String said,String fpid);
 
     Map<String,Object> getSaleProductDetail(int pageIndex,int pageSize);
 
     Map<String, Object> searchDetail(String keyword, int pageIndex, int pageSize);
 
-    SaleProductDetail getSaleProductDetailBySaid(long said);
+    List<SaleProductDetail> getSaleProductDetailBySaid(String said);
 
-    SaleProductDetail getSaleProductDetailByFpid(long fpid);
+    SaleProductDetail getSaleProductDetailByFpid(String fpid);
 
-    SaleProductDetail getSaleProductDetailBySaidAndFpid(long said,long fpid);
+    SaleProductDetail getSaleProductDetailBySaidAndFpid(String said,String fpid);
 
     void addSaleProductDetail(SaleProductDetail saleProductDetail);
-    void deleteSaleProductDetail(long said, long fpid);
+    void deleteSaleProductDetail(String said, String fpid);
     void updateSaleProductDetail(SaleProductDetail saleProductDetail);
 }

@@ -10,7 +10,7 @@ var MQPublisher *rabbitmq.Publisher
 func InitRabbitMQ() {
 	username := viper.GetString("rabbitmq.username")
 	password := viper.GetString("rabbitmq.password")
-	url := viper.GetString("rabbitmq.localhost")
+	url := viper.GetString("rabbitmq.url")
 
 	publisher, err := rabbitmq.NewPublisher(
 		"amqp://"+username+":"+password+"@"+url, rabbitmq.Config{},

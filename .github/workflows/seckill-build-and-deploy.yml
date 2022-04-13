@@ -1,0 +1,70 @@
+name: Seckill CI/CD
+
+on:
+  push:
+    tags:
+      - 'seckill-*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      FILE_FOLDER_NAME: bank-seckill
+      IMAGE_NAME: zmj-seckill
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.5
+
+      - name: Build module
+        run: |
+          cd ./bank-modules/$FILE_FOLDER_NAME/
+          pwd
+          run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
+      - name: Build docker image
+        run: |
+          cd ./bank-modules/$FILE_FOLDER_NAME/
+          docker build . --file Dockerfile --tag $IMAGE_NAME:$(date +%s)
+
+      - name: Publish to docker repository
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: orangeboy/zmj-seckill
+          username: ${{ secrets.ALI_DOCKER_HUB_USN }}
+          password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
+          registry: registry.cn-shenzhen.aliyuncs.com
+          workdir: ./bank-modules/bank-seckill/
+          tags: latest
+
+      - name: Set ssh environment
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.RSA }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.RSA_PUB }}" > ~/.ssh/id_rsa.pub
+          cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+          cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys2
+          chmod 640 ~/.ssh/authorized_keys
+          chmod 640 ~/.ssh/authorized_keys2
+          chmod 700 ~/.ssh && chmod 700 ~/.ssh/*
+          ls -l ~/.ssh/
+      - name: Deploy docker image to target server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            if docker ps -a|grep -i zmj-seckill;then 
+             docker rm -f zmj-seckill
+            fi
+            
+            if docker images -a|grep -i zmj-seckill;then
+            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-seckill
+            fi
+            
+            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-seckill:latest
+            docker run --name zmj-seckill -p 8099:8099 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-seckill:latest
+            docker ps -a | grep zmj-seckill

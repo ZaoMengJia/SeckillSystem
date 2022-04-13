@@ -1,14 +1,16 @@
-name: Springboot Admin CI/CD
+name: Order CI/CD
 
 on:
   push:
     tags:
-      - 'springboot-admin-*'
+      - 'order-*'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
+    env:
+      FILE_FOLDER_NAME: bank-order
+      IMAGE_NAME: zmj-order
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 1.8
@@ -16,26 +18,25 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Build module springboot-admin
+      - name: Build module
         run: |
           mvn -B install --file pom.xml
-          cd ./springboot-admin/
+          cd ./bank-modules/$FILE_FOLDER_NAME/
           pwd
           mvn -B package --file pom.xml
-
       - name: Build docker image
         run: |
-          cd ./springboot-admin/
-          docker build . --file Dockerfile --tag zmj-springboot-admin:$(date +%s)
+          cd ./bank-modules/$FILE_FOLDER_NAME/
+          docker build . --file Dockerfile --tag $IMAGE_NAME:$(date +%s)
 
       - name: Publish to docker repository
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: orangeboy/zmj-springboot-admin
+          name: orangeboy/zmj-order
           username: ${{ secrets.ALI_DOCKER_HUB_USN }}
           password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
           registry: registry.cn-shenzhen.aliyuncs.com
-          workdir: ./springboot-admin/
+          workdir: ./bank-modules/bank-order/
           tags: latest
 
       - name: Set ssh environment
@@ -52,19 +53,19 @@ jobs:
       - name: Deploy docker image to target server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }} #服务器ip地址
-          username: ${{ secrets.USERNAME }} #服务器ssh用户名
-          password: ${{ secrets.PASSWORD }} #服务器ssh证书密码
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            if docker ps -a|grep -i zmj-springboot-admin;then 
-             docker rm -f zmj-springboot-admin
+            if docker ps -a|grep -i zmj-order;then 
+             docker rm -f zmj-order
             fi
             
-            if docker images -a|grep -i zmj-springboot-admin;then
-            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-springboot-admin
+            if docker images -a|grep -i zmj-order;then
+            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-order
             fi
             
-            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-springboot-admin:latest
-            docker run --name zmj-springboot-admin -p 8811:8811 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-springboot-admin:latest
-            docker ps -a | grep zmj-springboot-admin
+            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-order:latest
+            docker run --name zmj-order -p 8090:8090 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-order:latest
+            docker ps -a | grep zmj-order

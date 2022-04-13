@@ -39,6 +39,12 @@ public class AdminUserController {
         return ResultUtils.success(result);
     }
 
+    @Operation(summary = "判断管理员是否存在")
+    @GetMapping("/adminExist")
+    public ResultVO<?> adminUserExist(@RequestParam String name){
+        return ResultUtils.success(userService.getAdminUserByUsername(name) != null);
+    }
+
     @Operation(summary = "通过userId获取")
     @GetMapping("/{userId}")
     public ResultVO<?> getAdminUserById(@PathVariable String userId) {

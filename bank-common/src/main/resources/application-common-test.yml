@@ -1,0 +1,68 @@
+spring:
+  redis:
+    host: localhost
+    password: 73wjWEqnrcPG1fJd
+    lettuce:
+      pool:
+        max-active: 200
+        max-idle: 160
+        min-idle: 4
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  rabbitmq:
+    username: admin
+    password: admin
+    host: localhost
+    port: 5672
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          multiplier: 2
+          max-attempts: 3
+          stateless: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/zmj?useUnicode=true&chatacterEncoding=utf-8&useSSL=false
+    username: zmj
+    password: by5ovOkw@m@S50Fo
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,log4j
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  file:
+    name: ./logs/${spring.application.name}/info.log
+  config: classpath:logback-spring.xml
+path:
+  log: ./logs/${spring.application.name}

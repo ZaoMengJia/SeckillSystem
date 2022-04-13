@@ -1,0 +1,29 @@
+jwt:
+  key: 123
+  expired-time: 100
+
+seckill:
+  path-key: 33oWwIws6iQnZWZc
+
+rabbitmq:
+  username: admin
+  password: admin
+  url: host.docker.internal:5672
+
+redis:
+  password: 73wjWEqnrcPG1fJd
+  url: host.docker.internal
+  port: 6379
+
+server:
+  port: 8099
+
+datasource:
+  username: sxfcds2104046
+  password: SX_fcds2104046
+  url: 172.31.32.230
+  database: sxfcds2104046
+
+nacos:
+  url: host.docker.internal
+  port: 8848

@@ -24,7 +24,7 @@ public class SeckillActivityController {
     }
 
     @GetMapping("/getSeckillActivityById/{id}")
-    public ResultVO<?> getSeckillActivityById(@PathVariable long id){
+    public ResultVO<?> getSeckillActivityById(@PathVariable String id){
         try{
             return ResultUtils.success(seckillActivityService.getSeckillActivityById(id));
         }catch (Exception e){
@@ -52,7 +52,7 @@ public class SeckillActivityController {
     }
 
     @DeleteMapping("/deleteSeckillActivity/{id}")
-    public ResultVO<?> deleteSeckillActivity(@PathVariable long id){
+    public ResultVO<?> deleteSeckillActivity(@PathVariable String id){
         try{
             seckillActivityService.deleteSeckillActivity(id);
             return ResultUtils.success();

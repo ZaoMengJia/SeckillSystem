@@ -65,6 +65,15 @@ public class WeixinUser {
     @Column(name = "deleted")
     private int deleted;
 
+    @Column(name = "has_job")
+    private boolean hasJob;
+
+    @Column(name = "overdue_record")
+    private int overdueRecord;
+
+    @Column(name = "is_discredit")
+    private boolean isDiscredit;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

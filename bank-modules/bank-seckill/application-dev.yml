@@ -23,3 +23,7 @@ datasource:
   password: by5ovOkw@m@S50Fo
   url: nowcent-database.mysql.rds.aliyuncs.com
   database: zmj
+
+nacos:
+  url: localhost
+  port: 8848

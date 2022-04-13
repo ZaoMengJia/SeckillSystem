@@ -24,7 +24,7 @@ public class SaleProductDetailController {
     }
 
     @GetMapping("/getSaleProductDetailBySaid/{said}")
-    public ResultVO<?> getSaleProductDetailBySaid(@PathVariable long said){
+    public ResultVO<?> getSaleProductDetailBySaid(@PathVariable String said){
         try{
             return ResultUtils.success(saleProductDetailService.getSaleProductDetailBySaid(said));
         }catch (Exception e){
@@ -33,7 +33,7 @@ public class SaleProductDetailController {
     }
 
     @GetMapping("/getSaleProductDetailByFpid/{fpid}")
-    public ResultVO<?> getSaleProductDetailByFpid(@PathVariable long fpid){
+    public ResultVO<?> getSaleProductDetailByFpid(@PathVariable String fpid){
         try{
             return ResultUtils.success(saleProductDetailService.getSaleProductDetailByFpid(fpid));
         }catch (Exception e){
@@ -42,7 +42,7 @@ public class SaleProductDetailController {
     }
 
     @GetMapping("/getSaleProductDetailBySaidAndFpid/{said}/{fpid}")
-    public ResultVO<?> getSaleProductDetailBySaidAndFpid(@PathVariable long said,@PathVariable long fpid){
+    public ResultVO<?> getSaleProductDetailBySaidAndFpid(@PathVariable String said,@PathVariable String fpid){
         try{
             return ResultUtils.success(saleProductDetailService.getSaleProductDetailBySaidAndFpid(said,fpid));
         }catch (Exception e){
@@ -63,7 +63,7 @@ public class SaleProductDetailController {
     }
 
     @DeleteMapping("/deleteSaleProductDetail/{said}/{fpid}")
-    public ResultVO<?> deleteSaleProductDetail(@PathVariable long said,@PathVariable long fpid){
+    public ResultVO<?> deleteSaleProductDetail(@PathVariable String said,@PathVariable String fpid){
         try{
             saleProductDetailService.deleteSaleProductDetail(said, fpid);
             return ResultUtils.success();

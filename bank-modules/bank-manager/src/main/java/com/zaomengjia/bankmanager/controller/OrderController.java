@@ -50,6 +50,15 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/searchOrder/{keyword}/{pageIndex}/{pageSize}")
+    public ResultVO<?> searchOrder(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
+        try{
+            return ResultUtils.success(orderService.searchOrder(keyword,pageIndex,pageSize));
+        }catch (Exception e){
+            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
+    }
+
     @PostMapping("/addOrder/{order}")
     public ResultVO<?> addOrder(@RequestBody Order order){
         try{

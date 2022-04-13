@@ -30,5 +30,5 @@
 
 ### 部署测试环境
 ```shell
-docker compose -f <文件> -d up 
+docker compose -f <文件> up -d
 ```

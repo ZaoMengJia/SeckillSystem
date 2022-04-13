@@ -4,6 +4,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/spf13/viper"
 )
 
 func NacosInit() {
@@ -19,9 +20,9 @@ func NacosInit() {
 
 	serverConfigs := []constant.ServerConfig{
 		{
-			IpAddr:      "127.0.0.1",
+			IpAddr:      viper.GetString("nacos.url"),
 			ContextPath: "/nacos",
-			Port:        8848,
+			Port:        viper.GetUint64("nacos.port"),
 			Scheme:      "http",
 		},
 	}
@@ -34,8 +35,8 @@ func NacosInit() {
 	)
 
 	namingClient.RegisterInstance(vo.RegisterInstanceParam{
-		Ip:          "127.0.0.1",
-		Port:        8848,
+		Ip:          viper.GetString("nacos.url"),
+		Port:        viper.GetUint64("nacos.port"),
 		ServiceName: "bank-seckill",
 		Weight:      10,
 		Enable:      true,

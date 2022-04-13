@@ -66,7 +66,7 @@ public class SeckillActivityController {
             //用于迷惑非法请求者
             throw new AppException(ResultCode.ACTIVITY_NOT_STARTED);
         }
-        else if(activity.getBeginTime().before(new Date())) {
+        else if(activity.getBeginTime().after(new Date())&&activity.getEndTime().before(new Date())) {
             throw new AppException(ResultCode.ACTIVITY_NOT_STARTED);
         }
 

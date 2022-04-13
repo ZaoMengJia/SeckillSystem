@@ -11,7 +11,7 @@ public interface FinancialProductService {
 
     Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize);
 
-    FinancialProduct getFinancialProductById(long fpid);
+    FinancialProduct getFinancialProductById(String fpid);
 
     FinancialProduct getFinancialProductByPrice(int price);
 
@@ -19,7 +19,7 @@ public interface FinancialProductService {
 
     void addFinancialProduct(FinancialProduct financialProduct);
 
-    void deleteFinancialProduct(long fpid);
+    void deleteFinancialProduct(String fpid);
 
     void updateFinancialProduct(FinancialProduct financialProduct);
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -18,7 +19,7 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
     SaleProductDetailMapper saleProductDetailMapper;
 
     @Override
-    public Boolean saleProductDetailExist(long said,long fpid) {
+    public Boolean saleProductDetailExist(String said,String fpid) {
         return saleProductDetailMapper.findByFinancialProductIdAndSeckillActivityId(said, fpid) !=null;
     }
 
@@ -47,17 +48,17 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
     }
 
     @Override
-    public SaleProductDetail getSaleProductDetailBySaid(long said) {
+    public List<SaleProductDetail> getSaleProductDetailBySaid(String said) {
         return saleProductDetailMapper.findBySeckillActivityId(said);
     }
 
     @Override
-    public SaleProductDetail getSaleProductDetailByFpid(long fpid) {
+    public SaleProductDetail getSaleProductDetailByFpid(String fpid) {
         return saleProductDetailMapper.findByFinancialProductId(fpid);
     }
 
     @Override
-    public SaleProductDetail getSaleProductDetailBySaidAndFpid(long said, long fpid){
+    public SaleProductDetail getSaleProductDetailBySaidAndFpid(String said, String fpid){
         return saleProductDetailMapper.findByFinancialProductIdAndSeckillActivityId(fpid, said);
     }
 
@@ -67,7 +68,7 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
     }
 
     @Override
-    public void deleteSaleProductDetail(long said, long fpid) {
+    public void deleteSaleProductDetail(String said, String fpid) {
         saleProductDetailMapper.deleteBySeckillActivityIdAndFinancialProductId(said, fpid);
     }
 
