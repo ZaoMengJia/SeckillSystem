@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "van-submit-bar": "@vant/weapp/submit-bar/index"
+    "van-submit-bar": "@vant/weapp/submit-bar/index",
+    "van-toast": "@vant/weapp/toast/index"
   },
   "enablePullDownRefresh": false
 }

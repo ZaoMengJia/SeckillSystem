@@ -38,3 +38,9 @@
     right: 0;
     bottom: 0;
 }
+
+.result-card{
+    background-color: #ffffff !important;
+    border-radius: 20rpx;
+    margin:3px 6px;
+}

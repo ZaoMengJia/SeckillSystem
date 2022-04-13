@@ -113,6 +113,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public PageVO<OrderVO> getUserOrderList(String userId) {
+        Page<Order> entityPage = orderMapper.findByUserId(userId, null);
+        return new PageVO<>(entityPage.map(this::modelToVO));
+    }
+
+    @Override
     public PageVO<OrderVO> getUserOrderList(String userId, int pageNum, int pageSize) {
         Page<Order> entityPage = orderMapper.findByUserId(userId, PageRequest.of(pageNum, pageSize));
         return new PageVO<>(entityPage.map(this::modelToVO));

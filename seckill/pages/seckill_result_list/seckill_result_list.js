@@ -1,3 +1,6 @@
+import {getSecKillResultListByUser} from "../../utils/api";
+const app = getApp()
+
 Page({
     data: {
         barIndex: 1,
@@ -21,6 +24,14 @@ Page({
         })
     },
     getUserAllResult() {
-
+        getSecKillResultListByUser({
+            userId: app.globalData.userId,
+            token: app.globalData.token
+        }).then(res =>{
+            console.log(res)
+            this.setData({
+                resultList: res.data.data
+            })
+        })
     }
 });

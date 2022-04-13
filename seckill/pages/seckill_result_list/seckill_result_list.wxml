@@ -5,16 +5,26 @@
         <image src="../../images/wave.gif" mode="scaleToFill" class="gif-wave"></image>
     </view>
     <view class="cu-list margin-top-xl margin-bottom-xl shadow-lg radius">
-        <!-- TODO -->
+        <view wx:for="{{resultList}}" wx:key="id">
+            <van-card custom-class="result-card shadow-warp" thumb-mode="aspectFill"
+                      desc-class="text-cut" title-class="text-cut"
+                      num="{{item.quantity}}"
+                      price="{{item.financialProduct.price}}"
+                      desc="{{item.seckillActivity.detail}}"
+                      title="{{item.seckillActivity.name}}"
+                      thumb="{{item.seckillActivity.image}}"
+                      data-id="{{item.id}}">
+                <view slot="price-top" style="text-align:right;">
+                    ({{item.financialProduct.name}})
+                </view>
+            </van-card>
+        </view>
         <view wx:if="{{resultList.length===0}}">
-    <van-empty description="不存在成功秒杀订单" />
-</view>
+            <van-empty description="不存在成功秒杀订单"/>
+        </view>
     </view>
     <view class="cu-tabbar-height"></view>
 </scroll-view>
-
-
-
 
 
 <view class="cu-bar tabbar bg-white bar-wrapper">
