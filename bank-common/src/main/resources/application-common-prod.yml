@@ -51,6 +51,11 @@ spring:
       ddl-auto: update
     show-sql: false
 
+  boot:
+    admin:
+      client:
+        url: http://host.docker.internal:8812
+
 management:
   endpoints:
     web:
