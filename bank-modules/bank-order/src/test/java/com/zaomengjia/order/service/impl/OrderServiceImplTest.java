@@ -5,6 +5,8 @@ import com.alibaba.nacos.common.utils.UuidUtils;
 import com.zaomengjia.common.constant.OrderStatus;
 import com.zaomengjia.common.constant.RabbitMQConstant;
 import com.zaomengjia.common.entity.Order;
+import com.zaomengjia.common.vo.bank.OrderVO;
+import com.zaomengjia.common.vo.page.PageVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;

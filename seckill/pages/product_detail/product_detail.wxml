@@ -11,6 +11,4 @@
         button-class="btnClass"
         bind:submit="onSecKill"
 />
-
-
-
+<van-toast id="van-toast" />
