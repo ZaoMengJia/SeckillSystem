@@ -1,13 +1,13 @@
 package service
 
 import (
+	"bank-seckill/common"
+	"bank-seckill/model"
+	"bank-seckill/response"
 	"encoding/json"
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 	"github.com/wagslane/go-rabbitmq"
-	"goweb/common"
-	"goweb/model"
-	"goweb/response"
 	"strings"
 )
 

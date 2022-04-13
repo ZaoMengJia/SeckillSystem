@@ -1,8 +1,8 @@
 package repository
 
 import (
+	"bank-seckill/model"
 	"gorm.io/gorm"
-	"goweb/model"
 )
 
 type SaleProductDetailDao struct {

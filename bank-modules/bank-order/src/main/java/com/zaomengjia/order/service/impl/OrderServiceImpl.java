@@ -107,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public FinancialProductVO modelToVO(FinancialProduct financialProduct) {
         return new FinancialProductVO()
-                .setId(financialProduct.getName())
+                .setId(financialProduct.getId())
                 .setPrice((double) financialProduct.getPrice() / 100)
                 .setName(financialProduct.getName());
     }

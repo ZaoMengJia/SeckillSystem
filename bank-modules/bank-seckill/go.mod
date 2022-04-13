@@ -1,4 +1,4 @@
-module goweb
+module bank-seckill
 
 go 1.17
 

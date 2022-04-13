@@ -5,6 +5,8 @@ import com.zaomengjia.common.vo.bank.SeckillActivityDetailVO;
 import com.zaomengjia.common.vo.bank.SeckillActivityVO;
 import com.zaomengjia.common.vo.page.PageVO;
 
+import java.util.List;
+
 /**
  * @author orangeboyChen
  * @version 1.0
@@ -19,5 +21,7 @@ public interface SeckillService {
 
     SeckillActivity getSeckillActivityEntity(String id);
 
-    PageVO<SeckillActivityVO> getSeckillActivityList(int pageNum, int pageSize);
+    PageVO<SeckillActivityVO> getSeckillActivityListPage(int pageNum, int pageSize);
+
+    List<SeckillActivityVO> getSeckillActivityList();
 }

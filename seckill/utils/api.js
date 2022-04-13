@@ -2,7 +2,7 @@ const { sign, RequestType } = require("./signUtils");
 
 const BASE_PATH ='http://localhost:8811';
 
-const request = (url, method, data, header, showLoading) => {
+const request = (url, method, data, header, showLoading, isForm = false) => {
     return new Promise((resolve, reject) => {
         if (showLoading){
             wx.showLoading({

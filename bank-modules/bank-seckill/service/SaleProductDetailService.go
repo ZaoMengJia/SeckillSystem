@@ -1,12 +1,12 @@
 package service
 
 import (
+	"bank-seckill/common"
+	"bank-seckill/model"
+	"bank-seckill/repository"
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis"
-	"goweb/common"
-	"goweb/model"
-	"goweb/repository"
 )
 
 type SaleProductDetailService struct {

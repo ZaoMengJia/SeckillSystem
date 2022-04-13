@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bank-seckill/controller"
 	"github.com/gin-gonic/gin"
-	"goweb/controller"
 )
 
 func CollectRoute(r *gin.Engine) *gin.Engine {

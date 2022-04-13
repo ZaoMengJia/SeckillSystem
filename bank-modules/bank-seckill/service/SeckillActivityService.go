@@ -1,9 +1,9 @@
 package service
 
 import (
-	"goweb/common"
-	"goweb/model"
-	"goweb/repository"
+	"bank-seckill/common"
+	"bank-seckill/model"
+	"bank-seckill/repository"
 )
 
 type SeckillActivityService struct {

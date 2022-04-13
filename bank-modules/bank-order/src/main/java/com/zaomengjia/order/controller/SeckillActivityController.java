@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author orangeboyChen
@@ -77,8 +78,8 @@ public class SeckillActivityController {
 
     @Operation(summary = "抢购活动列表")
     @GetMapping("/list")
-    public ResultVO<?> getSeckillList(@RequestParam int pageNum, @RequestParam int pageSize) {
-        PageVO<SeckillActivityVO> list = seckillService.getSeckillActivityList(pageNum, pageSize);
+    public ResultVO<?> getSeckillList() {
+        List<SeckillActivityVO> list = seckillService.getSeckillActivityList();
         return ResultUtils.success(list);
     }
 

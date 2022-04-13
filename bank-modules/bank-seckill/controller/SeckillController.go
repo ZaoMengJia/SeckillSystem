@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"bank-seckill/response"
+	"bank-seckill/service"
 	"crypto/md5"
 	"encoding/base64"
 	"errors"
@@ -9,8 +11,6 @@ import (
 	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/viper"
-	"goweb/response"
-	"goweb/service"
 	"strings"
 	"time"
 )

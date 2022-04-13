@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bank-seckill/common"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"goweb/common"
 	"os"
 	"strconv"
 )

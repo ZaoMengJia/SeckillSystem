@@ -1,6 +1,6 @@
 package service
 
-import "goweb/common"
+import "bank-seckill/common"
 
 type StockService struct {
 }
