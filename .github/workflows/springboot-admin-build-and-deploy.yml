@@ -19,7 +19,7 @@ jobs:
       - name: Build module springboot-admin
         run: |
           mvn -B install --file pom.xml
-          cd ./bank-modules/springboot-admin/
+          cd ./springboot-admin/
           pwd
           mvn -B package --file pom.xml
 
@@ -35,7 +35,7 @@ jobs:
           username: ${{ secrets.ALI_DOCKER_HUB_USN }}
           password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
           registry: registry.cn-shenzhen.aliyuncs.com
-          workdir: ./bank-modules/springboot-admin/
+          workdir: ./springboot-admin/
           tags: latest
 
       - name: Set ssh environment

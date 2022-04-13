@@ -28,17 +28,17 @@ jobs:
           mvn -B package --file pom.xml
       - name: Build docker image
         run: |
-          cd ./bank-modules/$IMAGE_NAME/
+          cd ./bank-modules/$FILE_FOLDER_NAME/
           docker build . --file Dockerfile --tag $IMAGE_NAME:$(date +%s)
 
       - name: Publish to docker repository
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: orangeboy/$IMAGE_NAME
+          name: orangeboy/zmj-manager
           username: ${{ secrets.ALI_DOCKER_HUB_USN }}
           password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
           registry: registry.cn-shenzhen.aliyuncs.com
-          workdir: ./bank-modules/$IMAGE_NAME/
+          workdir: ./bank-modules/bank-manager/
           tags: latest
 
       - name: Set ssh environment
@@ -60,14 +60,14 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            if docker ps -a|grep -i $IMAGE_NAME;then 
-             docker rm -f $IMAGE_NAME
+            if docker ps -a|grep -i zmj-manager;then 
+             docker rm -f zmj-manager
             fi
             
-            if docker images -a|grep -i $IMAGE_NAME;then
-            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/$IMAGE_NAME
+            if docker images -a|grep -i zmj-manager;then
+            docker rmi registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-manager
             fi
             
-            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/$IMAGE_NAME:latest
-            docker run --name $IMAGE_NAME -p $PORT:$CONTAINER_PORT -d registry.cn-shenzhen.aliyuncs.com/orangeboy/$IMAGE_NAME:latest
-            docker ps -a | grep $IMAGE_NAME
+            docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-manager:latest
+            docker run --name zmj-manager -p 8001:8001 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-manager:latest
+            docker ps -a | grep zmj-manager

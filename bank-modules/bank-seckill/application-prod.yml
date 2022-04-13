@@ -19,8 +19,8 @@ server:
   port: 8099
 
 datasource:
-  username: zmj
-  password: by5ovOkw@m@S50Fo
+  username: sxfcds2104046
+  password: SX_fcds2104046
   url: 172.31.32.230
   database: sxfcds2104046
 
