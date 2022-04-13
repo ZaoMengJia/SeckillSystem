@@ -11,7 +11,7 @@
 
     <artifactId>bank-modules</artifactId>
     <modules>
-        <module>bank-manager</module>
+<!--        <module>bank-manager</module>-->
         <module>bank-gateway</module>
         <module>bank-order</module>
         <module>bank-stock</module>
