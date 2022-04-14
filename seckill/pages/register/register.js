@@ -1,5 +1,5 @@
 // pages/register/register.js
-import {saveInfo} from "../../utils/api";
+import {saveInfo, login} from "../../utils/api";
 import {validateIdCard} from "../../utils/validate";
 import Toast from "../../miniprogram_npm/@vant/weapp/toast/toast";
 
@@ -107,11 +107,9 @@ Page({
             token: app.globalData.token
         }
         saveInfo(data).then(res => {
-            console.log(res)
-        })
-        .then(res => {
+            Toast.success("保存信息成功")
             wx.redirectTo({
-                url: '../activity_list/activity_list'
+                url: '../index/index'
             })
         })
     }
