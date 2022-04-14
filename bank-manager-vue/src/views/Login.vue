@@ -35,6 +35,8 @@
 
 <script>
 import Vcode from "vue-puzzle-vcode"
+import qs from "qs";
+import api from "@/api/api";
 export default {
   name: "Login",
   data() {
@@ -68,33 +70,35 @@ export default {
       })
     },
     //用户通过了验证
-    success(msg) {
+    success() {
       this.isShow = false; // 通过验证后，需要手动隐藏模态框
       let {account, password} = this.ruleForm;
       const that = this;
-      const qs = require('qs')
-      this.$http.post(
-          "/back/auth/web",
-          qs.stringify({
-            "username": account,
-            "password": password
-          }),
-          {
-            headers:{'Content-Type':'application/x-www-form-urlencoded',}
-          },
-      ).then(ress => {
-        if (ress.data.code === 10000) {
-          window.sessionStorage.setItem("adminLogin", "true")
-          window.sessionStorage.setItem("adminId", ress.data.data.userId)
-          window.sessionStorage.setItem("token", ress.data.data.token)
-          this.$router.push('/user'); //跳转到首页
-        } else if(ress.data.code === 404){
-          that.$message.error("迷路啦")
-        } else if(ress.data.code === 40001){
-          console.log(ress.data.code)
-          that.$message.error("用户名或密码错误")
+      this.$http({
+        method: 'post',
+        url: '/auth/web',
+        data: qs.stringify({
+          username : account,
+          password: password
+        }),
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded'
         }
       })
+      .then(res => {
+        if(res.data.code === 10000) {
+          this.$store.commit('setToken', res.data.data.token);
+          // window.sessionStorage.setItem("adminLogin", "true")
+          // window.sessionStorage.setItem("adminId", res.data.data.id)
+          this.$router.push('/user'); //跳转到首页
+        }
+        else if(res.data.code === 40001) {
+          that.$message.error("用户名或密码错误");
+        }
+        else {
+          that.$message.error(res.data.message);
+        }
+      });
     },
     // 用户点击遮罩层，应该关闭模态框
     close() {

@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -62,6 +63,11 @@ public class JwtFilter implements WebFilter {
     @NotNull
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, @NotNull WebFilterChain chain) {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        if(antPathMatcher.matchStart("/auth/**", exchange.getRequest().getURI().getPath())) {
+            return chain.filter(exchange);
+        }
+
         String jwt = exchange.getRequest().getHeaders().getFirst("Authorization");
         if(!StringUtil.isNullOrEmpty(jwt)) {
             if(!jwt.contains("Bearer ")) {

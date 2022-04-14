@@ -13,10 +13,6 @@ Vue.use(Element)
 Vue.config.productionTip = false
 Vue.prototype.$http = axios;
 
-axios.interceptors.request.use(config=>{
-  config.headers.Authorization=window.sessionStorage.getItem('token');
-  return config;
-})
 
 axios.interceptors.request.use(req => {
   req.headers.nonce = sign(RequestType.query,req.data).nonce;
@@ -27,8 +23,10 @@ axios.interceptors.request.use(req => {
   return Promise.reject(err)
 })
 
-new Vue({
+let vue = new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+
+export default vue

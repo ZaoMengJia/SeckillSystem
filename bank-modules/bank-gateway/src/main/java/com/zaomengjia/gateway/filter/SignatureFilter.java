@@ -70,11 +70,6 @@ public class SignatureFilter implements GlobalFilter, Ordered {
     @NotNull
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, @NotNull GatewayFilterChain chain) {
-
-        if(true) {
-            return chain.filter(exchange);
-        }
-
         ServerHttpRequest request = exchange.getRequest();
         HttpHeaders headers = request.getHeaders();
         String requestSignature = headers.getFirst(RequestHeaderKey.SIGNATURE);
@@ -82,7 +77,7 @@ public class SignatureFilter implements GlobalFilter, Ordered {
         String requestNonce = headers.getFirst(RequestHeaderKey.NONCE);
 
         AntPathMatcher antPathMatcher = new AntPathMatcher();
-        long count = Stream.of("/auth/**", "/admin/**", "/weixin/**")
+        long count = Stream.of("/auth/**", "/web/**", "/weixin/**")
                 .filter(path -> antPathMatcher.matchStart(path, request.getURI().getPath()))
                 .count();
         if(count == 0 || antPathMatcher.matchStart("/", request.getURI().getPath())) {
