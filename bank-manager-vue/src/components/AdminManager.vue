@@ -38,14 +38,17 @@
           <el-table-column prop="id" label="编号" width="100"> </el-table-column>
           <el-table-column prop="userName" label="管理员名" width="150">
           </el-table-column>
-          <el-table-column prop="idNumber" label="身份证号" width="300"></el-table-column>
           <!-- <el-table-column prop="password" label="密码" width="150">
           </el-table-column> -->
-          <el-table-column prop="sexForm" label="性别" width="150">
+          <el-table-column prop="avatarUrl" label="头像" width="100">
+            <template slot-scope="scope">
+              <img
+                  :src="adminParams.avatarUrl"
+                  alt=""
+                  style="width: 50px; height: 50px"
+              />
+            </template>
           </el-table-column>
-          <el-table-column prop="hasJob" label="是否工作" width="100"> </el-table-column>
-          <el-table-column prop="overdueRecord" label="失约次数" width="100"> </el-table-column>
-          <el-table-column prop="isDiscredit" label="是否为失约人" width="100"> </el-table-column>
           <el-table-column prop="operate" label="操作" width="200">
             <template slot-scope="scope">
               <el-button
@@ -75,6 +78,7 @@
         >
         </el-pagination>
       </el-card>
+
       <!-- 添加管理员dialog对话框 -->
       <el-dialog
           title="添加管理员"
@@ -99,14 +103,23 @@
                 clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="性别" prop="sexForm">
-            <el-radio-group v-model="addAdminForm.sexForm">
-              <el-radio label="男"></el-radio>
-              <el-radio label="女"></el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="身份证号" prop="idNumber">
-            <el-input v-model="addAdminForm.idNumber" clearable></el-input>
+          <el-form-item label="头像" prop="avatarUrl">
+            <el-upload
+                class="avatar-uploader"
+                action="#"
+                list-type="picture-card"
+                :limit="1"
+                :auto-upload="false"
+                :on-success="handleAddAdminAvatarSuccess"
+                :before-upload="beforeAddAdminAvatarUpload"
+            >
+              <img
+                  v-if="addAdminForm.avatarUrl"
+                  :src="addAdminForm.avatarUrl"
+                  class="userAddImg"
+              />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -132,14 +145,23 @@
           <el-form-item label="管理员名" prop="userName">
             <el-input v-model="editAdminParams.userName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="性别" prop="sexForm">
-            <el-radio-group v-model="editAdminParams.sexForm">
-              <el-radio label="男"></el-radio>
-              <el-radio label="女"></el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="身份证号" prop="idNumber">
-            <el-input v-model="editAdminParams.idNumber" clearable></el-input>
+          <el-form-item label="头像" prop="avatarUrl">
+            <el-upload
+                class="avatar-uploader"
+                action="#"
+                name="picture"
+                list-type="picture-card"
+                :limit="1"
+                :on-success="handleEditAdminAvatarSuccess"
+                :before-upload="beforeEditAdminAvatarUpload"
+            >
+              <img
+                  v-if="editAdminParams.avatarUrl"
+                  :src="editAdminParams.avatarUrl"
+                  class="userEditAvatar"
+              />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
           </el-form-item>
         </el-form>
         <span slot="footer" class="edit-footer">
@@ -168,11 +190,7 @@ export default {
         id: 0,
         userName: "",
         password: "",
-        idNumber:"",
-        sexForm: "",
-        hasJob: "",
-        overdueRecord:0,
-        isDiscredit:"否",
+        avatarUrl: "",
       },
       total: 0,
       // 添加管理员dialog显示/隐藏
@@ -181,11 +199,6 @@ export default {
       addAdminForm: {
         userName: "",
         password: "",
-        idNumber:"",
-        sexForm: "男",
-        hasJob: "",
-        overdueRecord:0,
-        isDiscredit:"否",
       },
       //添加管理员对话框验证规则
       addAdminFormRul: {
@@ -207,26 +220,14 @@ export default {
             trigger: "blur",
           },
         ],
-        idNumber: [
-          { required: true, message: "身份证号不能为空", trigger: "blur" },
-          {
-            min: 18,
-            max: 18,
-            message: "长度为18个字符",
-            trigger: "blur",
-          },
-        ],
+
       },
       //存储获取到的管理员信息
       editAdminParams: {
         id: 0,
         userName: "",
         password: "",
-        idNumber:"",
-        sexForm: "",
-        hasJob: "",
-        overdueRecord:0,
-        isDiscredit:"否",
+        avatarUrl: "",
       },
       //编辑管理员对话框验证规则
       editAdminParamsRul: {
@@ -239,18 +240,8 @@ export default {
             trigger: "blur",
           },
         ],
-        idNumber: [
-          { required: true, message: "身份证号不能为空", trigger: "blur" },
-          {
-            min: 18,
-            max: 18,
-            message: "长度为18个字符",
-            trigger: "blur",
-          },
-        ]
       },
       editAdminVisible: false,
-      dialogVisible: false,
       //上传头像
       headers: {
         token: window.localStorage["token"],
@@ -264,9 +255,9 @@ export default {
       if (this.keyword === "") {
         this.$http
             .get(
-                "/back/admin/getAllAdmin/" +
+                "/back/web/admin?pageNum=" +
                 this.queryInfo.pageIndex +
-                "/" +
+                "&pageSize=" +
                 this.queryInfo.pageSize
             )
             .then((ress) => {
@@ -276,14 +267,10 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempAdminList.length; i++) {
                   temp = {};
-                  temp.id = tempAdminList[i].uid;
+                  temp.id = tempAdminList[i].id;
                   temp.userName = tempAdminList[i].userName;
-                  temp.idNumber = tempAdminList[i].idNumber;
                   temp.password = tempAdminList[i].password;
-                  temp.sexForm = tempAdminList[i].sex ? "女" : "男";
-                  temp.hasJob = tempAdminList[i].hasJob ? "是":"否";
-                  temp.overdueRecord = tempAdminList[i].overdueRecord;
-                  temp.isDiscredit = tempAdminList[i].isDiscredit ? "是":"否";
+                  temp.avatarUrl = tempAdminList[i].avatarUrl;
                   that.adminList.push(temp);
                 }
                 that.total = ress.data.data.total;
@@ -294,11 +281,11 @@ export default {
       } else {
         this.$http
             .get(
-                "/back/admin/searchAdmin/" +
+                "/back/web/admin/search?keyword=" +
                 this.keyword +
-                "/" +
+                "&pageNum=" +
                 this.queryInfo.pageIndex +
-                "/" +
+                "&pageSize" +
                 this.queryInfo.pageSize
             )
             .then((ress) => {
@@ -308,14 +295,10 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempAdminList.length; i++) {
                   temp = {};
-                  temp.id = tempAdminList[i].uid;
+                  temp.id = tempAdminList[i].id;
                   temp.userName = tempAdminList[i].userName;
                   temp.password = tempAdminList[i].password;
-                  temp.idNumber = tempAdminList[i].idNumber
-                  temp.sexForm = tempAdminList[i].sex ? "女" : "男";
-                  temp.hasJob = tempAdminList[i].hasJob ? "是":"否";
-                  temp.overdueRecord = tempAdminList[i].overdueRecord;
-                  temp.isDiscredit = tempAdminList[i].isDiscredit ? "是":"否";
+                  temp.avatarUrl = tempAdminList[i].avatarUrl;
                   this.adminList.push(temp);
                 }
                 this.total = ress.data.data.total;
@@ -340,16 +323,11 @@ export default {
       this.$refs.addAdminFormRef.validate((valid) => {
         const that = this;
         if (valid) {
-          this.$http.get('/back/admin/userNameExist/'+this.addAdminForm.userName).then
+          this.$http.get('/back/web/admin/adminExist?name='+this.addAdminForm.userName).then
           this.$http
-              .post("/back/admin/addAdmin", {
+              .post("/back/web/admin/", {
                 userName: this.addAdminForm.userName,
-                idNumber: this.addAdminForm.idNumber,
                 password: this.addAdminForm.password,
-                sex: this.addAdminForm.sexForm !== "男",
-                hasJob: this.addAdminForm.hasJob !== "否",
-                overdueRecord: this.addAdminForm.overdueRecord,
-                isDiscredit: this.addAdminForm.isDiscredit !== "否",
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
@@ -374,16 +352,12 @@ export default {
     //点击编辑按钮，编辑管理员信息
     editAdmin(row) {
       //根据管理员id获取当前管理员信息
-      this.$http.get("/back/admin/getAdminById/" + row.id).then((ress) => {
+      this.$http.get("/back/web/admin/" + row.id).then((ress) => {
         //存储获取到的管理员信息
-        this.editAdminParams.id = ress.data.data.uid;
+        this.editAdminParams.id = ress.data.data.id;
         this.editAdminParams.userName = ress.data.data.userName;
         this.editAdminParams.password = ress.data.data.password;
-        this.editAdminParams.sexForm = ress.data.data.sex ? "女" : "男";
-        this.editAdminParams.idNumber = ress.data.data.idNumber;
-        this.editAdminParams.hasJob = ress.data.data.hasJob ? "是":"否";
-        this.editAdminParams.overdueRecord = ress.data.data.overdueRecord;
-        this.editAdminParams.isDiscredit = ress.data.data.isDiscredit ? "是":"否";
+        this.editAdminParams.avatarUrl = ress.data.data.avatarUrl;
         this.editAdminVisible = !this.editAdminVisible;
       });
     },
@@ -392,15 +366,11 @@ export default {
         const that = this;
         if (valid) {
           this.$http
-              .put("/back/admin/updateUser", {
-                id: this.editAdminParams.uid,
+              .put("/back/web/admin/"+row.id, {
+                id: this.editAdminParams.id,
                 userName: this.editAdminParams.userName,
                 password: this.editAdminParams.password,
-                idNumber: this.editAdminParams.idNumber,
-                hasJob: this.editAdminParams.hasJob !=="否",
-                overdueRecord: this.editAdminParams.overdueRecord,
-                isDiscredit: this.editAdminParams.isDiscredit !=="否",
-                sex: this.editAdminParams.sexForm !== "男",
+                avatarUrl: this.editAdminParams.avatarUrl,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
@@ -423,7 +393,7 @@ export default {
         type: "warning",
       })
           .then(() => {
-            this.$http.delete("/back/admin/deleteUser/" + row.id).then((ress) => {
+            this.$http.delete("/back/web/admin/" + row.id).then((ress) => {
               if (ress.data.code === 10000) {
                 that.$message.success("删除管理员成功");
                 this.getAdminList();
@@ -445,6 +415,41 @@ export default {
       index =
           index + 1 + (this.queryInfo.pageIndex - 1) * this.queryInfo.pageSize;
       return index;
+    },
+    handleAddAdminAvatarSuccess(res,file) {
+      this.addAdminForm.avatarUrl = file.url;
+    },
+    beforeAddAdminAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isPNG = file.type === "image/png";
+      const isLt5M = file.size / 1024 / 1024 < 5;
+
+      if (!(isJPG || isPNG)) {
+        this.$message.error("上传头像图片只能是 JPG或PNG 格式!");
+      }
+      if (!isLt5M) {
+        this.$message.error("上传头像图片大小不能超过 5MB!");
+      }
+      return (isJPG || isPNG) && isLt5M;
+    },
+    handleRemove(file){
+      file.clean();
+    },
+    handleEditAdminAvatarSuccess(res, file) {
+      this.editAdminParams.avatarUrl = file.url;
+    },
+    beforeEditAdminAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isPNG = file.type === "image/png";
+      const isLt5M = file.size / 1024 / 1024 < 5;
+
+      if (!(isJPG || isPNG)) {
+        this.$message.error("上传头像图片只能是 JPG或PNG 格式!");
+      }
+      if (!isLt5M) {
+        this.$message.error("上传头像图片大小不能超过 5MB!");
+      }
+      return (isJPG || isPNG) && isLt5M;
     },
   },
   created() {
@@ -480,5 +485,38 @@ export default {
   margin-top: 20px;
 }
 
+.avatar-uploader .el-upload {
+  border: 2px solid powderblue;
+  border-radius: 6px;
+  cursor: pointer;
+  position: absolute;
+  overflow: hidden;
+  top: 0px;
+  left: 170px;
+}
 
+.avatar-uploader .el-upload:hover {
+  border-color: powderblue;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: powderblue;
+  width: 130px;
+  height: 130px;
+  line-height: 130px;
+  text-align: center;
+}
+
+.userAddImg {
+  width: 130px;
+  height: 130px;
+  display: block;
+}
+
+.userEditAvatar {
+  width: 130px;
+  height: 130px;
+  display: block;
+}
 </style>

@@ -169,15 +169,15 @@ export default {
         break;
     }
   },
-  beforeCreate() {
-    // 修改背景色
-    document.querySelector('body').setAttribute('style', 'background-color:#fff')
-    let loginStatus = window.sessionStorage.getItem("adminLogin")
-    if(loginStatus !== "true"){
-      this.$message.error("请先登录")
-      this.$router.push('/login')
-    }
-  },
+  // beforeCreate() {
+  //   // 修改背景色
+  //   document.querySelector('body').setAttribute('style', 'background-color:#fff')
+  //   let loginStatus = window.sessionStorage.getItem("adminLogin")
+  //   if(loginStatus !== "true"){
+  //     this.$message.error("请先登录")
+  //     this.$router.push('/login')
+  //   }
+  // },
 }
 </script>
 

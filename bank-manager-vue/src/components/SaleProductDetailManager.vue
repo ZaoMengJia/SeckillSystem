@@ -38,7 +38,8 @@
           <el-table-column prop="said" label="秒杀活动id" width="100"> </el-table-column>
           <el-table-column prop="fpid" label="产品id" width="100">
           </el-table-column>
-          <el-table-column prop="quantity" label="数量" width="150"></el-table-column>
+          <el-table-column prop="quantity" label="余量" width="150"></el-table-column>
+          <el-table-column prop="total" label="总量" width="150"></el-table-column>
           <!-- <el-table-column prop="password" label="密码" width="150">
           </el-table-column> -->
           <el-table-column prop="operate" label="操作" width="200">
@@ -90,8 +91,11 @@
           <el-form-item label="产品id" prop="fpid">
             <el-input v-model="addDetailForm.fpid" clearable></el-input>
           </el-form-item>
-          <el-form-item label="数量" prop="quantity">
+          <el-form-item label="余量" prop="quantity">
             <el-input v-model="addDetailForm.quantity" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="总量" prop="total">
+            <el-input v-model="addDetailForm.total" clearable></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -120,8 +124,11 @@
           <el-form-item label="产品id" prop="fpid">
             <el-input v-model="editDetailParams.fpid" clearable></el-input>
           </el-form-item>
-          <el-form-item label="数量" prop="quantity">
+          <el-form-item label="余量" prop="quantity">
             <el-input v-model="editDetailParams.quantity" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="总量" prop="total">
+            <el-input v-model="editDetailParams.total" clearable></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="edit-footer">
@@ -150,6 +157,7 @@ export default {
         said: 0,
         fpid: 0,
         quantity: "",
+        total:"",
       },
       total: 0,
       // 添加明细dialog显示/隐藏
@@ -159,6 +167,7 @@ export default {
         said: 0,
         fpid: 0,
         quantity: "",
+        total:"",
       },
       //添加明细对话框验证规则
       addDetailFormRul: {
@@ -174,6 +183,7 @@ export default {
         said: 0,
         fpid: 0,
         quantity: "",
+        total:"",
       },
       //编辑明细对话框验证规则
       editDetailParamsRul: {
@@ -198,7 +208,7 @@ export default {
       if (this.keyword === "") {
         this.$http
             .get(
-                "/back/saleProductDetail/getAllSaleProductDetail/" +
+                "/back/web/saleProductDetail/getAllSaleProductDetail/" +
                 this.queryInfo.pageIndex +
                 "/" +
                 this.queryInfo.pageSize
@@ -213,6 +223,7 @@ export default {
                   temp.said = tempDetailList[i].said;
                   temp.fpid = tempDetailList[i].fpid;
                   temp.quantity = tempDetailList[i].quantity;
+                  temp.total = tempDetailList[i].total;
                   that.detailList.push(temp);
                 }
                 that.total = ress.data.data.total;
@@ -223,7 +234,7 @@ export default {
       } else {
         this.$http
             .get(
-                "/back/saleProductDetail/searchSaleProductDetail/" +
+                "/back/web/saleProductDetail/searchSaleProductDetail/" +
                 this.keyword +
                 "/" +
                 this.queryInfo.pageIndex +
@@ -240,6 +251,7 @@ export default {
                   temp.said = tempDetailList[i].said;
                   temp.fpid = tempDetailList[i].fpid;
                   temp.quantity = tempDetailList[i].quantity;
+                  temp.total = tempDetailList[i].total;
                   that.detailList.push(temp);
                 }
                 this.total = ress.data.data.total;
@@ -265,10 +277,11 @@ export default {
         const that = this;
         if (valid) {
           this.$http
-              .post("/back/saleProductDetail/addSaleProductDetail", {
+              .post("/back/web/saleProductDetail/addSaleProductDetail", {
                 fpid: this.addDetailForm.fpid,
                 said: this.addDetailForm.said,
                 quantity: this.addDetailForm.quantity,
+                total: this.addDetailForm.total,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
@@ -293,11 +306,12 @@ export default {
     //点击编辑按钮，编辑明细信息
     editDetail(row) {
       //根据明细id获取当前明细信息
-      this.$http.get("/back/saleProductDetail/getSaleProductDetailBySaidAndFpid/" + row.said+'/'+row.fpid).then((ress) => {
+      this.$http.get("/back/web/saleProductDetail/getSaleProductDetailBySaidAndFpid/" + row.said+'/'+row.fpid).then((ress) => {
         //存储获取到的明细信息
         this.editDetailParams.said = ress.data.data.said;
         this.editDetailParams.fpid = ress.data.data.fpid;
         this.editDetailParams.quantity = ress.data.data.quantity;
+        this.editDetailParams.total = ress.data.data.total;
         this.editDetailVisible = !this.editDetailVisible;
       });
     },
@@ -306,10 +320,11 @@ export default {
         const that = this;
         if (valid) {
           this.$http
-              .put("/back/saleProductDetail/updateSaleProductDetail", {
+              .put("/back/web/saleProductDetail/updateSaleProductDetail", {
                 fpid: this.addDetailForm.fpid,
                 said: this.addDetailForm.said,
                 quantity: this.addDetailForm.quantity,
+                total: this.addDetailForm.total,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
@@ -332,7 +347,7 @@ export default {
         type: "warning",
       })
           .then(() => {
-            this.$http.delete("/back/saleProductDetail/deleteSaleProductDetail/" + row.id).then((ress) => {
+            this.$http.delete("/back/web/saleProductDetail/deleteSaleProductDetail/" + row.id).then((ress) => {
               if (ress.data.code === 10000) {
                 that.$message.success("删除明细成功");
                 this.getDetailList();

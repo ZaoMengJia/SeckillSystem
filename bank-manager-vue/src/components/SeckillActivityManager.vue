@@ -36,8 +36,14 @@
           </el-table-column>
           <!-- 所有的prop值必须要activityList里的属性名改成一样的 -->
           <el-table-column prop="id" label="秒杀活动id" width="100"> </el-table-column>
-          <el-table-column prop="sname" label="秒杀活动名" width="150">
+          <el-table-column prop="sname" label="秒杀活动名" width="150"></el-table-column>
+          <el-table-column prop="image" label="秒杀活动图片" width="150">
+
           </el-table-column>
+          <el-table-column prop="detail" label="秒杀活动描述" width="150"></el-table-column>
+          <el-table-column prop="beginTime" label="秒杀活动开始时间" width="150"></el-table-column>
+          <el-table-column prop="endTime" label="秒杀活动结束时间" width="150"></el-table-column>
+          <el-table-column prop="createTime" label="秒杀活动创建时间" width="150"></el-table-column>
           <!-- <el-table-column prop="password" label="密码" width="150">
           </el-table-column> -->
           <el-table-column prop="operate" label="操作" width="200">
@@ -86,6 +92,53 @@
           <el-form-item label="秒杀活动名" prop="sname">
             <el-input v-model="addActivityForm.sname" clearable></el-input>
           </el-form-item>
+          <el-form-item label="秒杀活动图片" prop="image">
+            <el-upload
+                class="avatar-uploader"
+                action="#"
+                list-type="picture-card"
+                :auto-upload="false"
+                :on-success="handleAddActivityImageSuccess"
+                :before-upload="beforeAddActivityImageUpload"
+            >
+              <img
+                  v-if="addActivityForm.image"
+                  :src="addActivityForm.image"
+                  class="activityAddImg"
+              />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="秒杀活动描述" prop="detail">
+            <el-input v-model="addActivityForm.detail" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="创建时间" prop="createTime">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.createTime" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="0.2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="addActivityForm.createTime" style="width: 100%;"></el-time-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="开始时间" prop="beginTime">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.beginTime" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="0.2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="addActivityForm.beginTime" style="width: 100%;"></el-time-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="结束时间" prop="endTime">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.endTime" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="0.2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="addActivityForm.endTime" style="width: 100%;"></el-time-picker>
+            </el-col>
+          </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="addActivity">确 定</el-button>
@@ -109,6 +162,53 @@
         >
           <el-form-item label="秒杀活动名" prop="sname">
             <el-input v-model="editActivityParams.sname" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="秒杀活动图片" prop="image">
+            <el-upload
+                class="avatar-uploader"
+                action="#"
+                list-type="picture-card"
+                :auto-upload="false"
+                :on-success="handleEditActivityImageSuccess"
+                :before-upload="beforeEditActivityImageUpload"
+            >
+              <img
+                  v-if="editActivityParams.image"
+                  :src="editActivityParams.image"
+                  class="activityAddImg"
+              />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="秒杀活动描述" prop="detail">
+            <el-input v-model="editActivityParams.detail" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="创建时间" prop="createTime">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.createTime" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="0.2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="editActivityParams.createTime" style="width: 100%;"></el-time-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="开始时间" prop="beginTime">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.beginTime" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="0.2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="editActivityParams.beginTime" style="width: 100%;"></el-time-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="结束时间" prop="endTime">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.endTime" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="0.2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="editActivityParams.endTime" style="width: 100%;"></el-time-picker>
+            </el-col>
           </el-form-item>
         </el-form>
         <span slot="footer" class="edit-footer">
@@ -136,6 +236,11 @@ export default {
       activityParams: {
         id: 0,
         sname: "",
+        image: "",
+        detail: "",
+        beginTime: new Date(),
+        endTime: new Date(),
+        createTime: new Date(),
       },
       total: 0,
       // 添加秒杀活动dialog显示/隐藏
@@ -144,6 +249,11 @@ export default {
       addActivityForm: {
         id: 0,
         sname: "",
+        image: "",
+        detail: "",
+        beginTime: new Date(),
+        endTime: new Date(),
+        createTime: new Date(),
       },
       //添加秒杀活动对话框验证规则
       addActivityFormRul: {
@@ -158,6 +268,11 @@ export default {
       editActivityParams: {
         id: 0,
         sname: "",
+        image: "",
+        detail: "",
+        beginTime: new Date(),
+        endTime: new Date(),
+        createTime: new Date(),
       },
       //编辑秒杀活动对话框验证规则
       editActivityParamsRul: {
@@ -182,7 +297,7 @@ export default {
       if (this.keyword === "") {
         this.$http
             .get(
-                "/back/seckillActivity/getAllSeckillActivity/" +
+                "/back/web/seckillActivity/getAllSeckillActivity/" +
                 this.queryInfo.pageIndex +
                 "/" +
                 this.queryInfo.pageSize
@@ -196,6 +311,11 @@ export default {
                   temp = {};
                   temp.id = tempActivityList[i].said;
                   temp.sname = tempActivityList[i].sname;
+                  temp.image = tempActivityList[i].image;
+                  temp.detail = tempActivityList[i].detail;
+                  temp.beginTime = tempActivityList[i].beginTime;
+                  temp.endTime = tempActivityList[i].endTime;
+                  temp.createTime = tempActivityList[i].createTime;
                   that.activityList.push(temp);
                 }
                 that.total = ress.data.data.total;
@@ -206,7 +326,7 @@ export default {
       } else {
         this.$http
             .get(
-                "/back/seckillActivity/searchActivity/" +
+                "/back/web/seckillActivity/searchActivity/" +
                 this.keyword +
                 "/" +
                 this.queryInfo.pageIndex +
@@ -222,6 +342,11 @@ export default {
                   temp = {};
                   temp.id = tempActivityList[i].said;
                   temp.sname = tempActivityList[i].sname;
+                  temp.image = tempActivityList[i].image;
+                  temp.detail = tempActivityList[i].detail;
+                  temp.beginTime = tempActivityList[i].beginTime;
+                  temp.endTime = tempActivityList[i].endTime;
+                  temp.createTime = tempActivityList[i].createTime;
                   that.activityList.push(temp);
                 }
                 this.total = ress.data.data.total;
@@ -246,11 +371,16 @@ export default {
       this.$refs.addActivityFormRef.validate((valid) => {
         const that = this;
         if (valid) {
-          this.$http.get('/back/seckillActivity/activityExist/'+this.addActivityForm.sname).then
+          this.$http.get('/back/web/seckillActivity/activityExist/'+this.addActivityForm.sname).then
           this.$http
-              .post("/back/seckillActivity/addSeckillActivity", {
+              .post("/back/web/seckillActivity/addSeckillActivity", {
                 said: this.addActivityForm.id,
-                sname: this.addActivityForm.sname
+                sname: this.addActivityForm.sname,
+                image: this.addActivityForm.image,
+                detail: this.addActivityForm.detail,
+                beginTime: this.addActivityForm.beginTime,
+                endTime: this.addActivityForm.endTime,
+                createTime: this.addActivityForm.createTime,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
@@ -275,10 +405,15 @@ export default {
     //点击编辑按钮，编辑秒杀活动信息
     editActivity(row) {
       //根据秒杀活动id获取当前秒杀活动信息
-      this.$http.get("/back/seckillActivity/getSeckillActivityById/" + row.id).then((ress) => {
+      this.$http.get("/back/web/seckillActivity/getSeckillActivityById/" + row.id).then((ress) => {
         //存储获取到的秒杀活动信息
         this.editActivityParams.id = ress.data.data.said;
         this.editActivityParams.sname = ress.data.data.sname;
+        this.editActivityParams.image = ress.data.data.image;
+        this.editActivityParams.detail = ress.data.data.detail;
+        this.editActivityParams.beginTime = ress.data.data.beginTime;
+        this.editActivityParams.endTime = ress.data.data.endTime;
+        this.editActivityParams.createTime = ress.data.data.endTime;
         this.editActivityVisible = !this.editActivityVisible;
       });
     },
@@ -287,9 +422,14 @@ export default {
         const that = this;
         if (valid) {
           this.$http
-              .put("/back/seckillActivity/updateSeckillActivity", {
+              .put("/back/web/seckillActivity/updateSeckillActivity", {
                 said: this.editActivityParams.id,
                 sname: this.editActivityParams.sname,
+                image: this.editActivityParams.image,
+                detail: this.editActivityParams.detail,
+                beginTime: this.editActivityParams.beginTime,
+                endTime: this.editActivityParams.endTime,
+                createTime: this.editActivityParams.createTime,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
@@ -312,7 +452,7 @@ export default {
         type: "warning",
       })
           .then(() => {
-            this.$http.delete("/back/seckillActivity/deleteSeckillActivity/" + row.id).then((ress) => {
+            this.$http.delete("/back/web/seckillActivity/deleteSeckillActivity/" + row.id).then((ress) => {
               if (ress.data.code === 10000) {
                 that.$message.success("删除秒杀活动成功");
                 this.getActivityList();
@@ -335,6 +475,42 @@ export default {
           index + 1 + (this.queryInfo.pageIndex - 1) * this.queryInfo.pageSize;
       return index;
     },
+    handleAddActivityImageSuccess(res,file) {
+      this.addActivityForm.image = file.url;
+
+    },
+    beforeAddActivityImageUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isPNG = file.type === "image/png";
+      const isLt5M = file.size / 1024 / 1024 < 5;
+
+      if (!(isJPG || isPNG)) {
+        this.$message.error("上传头像图片只能是 JPG或PNG 格式!");
+      }
+      if (!isLt5M) {
+        this.$message.error("上传头像图片大小不能超过 5MB!");
+      }
+      return (isJPG || isPNG) && isLt5M;
+    },
+    handleRemove(file){
+      file.clean();
+    },
+    handleEditActivityImageSuccess(res, file) {
+      this.editActivityParams.image = file.url;
+    },
+    beforeEditActivityImageUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isPNG = file.type === "image/png";
+      const isLt5M = file.size / 1024 / 1024 < 5;
+
+      if (!(isJPG || isPNG)) {
+        this.$message.error("上传头像图片只能是 JPG或PNG 格式!");
+      }
+      if (!isLt5M) {
+        this.$message.error("上传头像图片大小不能超过 5MB!");
+      }
+      return (isJPG || isPNG) && isLt5M;
+    },
   },
   created() {
     this.getActivityList();
@@ -354,6 +530,12 @@ export default {
 .add {
   background-color: rgba(2, 153, 208, 1);
   border: 1px solid rgba(149, 200, 229, 1);
+}
+
+.activityAddImg {
+  width: 130px;
+  height: 130px;
+  display: block;
 }
 
 .el-row {

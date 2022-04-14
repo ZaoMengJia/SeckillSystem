@@ -73,19 +73,19 @@ export default {
       let {account, password} = this.ruleForm;
       const that = this;
       this.$http.post(
-          "/back/admin/login",
+          "/back/auth/web",
           {
-            "loginName": account,
+            "username": account,
             "password": password
           }
       ).then(ress => {
-        if (ress.data.code === 10000) {
+        if (ress.data.code === 200) {
           window.sessionStorage.setItem("adminLogin", "true")
           window.sessionStorage.setItem("adminId", ress.data.data.id)
           this.$router.push('/user'); //跳转到首页
         } else if(ress.data.code === 404){
           that.$message.error("迷路啦")
-        } else if(ress.data.code === 30001){
+        } else if(ress.data.code === 40001){
           console.log(ress.data.code)
           that.$message.error("用户名或密码错误")
         }
