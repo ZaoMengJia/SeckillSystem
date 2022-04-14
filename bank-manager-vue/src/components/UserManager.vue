@@ -38,22 +38,13 @@
           </el-table-column>
           <!-- 所有的prop值必须要userList里的属性名改成一样的 -->
           <el-table-column prop="id" label="编号" width="100"> </el-table-column>
-          <el-table-column prop="nickName" label="昵称" width="100"></el-table-column>
+          <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
           <el-table-column prop="realName" label="真实姓名" width="100"></el-table-column>
           <el-table-column prop="idNumber" label="身份证号" width="300"></el-table-column>
-          <!-- <el-table-column prop="password" label="密码" width="150">
-          </el-table-column> -->
           <el-table-column prop="sexForm" label="性别" width="100">
           </el-table-column>
           <el-table-column prop="avatarUrl" label="头像" width="100">
-<!--            <template slot-scope="scope">-->
-<!--              <img-->
-<!--                  :src="scope.row.avartarUrl"-->
-<!--                  alt=""-->
-<!--                  style="width: 50px; height: 50px"-->
-<!--              />-->
-<!--            </template>-->
-            <el-avatar :src="userParams.avartarUrl"></el-avatar>
+            <el-avatar v-if="userList.avatarUrl" :src="userList.avatarUrl" ></el-avatar>
           </el-table-column>
           <el-table-column prop="hasJob" label="是否工作" width="100"> </el-table-column>
           <el-table-column prop="overdueRecord" label="失约次数" width="100"> </el-table-column>
@@ -103,10 +94,10 @@ export default {
       userParams: {
         id: 0,
         nickname: "",
-        realname:"",
+        realName:"",
         password: "",
         idNumber:"",
-        avartarUrl:"",
+        avatarUrl:"",
         sexForm: "",
         hasJob: "",
         overdueRecord:0,
@@ -134,7 +125,7 @@ export default {
             .then((ress) => {
               if (ress.data.code === 10000) {
                 that.userList = [];
-                const tempUserList = ress.data.data.records;
+                const tempUserList = ress.data.data.data;
                 let temp = {};
                 for (let i = 0; i < tempUserList.length; i++) {
                   temp = {};
@@ -142,6 +133,7 @@ export default {
                   temp.nickname = tempUserList[i].nickname;
                   temp.realName = tempUserList[i].realName;
                   temp.idNumber = tempUserList[i].idCard;
+                  temp.avatarUrl = tempUserList[i].avatarUrl;
                   temp.password = tempUserList[i].password;
                   temp.sexForm = tempUserList[i].gender ? "女" : "男";
                   temp.hasJob = tempUserList[i].hasJob ? "是":"否";
@@ -151,7 +143,7 @@ export default {
                 }
                 that.total = ress.data.data.total;
               } else {
-                that.$message.error("请求用户列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       } else {
@@ -169,7 +161,7 @@ export default {
             .then((ress) => {
               if (ress.data.code === 10000) {
                 this.userList = [];
-                const tempUserList = ress.data.data.records;
+                const tempUserList = ress.data.data.data;
                 let temp = {};
                 for (let i = 0; i < tempUserList.length; i++) {
                   temp = {};
@@ -177,6 +169,7 @@ export default {
                   temp.nickname = tempUserList[i].nickname;
                   temp.realName = tempUserList[i].realName;
                   temp.idNumber = tempUserList[i].idCard;
+                  temp.avatarUrl = tempUserList[i].avatarUrl;
                   temp.password = tempUserList[i].password;
                   temp.sexForm = tempUserList[i].gender ? "女" : "男";
                   temp.hasJob = tempUserList[i].hasJob ? "是":"否";
@@ -186,7 +179,7 @@ export default {
                 }
                 this.total = ress.data.data.total;
               } else {
-                that.$message.error("请求用户列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       }
@@ -215,7 +208,7 @@ export default {
                 that.$message.success("删除用户成功");
                 this.getUserList();
               } else {
-                that.$message.error("删除用户失败");
+                that.$message.error(ress.data.message);
               }
             });
           })

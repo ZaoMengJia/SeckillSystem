@@ -217,25 +217,26 @@ export default {
         this.$http
             .get(
                 "/back/web/financialProduct/getAllProduct/" +
-                this.queryInfo.pageIndex +
+                (this.queryInfo.pageIndex-1) +
                 "/" +
                 this.queryInfo.pageSize
             )
             .then((ress) => {
+              console.log(ress)
               if (ress.data.code === 10000) {
                 that.productList = [];
                 const tempProductList = ress.data.data.records;
                 let temp = {};
                 for (let i = 0; i < tempProductList.length; i++) {
                   temp = {};
-                  temp.id = tempProductList[i].fpid;
-                  temp.fname = tempProductList[i].fname;
+                  temp.id = tempProductList[i].id;
+                  temp.fname = tempProductList[i].name;
                   temp.price = tempProductList[i].price;
                   that.productList.push(temp);
                 }
                 that.total = ress.data.data.total;
               } else {
-                that.$message.error("请求产品列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       } else {
@@ -244,7 +245,7 @@ export default {
                 "/back/web/financialProduct/searchProduct/" +
                 this.keyword +
                 "/" +
-                this.queryInfo.pageIndex +
+                (this.queryInfo.pageIndex-1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -255,14 +256,14 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempProductList.length; i++) {
                   temp = {};
-                  temp.id = tempProductList[i].fpid;
-                  temp.fname = tempProductList[i].fname;
+                  temp.id = tempProductList[i].id;
+                  temp.fname = tempProductList[i].name;
                   temp.price = tempProductList[i].price;
                   that.productList.push(temp);
                 }
                 this.total = ress.data.data.total;
               } else {
-                that.$message.error("请求产品列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       }
@@ -285,15 +286,15 @@ export default {
           this.$http.get('/back/web/financialProduct/productExist/'+this.addProductForm.fname).then
           this.$http
               .post("/back/financialProduct/addProduct", {
-                fpid: this.addProductForm.id,
-                fname: this.addProductForm.fname,
+                id: this.addProductForm.id,
+                name: this.addProductForm.fname,
                 price: this.addProductForm.price,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
                   that.$message.success("添加成功");
                 } else {
-                  that.$message.error("添加失败");
+                  that.$message.error(ress.data.message);
                 }
               });
           //关闭dialog对话框
@@ -314,8 +315,8 @@ export default {
       //根据产品id获取当前产品信息
       this.$http.get("/back/financialProduct/getProductById/" + row.id).then((ress) => {
         //存储获取到的产品信息
-        this.editProductParams.id = ress.data.data.fpid;
-        this.editProductParams.fname = ress.data.data.fname;
+        this.editProductParams.id = ress.data.data.id;
+        this.editProductParams.fname = ress.data.data.name;
         this.editProductParams.price = ress.data.data.price;
         this.editProductVisible = !this.editProductVisible;
       });
@@ -326,8 +327,8 @@ export default {
         if (valid) {
           this.$http
               .put("/back/financialProduct/updateProduct", {
-                fpid: this.editProductParams.id,
-                fname: this.editProductParams.fname,
+                id: this.editProductParams.id,
+                name: this.editProductParams.fname,
                 price: this.editProductParams.price,
               })
               .then((ress) => {
@@ -336,7 +337,7 @@ export default {
                   that.$message.success("修改成功");
                   this.getProductList();
                 } else {
-                  that.$message.error("修改失败");
+                  that.$message.error(ress.data.message);
                 }
               });
         }
@@ -356,7 +357,7 @@ export default {
                 that.$message.success("删除理财产品成功");
                 this.getProductList();
               } else {
-                that.$message.error("删除理财产品失败");
+                that.$message.error(ress.data.message);
               }
             });
           })
