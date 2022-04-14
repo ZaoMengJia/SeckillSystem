@@ -11,6 +11,8 @@ import com.zaomengjia.common.utils.RedisUtils;
 import io.netty.util.internal.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -53,6 +55,8 @@ public class SignatureFilter implements GlobalFilter, Ordered {
 
     @Value("${auth.sign-expired-time}")
     private long signatureExpireTime;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final RedisUtils redisUtils;
 
@@ -129,7 +133,9 @@ public class SignatureFilter implements GlobalFilter, Ordered {
         try {
             timestamp = Long.parseLong(timestampStr);
         } catch (NumberFormatException e) {
+            logger.info("签名：已过期");
             throw new AppException(ResultCode.INVALID_SIGNATURE);
+
         }
 
         long interval = System.currentTimeMillis() - timestamp;
@@ -139,12 +145,14 @@ public class SignatureFilter implements GlobalFilter, Ordered {
 
         //2. 检查nonce是否唯一
         if(redisUtils.containKey("auth::nonce::" + nonce)) {
+            logger.info("签名：nonce已被使用");
             throw new AppException(ResultCode.INVALID_SIGNATURE);
         }
 
         //3. 验签
         String correctSignature = getSignature(input + nonce + timestampStr + appKey);
         if(!correctSignature.equals(signature)) {
+            logger.info("签名错误追溯：input {} 正确的签名 {}", input + nonce + timestampStr + appKey, correctSignature);
             throw new AppException(ResultCode.INVALID_SIGNATURE);
         }
 

@@ -1,6 +1,7 @@
 const {sign, RequestType} = require("./signUtils");
 
 const BASE_PATH = 'http://52.82.45.59:8888';
+// const BASE_PATH = 'http://localhost:8811';
 
 const request = (url, method, data, header, showLoading, isBody=false) => {
     return new Promise((resolve, reject) => {
@@ -10,7 +11,6 @@ const request = (url, method, data, header, showLoading, isBody=false) => {
             })
         }
         let isJson = true;
-        console.log(header)
         if (method === 'GET' || method === 'get' || (header != null && header['content-type'] === 'application/x-www-form-urlencoded')) {
             //微信默认POST传json
             isJson = false;
