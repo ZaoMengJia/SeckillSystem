@@ -27,7 +27,7 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
     public Map<String, Object> getSaleProductDetail(int pageIndex,int pageSize) {
         Map<String, Object> map = new HashMap<>(5);
         Page<SaleProductDetail> page = saleProductDetailMapper.findAll(PageRequest.of(pageIndex, pageSize));
-        map.put("records", page.toList());
+        map.put("records", page.getContent());
         map.put("total", page.getTotalElements());
         return map;
     }

@@ -23,6 +23,10 @@ var (
 		code:    10000,
 		message: "成功",
 	}
+	ResultCodeNotFound = ResultCode{
+		code:    20001,
+		message: "迷路啦，您是想去华师吗",
+	}
 	ResultCodeInternalServerError = ResultCode{
 		code:    20002,
 		message: "服务器抛给你一个错误",

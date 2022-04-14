@@ -7,7 +7,7 @@ server:
     encoding:
       force-response: true
     context-path: /web
-    
+
 spring:
   application:
     name: bank-manager

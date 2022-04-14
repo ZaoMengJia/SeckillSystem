@@ -86,21 +86,14 @@ public class JwtFilter implements WebFilter {
             //3.判断是不是恶意访问
             //3.1 在不在黑名单里
             String userId = claimMap.get("userId").asString();
-            String blacklistKey = "user::blacklist::" + userId;
-            if(redisUtils.containKey(blacklistKey)) {
+            String requestKey = "user::request-time::" + userId;
+            Integer requestTime = (Integer) redisUtils.get(requestKey);
+            if(requestTime != null && requestTime > 400) {
                 throw new AppException(ResultCode.HAVE_A_REST_PLEASE);
             }
-
-            //3.2 判断当前次数
-            String requestKey = "user::request::" + userId;
-            int requestTime = redisUtils.keys(requestKey).size();
-            if(requestTime > 100) {
-                redisUtils.set(blacklistKey, "", 30 * 60);
-                throw new AppException(ResultCode.HAVE_A_REST_PLEASE);
-            }
-
-            //3.3 设置这次的访问
-            redisUtils.set(requestKey, jwt, 2 * 60);
+            //3.2 设置这次的访问
+            redisUtils.incr(requestKey);
+            redisUtils.expire(requestKey, 30 * 60);
 
             //4. 授权
             List<AuthorityGroup> authorityGroup = JSON.parseArray(claimMap.get("role").asString(), AuthorityGroup.class);

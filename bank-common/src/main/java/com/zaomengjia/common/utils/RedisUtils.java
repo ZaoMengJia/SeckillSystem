@@ -155,6 +155,10 @@ public final class RedisUtils {
         return redisTemplate.opsForValue().increment(key, delta);
     }
 
+    public long incr(String key) {
+        return redisTemplate.opsForValue().increment(key);
+    }
+
     /**
      * 递减
      *

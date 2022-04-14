@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private Map<String, Object> getPageInfo(int pageIndex, int pageSize) {
         Map<String, Object> map = new HashMap<>(5);
         Page<Order> page = orderMapper.findAll(PageRequest.of(pageIndex, pageSize));
-        map.put("records", page.toList());
+        map.put("records", page.getContent());
         map.put("total", page.getTotalElements());
         return map;
     }

@@ -1,10 +1,12 @@
 package common
 
 import (
+	"fmt"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"github.com/spf13/viper"
+	"net"
 )
 
 func NacosInit() {
@@ -35,8 +37,8 @@ func NacosInit() {
 	)
 
 	namingClient.RegisterInstance(vo.RegisterInstanceParam{
-		Ip:          viper.GetString("nacos.url"),
-		Port:        viper.GetUint64("nacos.port"),
+		Ip:          getIP(),
+		Port:        8099,
 		ServiceName: "bank-seckill",
 		Weight:      10,
 		Enable:      true,
@@ -47,4 +49,26 @@ func NacosInit() {
 		GroupName:   "DEFAULT_GROUP",
 	})
 
+}
+
+func getIP() string {
+	netInterfaces, err := net.Interfaces()
+	if err != nil {
+		fmt.Println("net.Interfaces failed, err:", err.Error())
+	}
+	for i := 0; i < len(netInterfaces); i++ {
+		if (netInterfaces[i].Flags & net.FlagUp) != 0 {
+			addrs, _ := netInterfaces[i].Addrs()
+
+			for _, address := range addrs {
+				if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+					if ipnet.IP.To4() != nil {
+						return ipnet.IP.String()
+					}
+				}
+			}
+		}
+	}
+
+	return ""
 }

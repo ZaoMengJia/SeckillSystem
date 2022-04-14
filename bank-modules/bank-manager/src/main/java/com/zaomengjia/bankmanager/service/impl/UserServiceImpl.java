@@ -60,13 +60,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageVO<AdminUserVO> getAdminUserList(int pageNum, int pageSize) {
-        Page<AdminUser> entityPage = adminUserMapper.findAll(PageRequest.of(pageNum, pageSize));
+        Page<AdminUser> entityPage = adminUserMapper.findAll(PageRequest.of(pageNum - 1, pageSize));
         return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
     public PageVO<WeixinUserVO> getWeixinUserList(int pageNum, int pageSize) {
-        Page<WeixinUser> entityPage = weixinUserMapper.findAll(PageRequest.of(pageNum, pageSize));
+        Page<WeixinUser> entityPage = weixinUserMapper.findAll(PageRequest.of(pageNum - 1, pageSize));
         return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
@@ -77,19 +77,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageVO<WeixinUserVO> searchWeixinUserByNickname(String keyword, int pageNum, int pageSize) {
-        Page<WeixinUser> entityPage = weixinUserMapper.searchByNicknameLike(keyword, PageRequest.of(pageNum, pageSize));
+        Page<WeixinUser> entityPage = weixinUserMapper.searchByNicknameLike(keyword, PageRequest.of(pageNum - 1, pageSize));
         return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
     public PageVO<WeixinUserVO> searchWeixinUserByRealName(String keyword, int pageNum, int pageSize) {
-        Page<WeixinUser> entityPage = weixinUserMapper.searchByRealNameLike(keyword, PageRequest.of(pageNum, pageSize));
+        Page<WeixinUser> entityPage = weixinUserMapper.searchByRealNameLike(keyword, PageRequest.of(pageNum - 1, pageSize));
         return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
     public PageVO<AdminUserVO> searchAdminUserByUsername(String keyword, int pageNum, int pageSize) {
-        Page<AdminUser> entityPage = adminUserMapper.searchByUsernameLike(keyword, PageRequest.of(pageNum, pageSize));
+        Page<AdminUser> entityPage = adminUserMapper.searchByUsernameLike(keyword, PageRequest.of(pageNum - 1, pageSize));
         return new PageVO<>(entityPage.map(this::entityToVO));
     }
 

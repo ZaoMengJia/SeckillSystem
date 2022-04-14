@@ -216,7 +216,7 @@ export default {
       if (this.keyword === "") {
         this.$http
             .get(
-                "/back/financialProduct/getAllProduct/" +
+                "/back/web/financialProduct/getAllProduct/" +
                 this.queryInfo.pageIndex +
                 "/" +
                 this.queryInfo.pageSize
@@ -241,7 +241,7 @@ export default {
       } else {
         this.$http
             .get(
-                "/back/financialProduct/searchProduct/" +
+                "/back/web/financialProduct/searchProduct/" +
                 this.keyword +
                 "/" +
                 this.queryInfo.pageIndex +
@@ -282,7 +282,7 @@ export default {
       this.$refs.addProductFormRef.validate((valid) => {
         const that = this;
         if (valid) {
-          this.$http.get('/back/financialProduct/productExist/'+this.addProductForm.fname).then
+          this.$http.get('/back/web/financialProduct/productExist/'+this.addProductForm.fname).then
           this.$http
               .post("/back/financialProduct/addProduct", {
                 fpid: this.addProductForm.id,

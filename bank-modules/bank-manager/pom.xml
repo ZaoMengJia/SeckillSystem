@@ -58,6 +58,8 @@
             <artifactId>springdoc-openapi-ui</artifactId>
         </dependency>
 
+
+
     </dependencies>
 
     <build>
