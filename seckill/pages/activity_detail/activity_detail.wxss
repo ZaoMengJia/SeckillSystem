@@ -7,8 +7,17 @@
     border-radius: 20rpx;
     margin: 3px 6px;
 }
+.van-card__bottom{
+    justify-content: flex-end;
+    display: flex;
+}
 
 .image-img {
     min-height: 300rpx;
     width: 100%;
+}
+
+.product{
+    display: flex;
+    flex-direction: row;
 }
