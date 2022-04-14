@@ -83,7 +83,8 @@ Page({
         })
         secKillList({
             pageNum: this.data.pageIndex,
-            pageSize: MAX_PAGE_SIZE
+            pageSize: MAX_PAGE_SIZE,
+            token: app.globalData.token
         }).then(res => {
             if (this.data.pageIndex === res.data.pageTotal - 1) {
                 this.setData({

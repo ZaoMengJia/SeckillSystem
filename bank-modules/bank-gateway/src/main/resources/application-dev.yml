@@ -39,7 +39,9 @@ spring:
         - id: bank-seckill-service
           uri: lb://bank-seckill
           predicates:
-            - Path=/weixin/seckill/**
+            - Path=/weixin/seckill/**,Method=POST
+            - Path=/weixin/seckill/order/**
+            - Path=/weixin/seckill/url**
         - id: bank-order-service
           uri: lb://bank-order
           predicates:
