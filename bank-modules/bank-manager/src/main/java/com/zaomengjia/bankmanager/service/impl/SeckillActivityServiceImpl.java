@@ -34,7 +34,7 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
     @Override
     public Map<String, Object> searchSeckillActivity(String keyword, int pageIndex, int pageSize) {
         HashMap<String, Object> map = new HashMap<>();
-        Page<SeckillActivity> result = seckillActivityMapper.findByNameLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<SeckillActivity> result = seckillActivityMapper.findByNameContaining(keyword, PageRequest.of(pageIndex, pageSize));
         map.put("records", result.toList());
         map.put("total", result.getTotalElements());
         return map;

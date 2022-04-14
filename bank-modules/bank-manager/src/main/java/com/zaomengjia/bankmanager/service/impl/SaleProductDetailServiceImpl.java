@@ -41,7 +41,7 @@ public class SaleProductDetailServiceImpl implements SaleProductDetailService {
 
 
         Map<String, Object> map = new HashMap<>(5);
-        Page<SaleProductDetail> result = saleProductDetailMapper.findBySeckillActivityIdLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<SaleProductDetail> result = saleProductDetailMapper.findBySeckillActivityIdContaining(keyword, PageRequest.of(pageIndex, pageSize));
         map.put("records", result.toList());
         map.put("total", result.getTotalElements());
         return map;

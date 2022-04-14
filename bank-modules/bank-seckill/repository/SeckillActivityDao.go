@@ -11,8 +11,14 @@ type SeckillActivityDao struct {
 
 func (s *SeckillActivityDao) GetSeckillActivityById(id string) (*model.SeckillActivity, error) {
 	var result model.SeckillActivity
-	if err := s.DB.Find(&result, id).Error; err != nil {
+	if err := s.DB.Debug().Table("seckill_activity").
+		Where(&model.SeckillActivity{Id: id}).Find(&result).Error; err != nil {
+		panic(err)
 		return nil, err
+	}
+
+	if result.Id == "" {
+		return nil, nil
 	}
 	return &result, nil
 }

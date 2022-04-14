@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Map<String, Object> searchOrder(String keyword, int pageIndex, int pageSize) {
-        Page<Order> result = orderMapper.findByUserIdLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<Order> result = orderMapper.findByUserIdContaining(keyword, PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
         map.put("records", result.toList());
         map.put("total", result.getTotalElements());

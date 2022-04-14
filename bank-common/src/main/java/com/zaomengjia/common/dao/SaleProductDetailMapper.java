@@ -23,7 +23,7 @@ public interface SaleProductDetailMapper extends JpaRepository<SaleProductDetail
 
     void deleteBySeckillActivityIdAndFinancialProductId(String seckillActivityId, String finalProductId);
 
-    Page<SaleProductDetail> findBySeckillActivityIdLike(String keyword, Pageable pageable);
+    Page<SaleProductDetail> findBySeckillActivityIdContaining(String keyword, Pageable pageable);
 
     @Transactional
     @Modifying

@@ -3,7 +3,9 @@ package com.zaomengjia.bankmanager.service.impl;
 import com.zaomengjia.bankmanager.service.SeckillActivityService;
 import com.zaomengjia.bankmanager.service.UserService;
 import com.zaomengjia.common.dao.SeckillActivityMapper;
+import com.zaomengjia.common.dao.WeixinUserMapper;
 import com.zaomengjia.common.entity.SeckillActivity;
+import com.zaomengjia.common.entity.WeixinUser;
 import com.zaomengjia.common.vo.page.PageVO;
 import com.zaomengjia.common.vo.user.WeixinUserVO;
 import org.junit.jupiter.api.Test;
@@ -29,9 +31,13 @@ class SeckillActivityServiceImplTest {
     private UserService service;
 
     @Autowired
+    private WeixinUserMapper weixinUserMapper;
+
+    @Autowired
     private SeckillActivityMapper seckillActivityMapper;
 
     @Test
     void test() {
+
     }
 }
