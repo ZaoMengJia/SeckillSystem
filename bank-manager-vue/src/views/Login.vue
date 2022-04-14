@@ -73,7 +73,7 @@ export default {
       let {account, password} = this.ruleForm;
       const that = this;
       this.$http.post(
-          "/back/auth/web",
+          "/auth/web",
           {
             "username": account,
             "password": password
