@@ -33,19 +33,18 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @date 2022/4/6 22:04
  */
-@Component
 public class JwtFilter implements WebFilter {
 
     private final JwtUtils jwtUtils;
 
     private final RedisUtils redisUtils;
 
-    @Value("${auth.expired-time}")
-    private long expire;
+    private final long expire;
 
-    public JwtFilter(JwtUtils jwtUtils, RedisUtils redisUtils) {
+    public JwtFilter(JwtUtils jwtUtils, RedisUtils redisUtils, long expire) {
         this.jwtUtils = jwtUtils;
         this.redisUtils = redisUtils;
+        this.expire = expire;
     }
 
     private Mono<Void> chainFilterAndSetHeaders(WebFilterChain chain, ServerWebExchange exchange, LinkedHashMap<String, String> headerMap) {

@@ -35,19 +35,18 @@ import java.util.stream.Stream;
  * @version 1.0
  * @date 2022/4/11 17:12
  */
-@Component
 public class SignatureFilter implements WebFilter {
 
-    @Value("${auth.app-key}")
-    private String appKey;
+    private final String appKey;
 
-    @Value("${auth.sign-expired-time}")
-    private long signatureExpireTime;
+    private final long signatureExpireTime;
 
     private final RedisUtils redisUtils;
 
-    public SignatureFilter(RedisUtils redisUtils) {
+    public SignatureFilter(RedisUtils redisUtils, String appKey, long signatureExpireTime) {
         this.redisUtils = redisUtils;
+        this.appKey = appKey;
+        this.signatureExpireTime = signatureExpireTime;
     }
 
     @NotNull
@@ -71,29 +70,19 @@ public class SignatureFilter implements WebFilter {
             throw new AppException(ResultCode.PATTERN_ERROR);
         }
 
-        MediaType contentType = headers.getContentType();
-        if(request.getMethod() != HttpMethod.GET && MediaType.APPLICATION_JSON.equals(contentType)) {
-            ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
-                @NotNull
-                @Override
-                public Flux<DataBuffer> getBody() {
-                    return super.getBody().doOnNext(buffer -> {
-                        String body = String.valueOf(StandardCharsets.UTF_8.decode(buffer.asByteBuffer()));
-                        verifySignature(body, requestNonce, requestTimestamp, requestSignature);
-                    });
-                }
-            };
-            return chain.filter(exchange.mutate().request(decorator).build());
-        }
-        else {
-            ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
-                @NotNull
-                @Override
-                public Flux<DataBuffer> getBody() {
-                    return super.getBody().doOnNext(buffer -> {
-                        Map<String, String> map = request.getQueryParams().toSingleValueMap();
+        ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
+            @NotNull
+            @Override
+            public Flux<DataBuffer> getBody() {
+                return super.getBody().doOnNext(buffer -> {
+                    Map<String, String> map = request.getQueryParams().toSingleValueMap();
+                    String body = String.valueOf(StandardCharsets.UTF_8.decode(buffer.asByteBuffer()));
+                    MediaType contentType = headers.getContentType();
 
-                        String body = String.valueOf(StandardCharsets.UTF_8.decode(buffer.asByteBuffer()));
+                    if(request.getMethod() != HttpMethod.GET && MediaType.APPLICATION_JSON.equals(contentType)) {
+                        verifySignature(body, requestNonce, requestTimestamp, requestSignature);
+                    }
+                    else {
                         for (String s : body.split("&")) {
                             String[] split = s.split("=");
                             if(split.length != 2) {
@@ -105,13 +94,13 @@ public class SignatureFilter implements WebFilter {
                         map.remove("t");
                         String input = JSON.toJSONString(new TreeMap<>(map));
                         verifySignature(input, requestNonce, requestTimestamp, requestSignature);
-                    });
-                }
-            };
+                    }
 
+                });
+            }
+        };
 
-            return chain.filter(exchange.mutate().request(decorator).build());
-        }
+        return chain.filter(exchange.mutate().request(decorator).build());
     }
 
 

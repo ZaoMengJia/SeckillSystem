@@ -22,9 +22,11 @@ export function sign(requestType = RequestType.query, body = {}) {
     let nonce = getRandomString();
     let timestamp = new Date().getTime();
 
-    let data = requestType != RequestType.body ? sortObject(body) : body;
+    let data = requestType != RequestType.body ? standardizeObject(body) : body;
     let input = JSON.stringify(data) + nonce + timestamp + appKey;
     let signature = Base64.encode(MD5.md5(input)).replaceAll(/[/=+]/g, '');
+    console.log(MD5.md5(input))
+    console.log(input)
     return {nonce, timestamp, signature};
 }
 
@@ -34,12 +36,11 @@ export function sign(requestType = RequestType.query, body = {}) {
  * @param {Object} object
  * @returns 排序后的对象
  */
-function sortObject(object = {}) {
+function standardizeObject(object = {}) {
     let newObject = {};
     Object.keys(object).sort().forEach(key => {
-        newObject[key] = object[key];
+        newObject[key] = object[key] + '';
     })
-
     return newObject;
 }
 

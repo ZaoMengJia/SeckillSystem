@@ -1,5 +1,6 @@
 package com.zaomengjia.gateway.config;
 
+import com.zaomengjia.common.utils.RedisUtils;
 import com.zaomengjia.gateway.filter.JwtFilter;
 import com.zaomengjia.gateway.filter.SignatureFilter;
 import com.zaomengjia.gateway.filter.UsernamePasswordManager;
@@ -8,6 +9,7 @@ import com.zaomengjia.gateway.handler.LoginSuccessHandler;
 import com.zaomengjia.gateway.pojo.WeixinToken;
 import com.zaomengjia.gateway.utils.JwtUtils;
 import io.netty.util.internal.StringUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -38,6 +40,15 @@ import java.util.Collections;
 @Configuration
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
+
+    @Value("${auth.app-key}")
+    private String appKey;
+
+    @Value("${auth.sign-expired-time}")
+    private long signatureExpireTime;
+
+    @Value("${auth.expired-time}")
+    private long expire;
 
 
     @Resource
@@ -88,9 +99,10 @@ public class WebSecurityConfig {
 
 
 
+
     @Bean
     @Primary
-    public ReactiveAuthenticationManager reactiveAuthenticationManager(WeixinLoginManager weixinLoginManager, UsernamePasswordManager usernamePasswordManager, JwtFilter jwtFilter) {
+    public ReactiveAuthenticationManager reactiveAuthenticationManager(WeixinLoginManager weixinLoginManager, UsernamePasswordManager usernamePasswordManager) {
         return authentication -> {
             if(authentication instanceof WeixinToken) {
                 return weixinLoginManager.authenticate(authentication);
@@ -105,7 +117,7 @@ public class WebSecurityConfig {
 
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager reactiveAuthenticationManager, JwtFilter jwtFilter, JwtUtils jwtUtils, SignatureFilter signatureFilter) {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager reactiveAuthenticationManager, JwtUtils jwtUtils, RedisUtils redisUtils) {
         http
                 .authenticationManager(reactiveAuthenticationManager)
                 .exceptionHandling()
@@ -152,9 +164,9 @@ public class WebSecurityConfig {
                 //2. 管理员用户名密码验证
                 .addFilterAt(usernamePasswordFilter(reactiveAuthenticationManager, jwtUtils), SecurityWebFiltersOrder.AUTHENTICATION)
                 //3. token验证
-                .addFilterAfter(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAfter(new JwtFilter(jwtUtils, redisUtils, expire), SecurityWebFiltersOrder.AUTHENTICATION)
                 //4. 签名验证
-                .addFilterBefore(signatureFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterBefore(new SignatureFilter(redisUtils, appKey, signatureExpireTime), SecurityWebFiltersOrder.AUTHENTICATION)
 
                 .csrf().disable().exceptionHandling()
 

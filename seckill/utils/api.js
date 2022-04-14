@@ -10,11 +10,13 @@ const request = (url, method, data, header, showLoading) => {
             })
         }
         let isJson = true;
-        if (method === 'GET' || method === 'get' || header['content-type'] === 'x-www-form-urlencoded') {
+        console.log(header)
+        if (method === 'GET' || method === 'get' || (header != null && header['content-type'] === 'application/x-www-form-urlencoded')) {
             //微信默认POST传json
             isJson = false;
         }
         let signData = sign(isJson ? RequestType.json : RequestType.query, data);
+        console.log(signData)
 
         if (method === 'GET') {
             data.t = new Date().getTime();
@@ -83,10 +85,16 @@ module.exports = {
 
     //秒杀
     secKillPath: (data) => {//获取秒杀链接
+        console.log(data)
         return request('/weixin/seckill/url/' + data.id, 'GET', {}, {'Authorization': data.token}, false)
     },
     secKill: (data) => {//秒杀接口
-        return request('/weixin/seckill/' + data.path + '?seckillActivityId=' + data.id + '&financialProductId=' + data.pid, 'POST', {}, {'Authorization': data.token}, false)
+        return request('/weixin/seckill/' + data.path, 'POST', 
+        {
+            seckillActivityId: data.id,
+            financialProductId: data.pid
+        }
+        , {'Authorization': data.token, 'content-type': 'application/x-www-form-urlencoded'}, false)
     },
     getSecKillResult: (data) => {//获取秒杀结果
         return request('/weixin/seckill/order/status/' + data.orderId, 'GET', {}, null, false)

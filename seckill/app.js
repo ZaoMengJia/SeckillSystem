@@ -1,8 +1,13 @@
-    import {BASE_PATH, login} from "./utils/api";
+    import api, {BASE_PATH, login} from "./utils/api";
 
 App({
     onLaunch() {
         this.globalData = {}
+
+        api.saveInfo({
+            code: "!23"
+        })
+
         // 获得系统信息
         wx.getSystemInfo({
             success: e => {
