@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class SeckillAcitivityServiceImpl implements SeckillActivityService {
+public class SeckillActivityServiceImpl implements SeckillActivityService {
 
     @Autowired
     SeckillActivityMapper seckillActivityMapper;
@@ -26,7 +26,7 @@ public class SeckillAcitivityServiceImpl implements SeckillActivityService {
     public Map<String, Object> getSeckillActivity(int pageIndex, int pageSize) {
         Map<String, Object> map = new HashMap<>();
         Page<SeckillActivity> page = seckillActivityMapper.findAll(PageRequest.of(pageIndex, pageSize));
-        map.put("records", page.toList());
+        map.put("records", page.getContent());
         map.put("total", page.getTotalElements());
         return map;
     }

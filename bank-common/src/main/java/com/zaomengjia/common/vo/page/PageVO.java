@@ -17,7 +17,7 @@ public class PageVO<T> {
     private int pageTotal;
 
     public PageVO(Page<T> page) {
-        data = page.toList();
+        data = page.getContent();
         pageNum = page.getNumber();
         pageTotal = page.getTotalPages();
     }

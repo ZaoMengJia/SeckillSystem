@@ -32,7 +32,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
     public Map<String, Object> getFinancialProduct(int pageIndex, int pageSize) {
         Page<FinancialProduct> page = financialProductMapper.findByNameLike("", PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
-        map.put("records", page.toList());
+        map.put("records", page.getContent());
         map.put("total", page.getTotalElements());
         return map;
     }
@@ -41,7 +41,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
     public Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize) {
         Page<FinancialProduct> page = financialProductMapper.findByNameLike(keyword, PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
-        map.put("records", page.toList());
+        map.put("records", page.getContent());
         map.put("total", page.getTotalElements());
         return map;
     }

@@ -1,7 +1,5 @@
 package com.zaomengjia.stock.service.impl;
 
-import com.alibaba.nacos.common.utils.UuidUtils;
-import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.service.StockSimpleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
