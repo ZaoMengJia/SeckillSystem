@@ -2,7 +2,7 @@
     <view slot="backText" catch:tap="onNavigateBack">返回</view>
     <view slot="content">秒杀活动详情</view>
 </cu-custom>
-<image class="image-img" mode="aspectFill" width="100%" src="{{url}}" bind:tap="onPreviewImg"/>
+<image class="image-img" mode="aspectFill" width="100%" src="{{url}}"/>
 
 <view class="cu-card article no-card">
     <view class="cu-item shadow">
@@ -10,15 +10,10 @@
             <view class="text-cut text-xxl">
                 {{title}}
             </view>
-            <view class="flex align-center">
-                <view class="price">
-                    结束时间：{{endTime}}
-                </view>
-            </view>
         </view>
         <view class="content">
             <view class="desc">
-                <view class="flex align-center justify-between">
+                <view class="flex align-center justify-end">
                     <view>
                         <view>结束时间：{{endTime}}</view>
                     </view>
@@ -36,16 +31,19 @@
 </view>
 <van-radio-group value="{{pid}}" bind:change="onChangeProduct">
     <view wx:for="{{productList}}" wx:key="id" style="margin-top:10px;">
-        <van-card custom-class="product-card shadow-warp" thumb-mode="aspectFill"
-                  title-class="text-cut"
-                  title="{{item.name}}"
-                  price="{{item.price}}"
-                  desc="剩余：{{item.quantity}}份"
-                  data-id="{{item.id}}">
-            <view slot="footer">
-                <van-radio name="{{item.id}}" disabled="{{item.quantity<=0}}"></van-radio>
-            </view>
-        </van-card>
+        <view class="product">
+            <van-card style="width:90%;"
+                      custom-class="product-card shadow-warp"
+                      thumb-mode="aspectFill"
+                      title-class="text-cut"
+                      title="{{item.name}}"
+                      price="{{item.price}}"
+                      desc="剩余：{{item.quantity}}份"
+                      data-id="{{item.id}}">
+            </van-card>
+            <van-radio class="flex align-center justify-between" name="{{item.id}}" disabled="{{item.quantity<=0}}"></van-radio>
+        </view>
+
     </view>
 </van-radio-group>
 <view style="height:160rpx;"></view>

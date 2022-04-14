@@ -1,7 +1,7 @@
 const {sign, RequestType} = require("./signUtils");
 
-const BASE_PATH = 'http://52.82.45.59:8888';
-// const BASE_PATH = 'http://localhost:8811';
+// const BASE_PATH = 'http://52.82.45.59:8888';
+const BASE_PATH = 'http://localhost:8811';
 
 const request = (url, method, data, header, showLoading, isBody=false) => {
     return new Promise((resolve, reject) => {
