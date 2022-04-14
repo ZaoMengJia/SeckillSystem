@@ -22,12 +22,12 @@ type Order struct {
 }
 
 type SeckillActivity struct {
-	Id         string
+	Id         string `gorm:"primaryKey"`
 	Name       string
 	Image      string
 	Detail     string
-	BeginTime  *time.Time
-	EndTime    *time.Time
+	BeginTime  *time.Time `gorm:"column:activity_begin_time"`
+	EndTime    *time.Time `gorm:"column:activity_end_time"`
 	CreateTime *time.Time
 	Deleted    int
 }

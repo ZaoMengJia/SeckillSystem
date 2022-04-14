@@ -37,6 +37,12 @@ func GetSeckillSecretUrl(ctx *gin.Context) {
 	}
 
 	activity := seckillActivityService.FindSeckillActivityById(seckillActivityId)
+
+	if activity == nil {
+		response.Error(ctx, response.ResultCodeNoSuchActivity)
+		return
+	}
+
 	now := time.Now()
 	if activity.BeginTime.After(now) && activity.EndTime.Before(now) {
 		response.Error(ctx, response.ResultCodeActivityNotStarted)
@@ -99,7 +105,12 @@ func Seckill(ctx *gin.Context) {
 }
 
 func getUserIdFromJwtPayload(jwt string) (string, error) {
-	payloadBase64 := strings.Split(jwt, ".")[1]
+	split := strings.Split(jwt, ".")
+	if len(split) < 2 {
+		return "", &response.AppException{ExceptionType: response.ResultCodeTokenError}
+	}
+
+	payloadBase64 := split[1]
 	payloadStr, err := base64.StdEncoding.DecodeString(payloadBase64)
 	if err != nil {
 		return "", err
