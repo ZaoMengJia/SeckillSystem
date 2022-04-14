@@ -1,4 +1,4 @@
-import {getActivityDetail, secKill} from "../../utils/api";
+import {getActivityDetail, getSecKillResult, secKill, secKillPath} from "../../utils/api";
 import Toast from "../../miniprogram_npm/@vant/weapp/toast/toast";
 
 const app = getApp()
@@ -9,7 +9,7 @@ Page({
         pid: -1,
         secKillPath: null,
         productList: [],
-        price: 0
+        curProductPrice: 0
     },
 
     onLoad: function (options) {
@@ -17,6 +17,7 @@ Page({
             aid: options.aid
         })
         this.getDetail()
+        this.getSecKillPath()
     },
     onNavigateBack() {
         wx.navigateBack({
@@ -36,7 +37,6 @@ Page({
         getActivityDetail({
             id: this.data.aid
         }).then(res => {
-            console.log(res)
             this.setData({
                 url: res.data.image,
                 detail: res.data.detail,
@@ -46,21 +46,61 @@ Page({
             })
         })
     },
+    getSecKillPath(){
+        secKillPath({
+            id: this.data.aid,
+            token: app.globalData.token
+        }).then(res => {
+            this.setData({
+                secKillPath: res.data.path
+            })
+        })
+    },
 
+    onChangeProduct(e){
+        this.setData({
+            pid: e.detail
+        })
+        for(let i = 0; i < this.data.productList.length; i+=1){
+            const cur = this.data.productList[i]
+            if(cur.id === this.data.pid){
+                this.setData({
+                    curProductPrice: cur.price*100
+                })
+                break
+            }
+        }
+    },
     onSecKill() {
         const isAudited = wx.getStorageSync("isAudited")
         if (isAudited) {
-            //TODO 秒杀
+            wx.showLoading({
+                title: '等待结果中'
+            })
             secKill({
                 path: this.data.secKillPath,
                 id: this.data.aid,
                 pid: this.data.pid,
                 token: app.globalData.token
             }).then(res => {
-                console.log("seckill", res)
+                let status
+                do {
+                    setTimeout(function () {},500)
+                    getSecKillResult({
+                        orderId: res.data.orderId
+                    }).then(res => {
+                        status = res.data.status
+                    })
+                }while(status === 'CREATING')
+                if(status === 'NORMAL'){
+                    Toast.success("抢购成功")
+                }else{
+                    Toast.fail("抢购失败")
+                }
+                wx.hideLoading()
             })
         } else {
-            Toast.fail("无抢购资格!")
+            Toast.fail("无抢购资格")
         }
     }
 })

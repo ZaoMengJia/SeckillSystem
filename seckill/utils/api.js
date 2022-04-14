@@ -2,7 +2,7 @@ const {sign, RequestType} = require("./signUtils");
 
 const BASE_PATH = 'http://localhost:8811';
 
-const request = (url, method, data, header, showLoading) => {
+const request = (url, method, data, header, showLoading, isBody=false) => {
     return new Promise((resolve, reject) => {
         if (showLoading) {
             wx.showLoading({
@@ -14,8 +14,12 @@ const request = (url, method, data, header, showLoading) => {
             //微信默认POST传json
             isJson = false;
         }
-        let signData = sign(isJson ? RequestType.json : RequestType.query, data);
-
+        let signData
+        if(isBody){
+            signData = sign(RequestType.body, data);
+        }else{
+            signData = sign(isJson ? RequestType.json : RequestType.query, data);
+        }
         if (method === 'GET') {
             data.t = new Date().getTime();
         }
@@ -37,7 +41,7 @@ const request = (url, method, data, header, showLoading) => {
                 } else {
                     wx.showModal({
                         title: '提示',
-                        content: '接口异常错误!',
+                        content: res.data.message,
                         success(res) {
                         }
                     })
@@ -48,7 +52,7 @@ const request = (url, method, data, header, showLoading) => {
                 console.log(error)
                 wx.showModal({
                     title: '提示',
-                    content: '接口请求失败!',
+                    content: '接口请求失败',
                     success(res) {
                     }
                 })
@@ -65,10 +69,10 @@ module.exports = {
     request,
     //用户
     login: (data) => {//登录
-        return request('/auth/weixin', 'POST', data, {'content-type': 'application/x-www-form-urlencoded'}, false, false)
+        return request('/auth/weixin', 'POST', data, {'content-type': 'application/x-www-form-urlencoded'}, false)
     },
-    saveInfo: (data) => {//注册
-        return request('/weixin/user/' + data.userId, 'PUT', data.body, {'Authorization': data.token}, false)
+    saveInfo: (data) => {//注册信息
+        return request('/weixin/user/' + data.userId, 'PUT', data.body, {'Authorization': data.token}, false, true)
     },
     getUserStatus: (data) => {//用户信息状态
         return request('/weixin/user/status/' + data.userId, 'GET', {}, {'Authorization': data.token}, false)

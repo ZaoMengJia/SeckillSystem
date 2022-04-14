@@ -21,8 +21,8 @@ export const RequestType = {
 export function sign(requestType = RequestType.query, body = {}) {
     let nonce = getRandomString();
     let timestamp = new Date().getTime();
-
     let data = requestType != RequestType.body ? sortObject(body) : body;
+
     let input = JSON.stringify(data) + nonce + timestamp + appKey;
     let signature = Base64.encode(MD5.md5(input)).replaceAll(/[/=+]/g, '');
     return {nonce, timestamp, signature};
