@@ -72,16 +72,21 @@ export default {
       this.isShow = false; // 通过验证后，需要手动隐藏模态框
       let {account, password} = this.ruleForm;
       const that = this;
+      const qs = require('qs')
       this.$http.post(
-          "/auth/web",
-          {
+          "/back/auth/web",
+          qs.stringify({
             "username": account,
             "password": password
-          }
+          }),
+          {
+            headers:{'Content-Type':'application/x-www-form-urlencoded',}
+          },
       ).then(ress => {
-        if (ress.data.code === 200) {
+        if (ress.data.code === 10000) {
           window.sessionStorage.setItem("adminLogin", "true")
-          window.sessionStorage.setItem("adminId", ress.data.data.id)
+          window.sessionStorage.setItem("adminId", ress.data.data.userId)
+          window.sessionStorage.setItem("token", ress.data.data.token)
           this.$router.push('/user'); //跳转到首页
         } else if(ress.data.code === 404){
           that.$message.error("迷路啦")

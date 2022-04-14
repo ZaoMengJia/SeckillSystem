@@ -23,6 +23,15 @@ public class SeckillActivityController {
         }
     }
 
+    @GetMapping("/searchSeckillActivity/{keyword}/{pageIndex}/{pageSize}")
+    public ResultVO<?> searchSeckillActivity(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
+        try{
+            return ResultUtils.success(seckillActivityService.searchSeckillActivity(keyword,pageIndex,pageSize));
+        }catch (Exception e){
+            throw new RuntimeException();
+        }
+    }
+
     @GetMapping("/getSeckillActivityById/{id}")
     public ResultVO<?> getSeckillActivityById(@PathVariable String id){
         try{

@@ -38,7 +38,12 @@
           <el-table-column prop="id" label="秒杀活动id" width="100"> </el-table-column>
           <el-table-column prop="sname" label="秒杀活动名" width="150"></el-table-column>
           <el-table-column prop="image" label="秒杀活动图片" width="150">
-
+            <img
+                :src="activityList.image"
+                alt=""
+                fit="fill"
+                style="width: 100px; height: 100px; "
+            />
           </el-table-column>
           <el-table-column prop="detail" label="秒杀活动描述" width="150"></el-table-column>
           <el-table-column prop="beginTime" label="秒杀活动开始时间" width="150"></el-table-column>
@@ -247,7 +252,6 @@ export default {
       addActivityVisible: false,
       //添加秒杀活动参数
       addActivityForm: {
-        id: 0,
         sname: "",
         image: "",
         detail: "",
@@ -257,11 +261,8 @@ export default {
       },
       //添加秒杀活动对话框验证规则
       addActivityFormRul: {
-        id: [
-          { required: true, message: "秒杀活动名不能为空", trigger: "blur" },
-        ],
         sname: [
-          { required: true, message: "价格不能为空", trigger: "blur" },
+          { required: true, message: "活动名不能为空", trigger: "blur" },
         ],
       },
       //存储获取到的秒杀活动信息
@@ -298,7 +299,7 @@ export default {
         this.$http
             .get(
                 "/back/web/seckillActivity/getAllSeckillActivity/" +
-                this.queryInfo.pageIndex +
+                (this.queryInfo.pageIndex-1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -309,8 +310,8 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempActivityList.length; i++) {
                   temp = {};
-                  temp.id = tempActivityList[i].said;
-                  temp.sname = tempActivityList[i].sname;
+                  temp.id = tempActivityList[i].id;
+                  temp.sname = tempActivityList[i].name;
                   temp.image = tempActivityList[i].image;
                   temp.detail = tempActivityList[i].detail;
                   temp.beginTime = tempActivityList[i].beginTime;
@@ -326,10 +327,10 @@ export default {
       } else {
         this.$http
             .get(
-                "/back/web/seckillActivity/searchActivity/" +
+                "/back/web/seckillActivity/searchSeckillActivity/" +
                 this.keyword +
                 "/" +
-                this.queryInfo.pageIndex +
+                (this.queryInfo.pageIndex-1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -340,8 +341,8 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempActivityList.length; i++) {
                   temp = {};
-                  temp.id = tempActivityList[i].said;
-                  temp.sname = tempActivityList[i].sname;
+                  temp.id = tempActivityList[i].id;
+                  temp.sname = tempActivityList[i].name;
                   temp.image = tempActivityList[i].image;
                   temp.detail = tempActivityList[i].detail;
                   temp.beginTime = tempActivityList[i].beginTime;
@@ -373,9 +374,9 @@ export default {
         if (valid) {
           this.$http.get('/back/web/seckillActivity/activityExist/'+this.addActivityForm.sname).then
           this.$http
-              .post("/back/web/seckillActivity/addSeckillActivity", {
-                said: this.addActivityForm.id,
-                sname: this.addActivityForm.sname,
+              .post("/back/web/seckillActivity/addSeckillActivity/", {
+                id: this.addActivityForm.id,
+                name: this.addActivityForm.sname,
                 image: this.addActivityForm.image,
                 detail: this.addActivityForm.detail,
                 beginTime: this.addActivityForm.beginTime,
@@ -386,7 +387,7 @@ export default {
                 if (ress.data.code === 10000) {
                   that.$message.success("添加成功");
                 } else {
-                  that.$message.error("添加失败");
+                  that.$message.error(ress.data.message);
                 }
               });
           //关闭dialog对话框
@@ -407,8 +408,8 @@ export default {
       //根据秒杀活动id获取当前秒杀活动信息
       this.$http.get("/back/web/seckillActivity/getSeckillActivityById/" + row.id).then((ress) => {
         //存储获取到的秒杀活动信息
-        this.editActivityParams.id = ress.data.data.said;
-        this.editActivityParams.sname = ress.data.data.sname;
+        this.editActivityParams.id = ress.data.data.id;
+        this.editActivityParams.sname = ress.data.data.name;
         this.editActivityParams.image = ress.data.data.image;
         this.editActivityParams.detail = ress.data.data.detail;
         this.editActivityParams.beginTime = ress.data.data.beginTime;
@@ -423,8 +424,8 @@ export default {
         if (valid) {
           this.$http
               .put("/back/web/seckillActivity/updateSeckillActivity", {
-                said: this.editActivityParams.id,
-                sname: this.editActivityParams.sname,
+                id: this.editActivityParams.id,
+                name: this.editActivityParams.sname,
                 image: this.editActivityParams.image,
                 detail: this.editActivityParams.detail,
                 beginTime: this.editActivityParams.beginTime,
@@ -437,7 +438,7 @@ export default {
                   that.$message.success("修改成功");
                   this.getActivityList();
                 } else {
-                  that.$message.error("修改失败");
+                  that.$message.error(ress.data.message);
                 }
               });
         }
@@ -457,7 +458,7 @@ export default {
                 that.$message.success("删除秒杀活动成功");
                 this.getActivityList();
               } else {
-                that.$message.error("删除秒杀活动失败");
+                that.$message.error(ress.data.message);
               }
             });
           })
