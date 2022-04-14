@@ -13,5 +13,5 @@ public interface SeckillActivityMapper extends JpaRepository<SeckillActivity, St
 
     SeckillActivity findByName(String name);
 
-    Page<SeckillActivity> findByNameLike(String keyword, Pageable pageable);
+    Page<SeckillActivity> findByNameContaining(String keyword, Pageable pageable);
 }

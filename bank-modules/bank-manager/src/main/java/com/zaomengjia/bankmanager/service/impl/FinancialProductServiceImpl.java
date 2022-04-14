@@ -30,7 +30,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
      */
     @Override
     public Map<String, Object> getFinancialProduct(int pageIndex, int pageSize) {
-        Page<FinancialProduct> page = financialProductMapper.findByNameLike("", PageRequest.of(pageIndex, pageSize));
+        Page<FinancialProduct> page = financialProductMapper.findByNameContaining("", PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
         map.put("records", page.getContent());
         map.put("total", page.getTotalElements());
@@ -39,7 +39,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
 
     @Override
     public Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize) {
-        Page<FinancialProduct> page = financialProductMapper.findByNameLike(keyword, PageRequest.of(pageIndex, pageSize));
+        Page<FinancialProduct> page = financialProductMapper.findByNameContaining(keyword, PageRequest.of(pageIndex, pageSize));
         Map<String, Object> map = new HashMap<>(5);
         map.put("records", page.getContent());
         map.put("total", page.getTotalElements());

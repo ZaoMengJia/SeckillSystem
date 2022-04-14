@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 /**
  * @author orangeboyChen
  * @version 1.0
@@ -17,9 +15,9 @@ import java.util.List;
 public interface WeixinUserMapper extends JpaRepository<WeixinUser, String> {
     WeixinUser findByOpenid(String openid);
 
-    Page<WeixinUser> searchByNicknameLike(String keyword, Pageable pageable);
+    Page<WeixinUser> searchByNicknameContaining(String keyword, Pageable pageable);
 
-    Page<WeixinUser> searchByRealNameLike(String keyword, Pageable pageable);
+    Page<WeixinUser> searchByRealNameContaining(String keyword, Pageable pageable);
 
 
 

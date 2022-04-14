@@ -77,19 +77,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageVO<WeixinUserVO> searchWeixinUserByNickname(String keyword, int pageNum, int pageSize) {
-        Page<WeixinUser> entityPage = weixinUserMapper.searchByNicknameLike(keyword, PageRequest.of(pageNum - 1, pageSize));
+        Page<WeixinUser> entityPage = weixinUserMapper.searchByNicknameContaining(keyword, PageRequest.of(pageNum - 1, pageSize));
         return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
     public PageVO<WeixinUserVO> searchWeixinUserByRealName(String keyword, int pageNum, int pageSize) {
-        Page<WeixinUser> entityPage = weixinUserMapper.searchByRealNameLike(keyword, PageRequest.of(pageNum - 1, pageSize));
+        Page<WeixinUser> entityPage = weixinUserMapper.searchByRealNameContaining(keyword, PageRequest.of(pageNum - 1, pageSize));
         return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
     @Override
     public PageVO<AdminUserVO> searchAdminUserByUsername(String keyword, int pageNum, int pageSize) {
-        Page<AdminUser> entityPage = adminUserMapper.searchByUsernameLike(keyword, PageRequest.of(pageNum - 1, pageSize));
+        Page<AdminUser> entityPage = adminUserMapper.searchByUsernameContaining(keyword, PageRequest.of(pageNum - 1, pageSize));
         return new PageVO<>(entityPage.map(this::entityToVO));
     }
 
