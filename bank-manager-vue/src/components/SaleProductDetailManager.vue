@@ -35,6 +35,7 @@
           <el-table-column type="index" width="100" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要detailList里的属性名改成一样的 -->
+          <el-table-column prop="id" label="商品明细id" width="100"> </el-table-column>
           <el-table-column prop="said" label="秒杀活动id" width="100"> </el-table-column>
           <el-table-column prop="fpid" label="产品id" width="100">
           </el-table-column>
@@ -154,6 +155,7 @@ export default {
       //明细列表数据
       detailList: [],
       detailParams: {
+        id:0,
         said: 0,
         fpid: 0,
         quantity: "",
@@ -209,7 +211,7 @@ export default {
         this.$http
             .get(
                 "/back/web/saleProductDetail/getAllSaleProductDetail/" +
-                this.queryInfo.pageIndex +
+                (this.queryInfo.pageIndex-1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -220,15 +222,16 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempDetailList.length; i++) {
                   temp = {};
-                  temp.said = tempDetailList[i].said;
-                  temp.fpid = tempDetailList[i].fpid;
+                  temp.id = tempDetailList[i].id;
+                  temp.said = tempDetailList[i].seckillActivityId;
+                  temp.fpid = tempDetailList[i].financialProductId;
                   temp.quantity = tempDetailList[i].quantity;
                   temp.total = tempDetailList[i].total;
                   that.detailList.push(temp);
                 }
                 that.total = ress.data.data.total;
               } else {
-                that.$message.error("请求明细列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       } else {
@@ -237,7 +240,7 @@ export default {
                 "/back/web/saleProductDetail/searchSaleProductDetail/" +
                 this.keyword +
                 "/" +
-                this.queryInfo.pageIndex +
+                (this.queryInfo.pageIndex-1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -248,15 +251,16 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempDetailList.length; i++) {
                   temp = {};
-                  temp.said = tempDetailList[i].said;
-                  temp.fpid = tempDetailList[i].fpid;
+                  temp.id = tempDetailList[i].id;
+                  temp.said = tempDetailList[i].seckillActivityId;
+                  temp.fpid = tempDetailList[i].financialProductId;
                   temp.quantity = tempDetailList[i].quantity;
                   temp.total = tempDetailList[i].total;
                   that.detailList.push(temp);
                 }
                 this.total = ress.data.data.total;
               } else {
-                that.$message.error("请求明细列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       }
@@ -287,7 +291,7 @@ export default {
                 if (ress.data.code === 10000) {
                   that.$message.success("添加成功");
                 } else {
-                  that.$message.error("添加失败");
+                  that.$message.error(ress.data.message);
                 }
               });
           //关闭dialog对话框
@@ -308,8 +312,8 @@ export default {
       //根据明细id获取当前明细信息
       this.$http.get("/back/web/saleProductDetail/getSaleProductDetailBySaidAndFpid/" + row.said+'/'+row.fpid).then((ress) => {
         //存储获取到的明细信息
-        this.editDetailParams.said = ress.data.data.said;
-        this.editDetailParams.fpid = ress.data.data.fpid;
+        this.editDetailParams.said = ress.data.data.seckillActivityId;
+        this.editDetailParams.fpid = ress.data.data.financialProductId;
         this.editDetailParams.quantity = ress.data.data.quantity;
         this.editDetailParams.total = ress.data.data.total;
         this.editDetailVisible = !this.editDetailVisible;
@@ -321,8 +325,8 @@ export default {
         if (valid) {
           this.$http
               .put("/back/web/saleProductDetail/updateSaleProductDetail", {
-                fpid: this.addDetailForm.fpid,
-                said: this.addDetailForm.said,
+                financialProductId: this.addDetailForm.fpid,
+                seckillActivityId: this.addDetailForm.said,
                 quantity: this.addDetailForm.quantity,
                 total: this.addDetailForm.total,
               })
@@ -332,7 +336,7 @@ export default {
                   that.$message.success("修改成功");
                   this.getDetailList();
                 } else {
-                  that.$message.error("修改失败");
+                  that.$message.error(ress.data.message);
                 }
               });
         }
@@ -352,7 +356,7 @@ export default {
                 that.$message.success("删除明细成功");
                 this.getDetailList();
               } else {
-                that.$message.error("删除明细失败");
+                that.$message.error(ress.data.message);
               }
             });
           })

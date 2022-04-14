@@ -2,6 +2,7 @@ const {sign, RequestType} = require("./signUtils");
 
 // const BASE_PATH = 'http://52.82.45.59:8888';
 const BASE_PATH = 'http://localhost:8811';
+
 const request = (url, method, data, header, showLoading, isBody=false) => {
     return new Promise((resolve, reject) => {
         if (showLoading) {
@@ -30,8 +31,6 @@ const request = (url, method, data, header, showLoading, isBody=false) => {
         if (header != null) {
             headers = Object.assign(header, headers)
         }
-
-        console.log(BASE_PATH + url)
         wx.request({
             url: BASE_PATH + url,
             method: method,
@@ -66,7 +65,7 @@ const request = (url, method, data, header, showLoading, isBody=false) => {
         })
     })
 }
-const app = getApp();
+
 module.exports = {
     request,
     //用户
@@ -84,10 +83,10 @@ module.exports = {
         return request('/weixin/seckill/list', 'GET', {
             pageNum: data.pageNum,
             pageSize: data.pageSize
-        }, {'Authorization': getApp().globalData.token}, true)
+        }, {'Authorization': data.token}, true)
     },
     getActivityDetail: (data) => {//秒杀活动详情
-        return request('/weixin/seckill/' + data.id, 'GET', {}, null, false)
+        return request('/weixin/seckill/' + data.id, 'GET', {}, {'Authorization': data.token}, false)
     },
 
     //秒杀
@@ -103,7 +102,7 @@ module.exports = {
         , {'Authorization': data.token, 'content-type': 'application/x-www-form-urlencoded'}, false)
     },
     getSecKillResult: (data) => {//获取秒杀结果
-        return request('/weixin/seckill/order/status/' + data.orderId, 'GET', {}, null, false)
+        return request('/weixin/seckill/order/status/' + data.orderId, 'GET', {}, {'Authorization': data.token}, false)
     },
 
     //订单

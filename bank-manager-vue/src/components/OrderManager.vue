@@ -236,7 +236,7 @@ export default {
         this.$http
             .get(
                 "/back/web/order/getAllOrders/" +
-                this.queryInfo.pageIndex +
+                (this.queryInfo.pageIndex-1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -257,7 +257,7 @@ export default {
                 }
                 that.total = ress.data.data.total;
               } else {
-                that.$message.error("请求订单列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       } else {
@@ -266,7 +266,7 @@ export default {
                 "/back/web/order/searchOrder/" +
                 this.keyword +
                 "/" +
-                this.queryInfo.pageIndex +
+                (this.queryInfo.pageIndex-1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -287,7 +287,7 @@ export default {
                 }
                 this.total = ress.data.data.total;
               } else {
-                that.$message.error("请求订单列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       }
@@ -320,7 +320,7 @@ export default {
                 if (ress.data.code === 10000) {
                   that.$message.success("添加成功");
                 } else {
-                  that.$message.error("添加失败");
+                  that.$message.error(ress.data.message);
                 }
               });
           //关闭dialog对话框
@@ -370,7 +370,7 @@ export default {
                   that.$message.success("修改成功");
                   this.getOrderList();
                 } else {
-                  that.$message.error("修改失败");
+                  that.$message.error(ress.data.message);
                 }
               });
         }
@@ -390,7 +390,7 @@ export default {
                 that.$message.success("删除订单成功");
                 this.getOrderList();
               } else {
-                that.$message.error("删除订单失败");
+                that.$message.error(ress.data.message);
               }
             });
           })

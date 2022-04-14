@@ -41,13 +41,12 @@
           <!-- <el-table-column prop="password" label="密码" width="150">
           </el-table-column> -->
           <el-table-column prop="avatarUrl" label="头像" width="100">
-            <template slot-scope="scope">
               <img
-                  :src="adminParams.avatarUrl"
+                  v-if="adminList.avatarUrl"
+                  :src="adminList.avatarUrl"
                   alt=""
                   style="width: 50px; height: 50px"
               />
-            </template>
           </el-table-column>
           <el-table-column prop="operate" label="操作" width="200">
             <template slot-scope="scope">
@@ -151,6 +150,7 @@
                 action="#"
                 name="picture"
                 list-type="picture-card"
+                :auto-upload="false"
                 :limit="1"
                 :on-success="handleEditAdminAvatarSuccess"
                 :before-upload="beforeEditAdminAvatarUpload"
@@ -199,6 +199,7 @@ export default {
       addAdminForm: {
         userName: "",
         password: "",
+        avatarUrl:"",
       },
       //添加管理员对话框验证规则
       addAdminFormRul: {
@@ -263,19 +264,19 @@ export default {
             .then((ress) => {
               if (ress.data.code === 10000) {
                 that.adminList = [];
-                const tempAdminList = ress.data.data.records;
+                const tempAdminList = ress.data.data.data;
                 let temp = {};
                 for (let i = 0; i < tempAdminList.length; i++) {
                   temp = {};
                   temp.id = tempAdminList[i].id;
-                  temp.userName = tempAdminList[i].userName;
+                  temp.userName = tempAdminList[i].username;
                   temp.password = tempAdminList[i].password;
                   temp.avatarUrl = tempAdminList[i].avatarUrl;
                   that.adminList.push(temp);
                 }
                 that.total = ress.data.data.total;
               } else {
-                that.$message.error("请求管理员列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       } else {
@@ -291,19 +292,19 @@ export default {
             .then((ress) => {
               if (ress.data.code === 10000) {
                 this.adminList = [];
-                const tempAdminList = ress.data.data.records;
+                const tempAdminList = ress.data.data.data;
                 let temp = {};
                 for (let i = 0; i < tempAdminList.length; i++) {
                   temp = {};
                   temp.id = tempAdminList[i].id;
-                  temp.userName = tempAdminList[i].userName;
+                  temp.userName = tempAdminList[i].username;
                   temp.password = tempAdminList[i].password;
                   temp.avatarUrl = tempAdminList[i].avatarUrl;
                   this.adminList.push(temp);
                 }
                 this.total = ress.data.data.total;
               } else {
-                that.$message.error("请求管理员列表失败");
+                that.$message.error(ress.data.message);
               }
             });
       }
@@ -326,14 +327,15 @@ export default {
           this.$http.get('/back/web/admin/adminExist?name='+this.addAdminForm.userName).then
           this.$http
               .post("/back/web/admin/", {
-                userName: this.addAdminForm.userName,
+                username: this.addAdminForm.userName,
                 password: this.addAdminForm.password,
+                avatarUrl: this.addAdminForm.avatarUrl,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
                   that.$message.success("添加成功");
                 } else {
-                  that.$message.error("添加失败");
+                  that.$message.error(ress.data.message);
                 }
               });
           //关闭dialog对话框
@@ -355,7 +357,7 @@ export default {
       this.$http.get("/back/web/admin/" + row.id).then((ress) => {
         //存储获取到的管理员信息
         this.editAdminParams.id = ress.data.data.id;
-        this.editAdminParams.userName = ress.data.data.userName;
+        this.editAdminParams.userName = ress.data.data.username;
         this.editAdminParams.password = ress.data.data.password;
         this.editAdminParams.avatarUrl = ress.data.data.avatarUrl;
         this.editAdminVisible = !this.editAdminVisible;
@@ -366,9 +368,9 @@ export default {
         const that = this;
         if (valid) {
           this.$http
-              .put("/back/web/admin/"+row.id, {
+              .put("/back/web/admin/"+this.editAdminParams.id, {
                 id: this.editAdminParams.id,
-                userName: this.editAdminParams.userName,
+                username: this.editAdminParams.userName,
                 password: this.editAdminParams.password,
                 avatarUrl: this.editAdminParams.avatarUrl,
               })
@@ -378,7 +380,7 @@ export default {
                   that.$message.success("修改成功");
                   this.getAdminList();
                 } else {
-                  that.$message.error("修改失败");
+                  that.$message.error(ress.data.message);
                 }
               });
         }

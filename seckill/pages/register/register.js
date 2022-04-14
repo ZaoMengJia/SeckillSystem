@@ -1,5 +1,5 @@
 // pages/register/register.js
-import {saveInfo} from "../../utils/api";
+import {saveInfo, login} from "../../utils/api";
 import {validateIdCard} from "../../utils/validate";
 import Toast from "../../miniprogram_npm/@vant/weapp/toast/toast";
 
@@ -98,7 +98,7 @@ Page({
             body: {
                 "openid": app.globalData.openId,
                 "nickname": this.data.nickName,
-                "gender": this.data.gender === 'male' ? 1 : 0,
+                "gender": this.data.gender === 'male' ? 0 : 1,
                 "avatarUrl": this.data.avatarUrl,
                 "idCard": this.data.idCard,
                 "birthday": this.data.birthday,
@@ -107,11 +107,9 @@ Page({
             token: app.globalData.token
         }
         saveInfo(data).then(res => {
-            console.log(res)
-        })
-        .then(res => {
+            Toast.success("保存信息成功")
             wx.redirectTo({
-                url: '../activity_list/activity_list'
+                url: '../index/index'
             })
         })
     }
