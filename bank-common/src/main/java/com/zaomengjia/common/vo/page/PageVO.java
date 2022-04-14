@@ -15,10 +15,12 @@ public class PageVO<T> {
     private List<T> data;
     private int pageNum;
     private int pageTotal;
+    private long total;
 
     public PageVO(Page<T> page) {
         data = page.getContent();
         pageNum = page.getNumber();
         pageTotal = page.getTotalPages();
+        total = page.getTotalElements();
     }
 }

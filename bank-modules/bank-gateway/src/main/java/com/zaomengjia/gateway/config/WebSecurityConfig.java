@@ -1,6 +1,7 @@
 package com.zaomengjia.gateway.config;
 
 import com.zaomengjia.common.utils.RedisUtils;
+import com.zaomengjia.gateway.constant.AuthorityGroup;
 import com.zaomengjia.gateway.filter.JwtFilter;
 import com.zaomengjia.gateway.filter.SignatureFilter;
 import com.zaomengjia.gateway.filter.UsernamePasswordManager;
@@ -128,13 +129,14 @@ public class WebSecurityConfig {
                 .pathMatchers("/auth/**").permitAll()
 
                 //2. 管理员服务，需要ADMIN的角色
-                .pathMatchers("/web/**").permitAll()
-//                    .hasRole(AuthorityGroup.ADMIN.raw)
+                .pathMatchers("/web/**")
+//                .permitAll()
+                .hasAuthority(AuthorityGroup.ADMIN.raw)
 
                 //3. 用户订单服务，需要USER的角色
                 .pathMatchers("/weixin/**")
-                .permitAll()
-//                    .hasRole(AuthorityGroup.USER.raw)
+//                .permitAll()
+                .hasAuthority(AuthorityGroup.USER.raw)
 
                 //4. OpenAPI，放行
                 .pathMatchers(

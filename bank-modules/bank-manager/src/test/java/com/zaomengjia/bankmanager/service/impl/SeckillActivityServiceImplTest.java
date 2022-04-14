@@ -33,7 +33,5 @@ class SeckillActivityServiceImplTest {
 
     @Test
     void test() {
-        PageVO<WeixinUserVO> weixinUserList = service.getWeixinUserList(1, 100);
-        System.out.println(weixinUserList);
     }
 }

@@ -108,7 +108,8 @@ Page({
         }
         saveInfo(data).then(res => {
             console.log(res)
-        }).then(res => {
+        })
+        .then(res => {
             wx.redirectTo({
                 url: '../activity_list/activity_list'
             })

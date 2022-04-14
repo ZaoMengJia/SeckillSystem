@@ -1,7 +1,7 @@
 const {sign, RequestType} = require("./signUtils");
 
-const BASE_PATH = 'http://52.82.45.59:8888';
-// const BASE_PATH = 'http://localhost:8811';
+// const BASE_PATH = 'http://52.82.45.59:8888';
+const BASE_PATH = 'http://localhost:8811';
 
 const request = (url, method, data, header, showLoading, isBody=false) => {
     return new Promise((resolve, reject) => {
@@ -72,7 +72,7 @@ module.exports = {
     request,
     //用户
     login: (data) => {//登录
-        return request('/auth/weixin', 'POST', data, {'content-type': 'application/x-www-form-urlencoded'}, false)
+        return request('/auth/weixin', 'POST', data, {'content-type': 'application/x-www-form-urlencoded', 'Authorization': ''}, false)
     },
     saveInfo: (data) => {//注册信息
         return request('/weixin/user/' + data.userId, 'PUT', data.body, {'Authorization': data.token}, false, true)
