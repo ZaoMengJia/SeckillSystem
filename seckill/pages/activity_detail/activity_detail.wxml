@@ -10,9 +10,19 @@
             <view class="text-cut text-xxl">
                 {{title}}
             </view>
+            <view class="flex align-center">
+                <view class="price">
+                    结束时间：{{endTime}}
+                </view>
+            </view>
         </view>
         <view class="content">
             <view class="desc">
+                <view class="flex align-center justify-between">
+                    <view>
+                        <view>结束时间：{{endTime}}</view>
+                    </view>
+                </view>
                 <view class="cu-bar bg-white">
                     <view class="action">
                         <text>
@@ -24,19 +34,24 @@
         </view>
     </view>
 </view>
-<view wx:for="{{productList}}" wx:key="id" style="margin-top:20px;">
-    <van-card custom-class="product-card shadow-warp" thumb-mode="aspectFill"
-              title-class="text-cut"
-              title="{{item.name}}"
-              price="{{item.price}}"
-              desc="剩余：{{item.quantity}}份"
-              data-id="{{item.id}}">
-    </van-card>
-</view>
+<van-radio-group value="{{pid}}" bind:change="onChangeProduct">
+    <view wx:for="{{productList}}" wx:key="id" style="margin-top:10px;">
+        <van-card custom-class="product-card shadow-warp" thumb-mode="aspectFill"
+                  title-class="text-cut"
+                  title="{{item.name}}"
+                  price="{{item.price}}"
+                  desc="剩余：{{item.quantity}}份"
+                  data-id="{{item.id}}">
+            <view slot="footer">
+                <van-radio name="{{item.id}}" disabled="{{item.quantity<=0}}"></van-radio>
+            </view>
+        </van-card>
+    </view>
+</van-radio-group>
 <view style="height:160rpx;"></view>
 
 <van-submit-bar
-        price="{{price}}"
+        price="{{curProductPrice}}"
         button-text="立即抢购"
         button-class="btnClass"
         bind:submit="onSecKill"

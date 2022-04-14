@@ -41,11 +41,6 @@ import java.util.Collections;
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
 
-    @Value("${auth.app-key}")
-    private String appKey;
-
-    @Value("${auth.sign-expired-time}")
-    private long signatureExpireTime;
 
     @Value("${auth.expired-time}")
     private long expire;
@@ -166,7 +161,6 @@ public class WebSecurityConfig {
                 //3. token验证
                 .addFilterAfter(new JwtFilter(jwtUtils, redisUtils, expire), SecurityWebFiltersOrder.AUTHENTICATION)
                 //4. 签名验证
-                .addFilterBefore(new SignatureFilter(redisUtils, appKey, signatureExpireTime), SecurityWebFiltersOrder.AUTHENTICATION)
 
                 .csrf().disable().exceptionHandling()
 

@@ -4,10 +4,6 @@ App({
     onLaunch() {
         this.globalData = {}
 
-        api.saveInfo({
-            code: "!23"
-        })
-
         // 获得系统信息
         wx.getSystemInfo({
             success: e => {
