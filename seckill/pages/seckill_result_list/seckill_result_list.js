@@ -29,7 +29,6 @@ Page({
             userId: app.globalData.userId,
             token: app.globalData.token
         }).then(res => {
-            console.log(res)
             this.setData({
                 resultList: res.data.data
             })

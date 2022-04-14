@@ -31,8 +31,6 @@ const request = (url, method, data, header, showLoading, isBody=false) => {
         if (header != null) {
             headers = Object.assign(header, headers)
         }
-
-        console.log(BASE_PATH + url)
         wx.request({
             url: BASE_PATH + url,
             method: method,
@@ -85,10 +83,10 @@ module.exports = {
         return request('/weixin/seckill/list', 'GET', {
             pageNum: data.pageNum,
             pageSize: data.pageSize
-        }, null, true)
+        }, {'Authorization': data.token}, true)
     },
     getActivityDetail: (data) => {//秒杀活动详情
-        return request('/weixin/seckill/' + data.id, 'GET', {}, null, false)
+        return request('/weixin/seckill/' + data.id, 'GET', {}, {'Authorization': data.token}, false)
     },
 
     //秒杀
@@ -104,7 +102,7 @@ module.exports = {
         , {'Authorization': data.token, 'content-type': 'application/x-www-form-urlencoded'}, false)
     },
     getSecKillResult: (data) => {//获取秒杀结果
-        return request('/weixin/seckill/order/status/' + data.orderId, 'GET', {}, null, false)
+        return request('/weixin/seckill/order/status/' + data.orderId, 'GET', {}, {'Authorization': data.token}, false)
     },
 
     //订单

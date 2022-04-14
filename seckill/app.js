@@ -1,5 +1,3 @@
-import {login} from "./utils/api";
-
 App({
     onLaunch() {
         this.globalData = {}

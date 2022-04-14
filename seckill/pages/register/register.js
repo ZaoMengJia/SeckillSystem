@@ -98,7 +98,7 @@ Page({
             body: {
                 "openid": app.globalData.openId,
                 "nickname": this.data.nickName,
-                "gender": this.data.gender === 'male' ? 1 : 0,
+                "gender": this.data.gender === 'male' ? 0 : 1,
                 "avatarUrl": this.data.avatarUrl,
                 "idCard": this.data.idCard,
                 "birthday": this.data.birthday,

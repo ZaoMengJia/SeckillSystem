@@ -28,7 +28,8 @@ Page({
 
     getDetail() {
         getActivityDetail({
-            id: this.data.aid
+            id: this.data.aid,
+            token: app.globalData.token
         }).then(res => {
             this.setData({
                 url: res.data.image,
