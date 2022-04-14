@@ -1,5 +1,4 @@
     import api, {BASE_PATH, login} from "./utils/api";
-
 App({
     onLaunch() {
         this.globalData = {}

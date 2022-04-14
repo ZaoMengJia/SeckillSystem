@@ -7,17 +7,12 @@ import axios from 'axios'
 
 import "element-ui/lib/theme-chalk/index.css"
 import {RequestType, sign} from "@/utils/signUtils";
-import {Method} from "_axios@0.26.1@axios";
 
 Vue.use(Element)
 
 Vue.config.productionTip = false
 Vue.prototype.$http = axios;
 
-axios.interceptors.request.use(config=>{
-  config.headers.Authorization=window.sessionStorage.getItem('token');
-  return config;
-})
 
 //baseurl
 axios.defaults.baseURL = 'http://localhost:8811'
@@ -44,8 +39,10 @@ axios.interceptors.request.use(req => {
   return Promise.reject(err)
 })
 
-new Vue({
+let vue = new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+
+export default vue

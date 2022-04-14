@@ -38,12 +38,15 @@
           </el-table-column>
           <!-- 所有的prop值必须要userList里的属性名改成一样的 -->
           <el-table-column prop="id" label="编号" width="100"> </el-table-column>
-          <el-table-column prop="nickName" label="昵称" width="100"></el-table-column>
+          <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
           <el-table-column prop="realName" label="真实姓名" width="100"></el-table-column>
-          <el-table-column prop="idNumber" label="身份证号" width="300"></el-table-column>
+          <el-table-column prop="idCard" label="身份证号" width="300"></el-table-column>
           <!-- <el-table-column prop="password" label="密码" width="150">
           </el-table-column> -->
           <el-table-column prop="sexForm" label="性别" width="100">
+            <template slot-scope="scope">
+              {{ scope.row.gender === 0 ? '女' : '男' }}
+            </template>
           </el-table-column>
           <el-table-column prop="avatarUrl" label="头像" width="100">
 <!--            <template slot-scope="scope">-->
@@ -53,7 +56,9 @@
 <!--                  style="width: 50px; height: 50px"-->
 <!--              />-->
 <!--            </template>-->
-            <el-avatar :src="userParams.avartarUrl"></el-avatar>
+            <template slot-scope="scope">
+              <el-avatar :src="scope.row.avatarUrl"></el-avatar>
+            </template>
           </el-table-column>
           <el-table-column prop="hasJob" label="是否工作" width="100"> </el-table-column>
           <el-table-column prop="overdueRecord" label="失约次数" width="100"> </el-table-column>
@@ -86,6 +91,7 @@
 </template>
 
 <script>
+import api from "@/api/api";
 export default {
   name: "UserService",
   data() {
@@ -121,40 +127,18 @@ export default {
   },
   methods: {
     //请求用户列表数据
-    getUserList() {
+    async getUserList() {
       const that = this;
       if (this.keyword === "") {
-        this.$http
-            .get(
-                "/back/web/weixin-user?pageNum=" +
-                this.queryInfo.pageIndex +
-                "&pageSize=" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                that.userList = [];
-                const tempUserList = ress.data.data.records;
-                let temp = {};
-                for (let i = 0; i < tempUserList.length; i++) {
-                  temp = {};
-                  temp.id = tempUserList[i].id;
-                  temp.nickname = tempUserList[i].nickname;
-                  temp.realName = tempUserList[i].realName;
-                  temp.idNumber = tempUserList[i].idCard;
-                  temp.password = tempUserList[i].password;
-                  temp.sexForm = tempUserList[i].gender ? "女" : "男";
-                  temp.hasJob = tempUserList[i].hasJob ? "是":"否";
-                  temp.overdueRecord = tempUserList[i].overdueRecord;
-                  temp.isDiscredit = tempUserList[i].isDiscredit ? "是":"否";
-                  that.userList.push(temp);
-                }
-                that.total = ress.data.data.total;
-              } else {
-                that.$message.error("请求用户列表失败");
-              }
-            });
-      } else {
+        let [res, err] = await api.getWeixinUserList(this.queryInfo.pageIndex, this.queryInfo.pageSize, this.$store.getters.token);
+        if(err !== null) {
+          this.$message.error(err.message);
+          return;
+        }
+        this.userList = res.data.data.data;
+        this.total = res.data.data.total;
+      }
+      else {
         this.$http
             .get(
                 "/back/web/weixin-user/search?keyword=" +
