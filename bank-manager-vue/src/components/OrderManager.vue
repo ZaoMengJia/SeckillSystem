@@ -36,12 +36,12 @@
           </el-table-column>
           <!-- 所有的prop值必须要orderList里的属性名改成一样的 -->
           <el-table-column prop="id" label="编号" width="100"> </el-table-column>
-          <el-table-column prop="userName" label="用户名" width="150">
+          <el-table-column prop="userId" label="用户id" width="150">
           </el-table-column>
-          <el-table-column prop="productName" label="产品名" width="150"></el-table-column>
-          <el-table-column prop="said" label="秒杀活动id" width="150"></el-table-column>
-          <!-- <el-table-column prop="password" label="密码" width="150">
-          </el-table-column> -->
+          <el-table-column prop="financialProductId" label="产品id" width="150"></el-table-column>
+          <el-table-column prop="seckillActivityId" label="秒杀活动id" width="150"></el-table-column>
+          <el-table-column prop="quantity" label="购买产品数量" width="150"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="150"></el-table-column>
           <el-table-column prop="operate" label="操作" width="200">
             <template slot-scope="scope">
               <el-button
@@ -85,14 +85,26 @@
             label-width="100px"
             class="demo-ruleForm"
         >
-          <el-form-item label="用户名" prop="userName">
-            <el-input v-model="addOrderForm.userName" clearable></el-input>
+          <el-form-item label="用户id" prop="userId">
+            <el-input v-model="addOrderForm.userId" clearable></el-input>
           </el-form-item>
-          <el-form-item label="产品名" prop="productName">
-            <el-input v-model="addOrderForm.productName" clearable></el-input>
+          <el-form-item label="产品id" prop="financialProductId">
+            <el-input v-model="addOrderForm.financialProductId" clearable></el-input>
           </el-form-item>
-          <el-form-item label="秒杀活动id" prop="said">
-            <el-input v-model="addOrderForm.said" clearable></el-input>
+          <el-form-item label="秒杀活动id" prop="seckillActivityId">
+            <el-input v-model="addOrderForm.seckillActivityId" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="购买产品数量" prop="quantity">
+            <el-input v-model="addOrderForm.quantity" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="创建时间" prop="createTime">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="addOrderForm.createTime" style="width: 100%;" ></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="0.2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="addOrderForm.createTime" style="width: 100%;" :default-time="['0:0:0']"></el-time-picker>
+            </el-col>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -115,14 +127,23 @@
             label-width="100px"
             class="demo-ruleForm-edit"
         >
-          <el-form-item label="用户名" prop="userName">
-            <el-input v-model="editOrderParams.userName" clearable></el-input>
+          <el-form-item label="用户名" prop="userId">
+            <el-input v-model="editOrderParams.userId" clearable></el-input>
           </el-form-item>
-          <el-form-item label="产品名" prop="productName">
-            <el-input v-model="editOrderParams.productName" clearable></el-input>
+          <el-form-item label="产品名" prop="financialProductId">
+            <el-input v-model="editOrderParams.financialProductId" clearable></el-input>
           </el-form-item>
-          <el-form-item label="秒杀活动id" prop="said">
-            <el-input v-model="editOrderParams.said" clearable></el-input>
+          <el-form-item label="秒杀活动id" prop="seckillActivityId">
+            <el-input v-model="editOrderParams.seckillActivityId" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="创建时间" prop="createTime">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="editOrderParams.createTime" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="0.2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="editOrderParams.createTime" style="width: 100%;"></el-time-picker>
+            </el-col>
           </el-form-item>
         </el-form>
         <span slot="footer" class="edit-footer">
@@ -142,7 +163,6 @@ export default {
       keyword: "",
       // 请求订单列表的参数
       queryInfo: {
-        userName: "",
         pageIndex: 1,
         pageSize: 10,
       },
@@ -150,9 +170,11 @@ export default {
       orderList: [],
       orderParams: {
         id: 0,
-        userName: "",
-        productName: "",
-        said: 0,
+        userId: "",
+        financialProductId: "",
+        seckillActivityId: "",
+        quantity:0,
+        createTime:"",
       },
       total: 0,
       // 添加订单dialog显示/隐藏
@@ -160,57 +182,43 @@ export default {
       //添加订单参数
       addOrderForm: {
         id: 0,
-        userName: "",
-        productName: "",
-        said: 0,
+        userId: "",
+        financialProductId: "",
+        seckillActivityId: "",
+        quantity:0,
+        createTime:new Date(),
       },
       //添加订单对话框验证规则
       addOrderFormRul: {
-        userName: [
+        userId: [
           { required: true, message: "用户名不能为空", trigger: "blur" },
-          {
-            min: 2,
-            max: 10,
-            message: "长度在 2 到 10 个字符",
-            trigger: "blur",
-          },
         ],
-        productName: [
+        financialProductId: [
           { required: true, message: "产品名不能为空", trigger: "blur" },
-          {
-            min: 2,
-            max: 10,
-            message: "长度在 2 到 10 个字符",
-            trigger: "blur",
-          },
+        ],
+        seckillActivityId:[
+          {required: true, message: "秒杀活动不能为空", trigger: "blur"},
         ],
       },
       //存储获取到的订单信息
       editOrderParams: {
         id: 0,
-        userName: "",
-        productName: "",
-        said: 0,
+        userId: "",
+        financialProductId: "",
+        seckillActivityId: "",
+        quantity:0,
+        createTime:"",
       },
       //编辑订单对话框验证规则
       editOrderParamsRul: {
-        userName: [
+        userId: [
           { required: true, message: "用户名不能为空", trigger: "blur" },
-          {
-            min: 2,
-            max: 10,
-            message: "长度在 2 到 10 个字符",
-            trigger: "blur",
-          },
         ],
-        productName: [
+        financialProductId: [
           { required: true, message: "产品名不能为空", trigger: "blur" },
-          {
-            min: 2,
-            max: 10,
-            message: "长度在 2 到 10 个字符",
-            trigger: "blur",
-          },
+        ],
+        seckillActivityId:[
+          {required: true, message: "秒杀活动不能为空", trigger: "blur"},
         ],
       },
       editOrderVisible: false,
@@ -227,7 +235,7 @@ export default {
       if (this.keyword === "") {
         this.$http
             .get(
-                "/back/order/getAllOrders/" +
+                "/back/web/order/getAllOrders/" +
                 this.queryInfo.pageIndex +
                 "/" +
                 this.queryInfo.pageSize
@@ -239,10 +247,12 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempOrderList.length; i++) {
                   temp = {};
-                  temp.id = tempOrderList[i].oid;
-                  temp.userName = tempOrderList[i].userName;
-                  temp.productName = tempOrderList[i].productName;
-                  temp.said = tempOrderList[i].said;
+                  temp.id = tempOrderList[i].id;
+                  temp.userId = tempOrderList[i].userId;
+                  temp.financialProductId = tempOrderList[i].financialProductId;
+                  temp.seckillActivityId = tempOrderList[i].seckillActivityId;
+                  temp.quantity = tempOrderList[i].quantity;
+                  temp.createTime = tempOrderList[i].createTime;
                   that.orderList.push(temp);
                 }
                 that.total = ress.data.data.total;
@@ -253,7 +263,7 @@ export default {
       } else {
         this.$http
             .get(
-                "/back/order/searchOrder/" +
+                "/back/web/order/searchOrder/" +
                 this.keyword +
                 "/" +
                 this.queryInfo.pageIndex +
@@ -267,10 +277,12 @@ export default {
                 let temp = {};
                 for (let i = 0; i < tempOrderList.length; i++) {
                   temp = {};
-                  temp.id = tempOrderList[i].oid;
-                  temp.userName = tempOrderList[i].userName;
-                  temp.productName = tempOrderList[i].productName;
-                  temp.said = tempOrderList[i].said;
+                  temp.id = tempOrderList[i].id;
+                  temp.userId = tempOrderList[i].userId;
+                  temp.financialProductId = tempOrderList[i].financialProductId;
+                  temp.seckillActivityId = tempOrderList[i].seckillActivityId;
+                  temp.quantity = tempOrderList[i].quantity;
+                  temp.createTime = tempOrderList[i].createTime;
                   that.orderList.push(temp);
                 }
                 this.total = ress.data.data.total;
@@ -296,11 +308,13 @@ export default {
         const that = this;
         if (valid) {
           this.$http
-              .post("/back/order/addOrder", {
-                oid: this.addOrderForm.id,
-                userName: this.addOrderForm.userName,
-                financialProductName: this.addOrderForm.productName,
-                said: this.addOrderForm.said,
+              .post("/back/web/order/addOrder", {
+                id: this.addOrderForm.id,
+                userId: this.addOrderForm.userId,
+                financialProductId: this.addOrderForm.financialProductId,
+                seckillActivityId: this.addOrderForm.seckillActivityId,
+                quantity: this.addOrderForm.quantity,
+                createTime: this.addOrderForm.createTime,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
@@ -325,12 +339,15 @@ export default {
     //点击编辑按钮，编辑订单信息
     editOrder(row) {
       //根据订单id获取当前订单信息
-      this.$http.get("/back/financialOrder/getOrderById/" + row.id).then((ress) => {
+      this.$http.get("/back/web/order/getOrderById/" + row.id).then((ress) => {
         //存储获取到的订单信息
-        this.editOrderParams.id = ress.data.data.oid;
-        this.editOrderParams.userName = ress.data.data.userName;
-        this.editOrderParams.productName = ress.data.data.financialProductName;
-        this.editOrderParams.said = ress.data.data.said;
+        this.editOrderParams.id = ress.data.data.id;
+        this.editOrderParams.userId = ress.data.data.userId;
+        this.editOrderParams.financialProductId = ress.data.data.financialProductId;
+        this.editOrderParams.seckillActivityId = ress.data.data.seckillActivityId;
+        this.editOrderParams.quantity = ress.data.data.quantity;
+        this.editOrderParams.createTime = ress.data.data.createTime;
+
         this.editOrderVisible = !this.editOrderVisible;
       });
     },
@@ -339,10 +356,13 @@ export default {
         const that = this;
         if (valid) {
           this.$http
-              .put("/back/financialOrder/updateOrder", {
-                oid: this.editOrderParams.id,
-                userName: this.editOrderParams.userName,
-                financialProductName: this.editOrderParams.productName,
+              .put("/back/web/order/updateOrder", {
+                id: this.editOrderParams.id,
+                userId: this.editOrderParams.userId,
+                financialProductId: this.editOrderParams.financialProductId,
+                seckillActivityId: this.editOrderParams.seckillActivityId,
+                quantity: this.editOrderParams.quantity,
+                createTime: this.editOrderParams.createTime,
               })
               .then((ress) => {
                 if (ress.data.code === 10000) {
@@ -365,7 +385,7 @@ export default {
         type: "warning",
       })
           .then(() => {
-            this.$http.delete("/back/financialOrder/deleteOrder/" + row.id).then((ress) => {
+            this.$http.delete("/back/web/financialOrder/deleteOrder/" + row.id).then((ress) => {
               if (ress.data.code === 10000) {
                 that.$message.success("删除订单成功");
                 this.getOrderList();

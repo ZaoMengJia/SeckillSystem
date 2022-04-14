@@ -4,7 +4,7 @@ module.exports ={
         proxy:{
             "/back":{
                 changeOrigin:true,
-                target:'http://localhost:8001',
+                target:'http://localhost:8811',
                 pathRewrite:{
                     '^/back':'/'
                 }
