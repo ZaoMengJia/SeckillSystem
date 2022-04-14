@@ -110,6 +110,7 @@ public class SignatureFilter implements GlobalFilter, Ordered {
                                 for (String s : body.split("&")) {
                                     String[] split = s.split("=");
                                     if(split.length != 2) {
+                                        logger.error("签名：有问题");
                                         throw new AppException(ResultCode.INVALID_SIGNATURE);
                                     }
                                     map.put(split[0], split[1]);
@@ -133,26 +134,27 @@ public class SignatureFilter implements GlobalFilter, Ordered {
         try {
             timestamp = Long.parseLong(timestampStr);
         } catch (NumberFormatException e) {
-            logger.info("签名：已过期");
+            logger.error("签名：已过期");
             throw new AppException(ResultCode.INVALID_SIGNATURE);
 
         }
 
         long interval = System.currentTimeMillis() - timestamp;
-        if(interval < 0 || interval > 1000 * 60 * signatureExpireTime) {
+        if(interval < - 60 * 1000 || interval > 1000 * 60 * signatureExpireTime) {
+            logger.error("签名：已过期 {} - {}", System.currentTimeMillis(), timestamp);
             throw new AppException(ResultCode.INVALID_SIGNATURE);
         }
 
         //2. 检查nonce是否唯一
         if(redisUtils.containKey("auth::nonce::" + nonce)) {
-            logger.info("签名：nonce已被使用");
+            logger.error("签名：nonce已被使用");
             throw new AppException(ResultCode.INVALID_SIGNATURE);
         }
 
         //3. 验签
         String correctSignature = getSignature(input + nonce + timestampStr + appKey);
         if(!correctSignature.equals(signature)) {
-            logger.info("签名错误追溯：input {} 正确的签名 {}", input + nonce + timestampStr + appKey, correctSignature);
+            logger.error("签名错误追溯：input {} 正确的签名 {}", input + nonce + timestampStr + appKey, correctSignature);
             throw new AppException(ResultCode.INVALID_SIGNATURE);
         }
 

@@ -22,6 +22,8 @@ jobs:
         run: |
           cd ./bank-modules/$FILE_FOLDER_NAME/
           pwd
+          rm -f application.yml
+          echo "active: prod" > application.yml
           go mod tidy -go=1.16 && go mod tidy -go=1.17
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
       - name: Build docker image

@@ -2,7 +2,7 @@ auth:
   app-key: IZe37zbJnGpPrZ5u
   secret: 123
   expired-time: 3000
-  sign-expired-time: 60 # 分
+  sign-expired-time: 5 # 分
 
 weixin:
   appid: wx3f7f4b71b02fb7ab
