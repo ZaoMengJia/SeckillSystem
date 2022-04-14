@@ -22,11 +22,10 @@ export function sign(requestType = RequestType.query, body = {}) {
     let nonce = getRandomString();
     let timestamp = new Date().getTime();
 
-    let data = requestType != RequestType.body ? standardizeObject(body) : body;
+    let data = requestType !== RequestType.body ? standardizeObject(body) : body;
     let input = JSON.stringify(data) + nonce + timestamp + appKey;
     let signature = Base64.encode(MD5.md5(input)).replaceAll(/[/=+]/g, '');
-    console.log(MD5.md5(input))
-    console.log(input)
+
     return {nonce, timestamp, signature};
 }
 

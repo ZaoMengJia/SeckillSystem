@@ -4,24 +4,34 @@ import cn.hutool.core.codec.Base64;
 import com.alibaba.fastjson.JSON;
 import com.zaomengjia.common.constant.RequestHeaderKey;
 import com.zaomengjia.common.constant.ResultCode;
+import com.zaomengjia.common.entity.Order;
 import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.common.utils.MD5Utils;
 import com.zaomengjia.common.utils.RedisUtils;
 import io.netty.util.internal.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.reactivestreams.Publisher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory;
+import org.springframework.cloud.gateway.filter.factory.rewrite.RewriteFunction;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
+import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,23 +45,27 @@ import java.util.stream.Stream;
  * @version 1.0
  * @date 2022/4/11 17:12
  */
-public class SignatureFilter implements WebFilter {
+@Component
+public class SignatureFilter implements GlobalFilter, Ordered {
 
-    private final String appKey;
+    @Value("${auth.app-key}")
+    private String appKey;
 
-    private final long signatureExpireTime;
+    @Value("${auth.sign-expired-time}")
+    private long signatureExpireTime;
 
     private final RedisUtils redisUtils;
 
-    public SignatureFilter(RedisUtils redisUtils, String appKey, long signatureExpireTime) {
+    private final ModifyRequestBodyGatewayFilterFactory modifyRequestBodyFilter;
+
+    public SignatureFilter(RedisUtils redisUtils, ModifyRequestBodyGatewayFilterFactory modifyRequestBodyFilter) {
         this.redisUtils = redisUtils;
-        this.appKey = appKey;
-        this.signatureExpireTime = signatureExpireTime;
+        this.modifyRequestBodyFilter = modifyRequestBodyFilter;
     }
 
     @NotNull
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, @NotNull WebFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, @NotNull GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         HttpHeaders headers = request.getHeaders();
         String requestSignature = headers.getFirst(RequestHeaderKey.SIGNATURE);
@@ -70,37 +84,42 @@ public class SignatureFilter implements WebFilter {
             throw new AppException(ResultCode.PATTERN_ERROR);
         }
 
-        ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
-            @NotNull
-            @Override
-            public Flux<DataBuffer> getBody() {
-                return super.getBody().doOnNext(buffer -> {
-                    Map<String, String> map = request.getQueryParams().toSingleValueMap();
-                    String body = String.valueOf(StandardCharsets.UTF_8.decode(buffer.asByteBuffer()));
-                    MediaType contentType = headers.getContentType();
 
-                    if(request.getMethod() != HttpMethod.GET && MediaType.APPLICATION_JSON.equals(contentType)) {
-                        verifySignature(body, requestNonce, requestTimestamp, requestSignature);
-                    }
-                    else {
-                        for (String s : body.split("&")) {
-                            String[] split = s.split("=");
-                            if(split.length != 2) {
-                                throw new AppException(ResultCode.INVALID_SIGNATURE);
-                            }
-                            map.put(split[0], split[1]);
-                        }
 
+        return modifyRequestBodyFilter.apply(
+                new ModifyRequestBodyGatewayFilterFactory.Config().setRewriteFunction(String.class, String.class, new RewriteFunction<String, String>() {
+                    @Override
+                    public Publisher<String> apply(ServerWebExchange exchange, String body) {
+                        Map<String, String> map = request.getQueryParams().toSingleValueMap();
                         map.remove("t");
-                        String input = JSON.toJSONString(new TreeMap<>(map));
-                        verifySignature(input, requestNonce, requestTimestamp, requestSignature);
+                        if(body == null) {
+                            String input = JSON.toJSONString(new TreeMap<>(map));
+                            verifySignature(input, requestNonce, requestTimestamp, requestSignature);
+                        }
+                        else {
+                            MediaType contentType = headers.getContentType();
+
+                            if(request.getMethod() != HttpMethod.GET && MediaType.APPLICATION_JSON.equals(contentType)) {
+                                verifySignature(body, requestNonce, requestTimestamp, requestSignature);
+                            }
+                            else {
+                                for (String s : body.split("&")) {
+                                    String[] split = s.split("=");
+                                    if(split.length != 2) {
+                                        throw new AppException(ResultCode.INVALID_SIGNATURE);
+                                    }
+                                    map.put(split[0], split[1]);
+                                }
+                                String input = JSON.toJSONString(new TreeMap<>(map));
+                                verifySignature(input, requestNonce, requestTimestamp, requestSignature);
+                            }
+
+                        }
+                        return Mono.justOrEmpty(body);
                     }
-
-                });
-            }
-        };
-
-        return chain.filter(exchange.mutate().request(decorator).build());
+                })
+        )
+                .filter(exchange, chain);
     }
 
 
@@ -136,5 +155,10 @@ public class SignatureFilter implements WebFilter {
     private String getSignature(String input) {
         String md5 = MD5Utils.toMD5(input);
         return Base64.encode(md5).replaceAll("[=/+]", "");
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

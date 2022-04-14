@@ -5,7 +5,7 @@
 <view wx:if="{{activityList.length===0}}">
     <van-empty description="暂时没有秒杀活动哦"/>
 </view>
-<view wx:for="{{activityList}}" wx:key="id">
+<view wx:for="{{activityList}}" wx:key="id" style="margin-top:10px;">
     <van-card custom-class="activity-card shadow-warp" thumb-mode="aspectFill"
               title-class="text-cut"
               desc="{{item.detail}}"
@@ -39,3 +39,4 @@
         我的
     </view>
 </view>
+<van-toast id="van-toast"/>

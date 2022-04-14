@@ -2,7 +2,7 @@ const {sign, RequestType} = require("./signUtils");
 
 const BASE_PATH = 'http://localhost:8811';
 
-const request = (url, method, data, header, showLoading) => {
+const request = (url, method, data, header, showLoading, isBody=false) => {
     return new Promise((resolve, reject) => {
         if (showLoading) {
             wx.showLoading({
@@ -15,9 +15,12 @@ const request = (url, method, data, header, showLoading) => {
             //微信默认POST传json
             isJson = false;
         }
-        let signData = sign(isJson ? RequestType.json : RequestType.query, data);
-        console.log(signData)
-
+        let signData;
+        if(isBody){
+            signData = sign(RequestType.body, data);
+        }else{
+            signData = sign(isJson ? RequestType.json : RequestType.query, data);
+        }
         if (method === 'GET') {
             data.t = new Date().getTime();
         }
@@ -28,6 +31,8 @@ const request = (url, method, data, header, showLoading) => {
         if (header != null) {
             headers = Object.assign(header, headers)
         }
+
+        console.log(BASE_PATH + url)
         wx.request({
             url: BASE_PATH + url,
             method: method,
@@ -39,7 +44,7 @@ const request = (url, method, data, header, showLoading) => {
                 } else {
                     wx.showModal({
                         title: '提示',
-                        content: '接口异常错误!',
+                        content: res.data.message,
                         success(res) {
                         }
                     })
@@ -50,7 +55,7 @@ const request = (url, method, data, header, showLoading) => {
                 console.log(error)
                 wx.showModal({
                     title: '提示',
-                    content: '接口请求失败!',
+                    content: '接口请求失败',
                     success(res) {
                     }
                 })
@@ -67,17 +72,20 @@ module.exports = {
     request,
     //用户
     login: (data) => {//登录
-        return request('/auth/weixin', 'POST', data, {'content-type': 'application/x-www-form-urlencoded'}, false, false)
+        return request('/auth/weixin', 'POST', data, {'content-type': 'application/x-www-form-urlencoded'}, false)
     },
-    saveInfo: (data) => {//注册
-        return request('/weixin/user/' + data.userId, 'PUT', data.body, {'Authorization': data.token}, false)
+    saveInfo: (data) => {//注册信息
+        return request('/weixin/user/' + data.userId, 'PUT', data.body, {'Authorization': data.token}, false, true)
     },
     getUserStatus: (data) => {//用户信息状态
         return request('/weixin/user/status/' + data.userId, 'GET', {}, {'Authorization': data.token}, false)
     },
     //秒杀活动
     secKillList: (data) => {//秒杀活动列表
-        return request('/weixin/seckill/list?pageNum=' + data.pageNum + '&pageSize=' + data.pageSize, 'GET', {}, null, true)
+        return request('/weixin/seckill/list', 'GET', {
+            pageNum: data.pageNum,
+            pageSize: data.pageSize
+        }, null, true)
     },
     getActivityDetail: (data) => {//秒杀活动详情
         return request('/weixin/seckill/' + data.id, 'GET', {}, null, false)
@@ -85,11 +93,10 @@ module.exports = {
 
     //秒杀
     secKillPath: (data) => {//获取秒杀链接
-        console.log(data)
         return request('/weixin/seckill/url/' + data.id, 'GET', {}, {'Authorization': data.token}, false)
     },
     secKill: (data) => {//秒杀接口
-        return request('/weixin/seckill/' + data.path, 'POST', 
+        return request('/weixin/seckill/' + data.path, 'POST',
         {
             seckillActivityId: data.id,
             financialProductId: data.pid

@@ -3,7 +3,7 @@ import Toast from "../../miniprogram_npm/@vant/weapp/toast/toast";
 
 const app = getApp()
 
-const MAX_PAGE_SIZE = 4
+const MAX_PAGE_SIZE = 5
 Page({
 
     data: {
@@ -45,7 +45,6 @@ Page({
                 })
             }
         }).then(res => {
-            this.processStatus()
             this.setData({
                 isLoading: false
             })
@@ -63,15 +62,14 @@ Page({
             const cur = this.data.activityList[i]
             if (cur.id === id) {
                 const result = this.judgeTime(cur.beginTime, cur.endTime)
-                console.log(result)
                 if (result === 0) {
                     wx.navigateTo({
                         url: '../activity_detail/activity_detail?aid=' + id
                     })
                 } else if (result === 1) {
-                    Toast.fail("活动未开始!")
+                    Toast.fail("活动未开始")
                 } else if (result === -1) {
-                    Toast.fail("活动已结束!")
+                    Toast.fail("活动已结束")
                 }
                 break
             }
@@ -86,7 +84,6 @@ Page({
             pageNum: this.data.pageIndex,
             pageSize: MAX_PAGE_SIZE
         }).then(res => {
-
             if (this.data.pageIndex === res.data.pageTotal - 1) {
                 this.setData({
                     activityList: that.processStatus(res.data.data),
@@ -99,8 +96,6 @@ Page({
                     hasMore: true
                 })
             }
-        }).then(res => {
-
         })
     },
     judgeTime(beginTime, endTime) {
