@@ -9,7 +9,10 @@ Page({
         pid: -1,
         secKillPath: null,
         productList: [],
-        curProductPrice: 0
+        curProductPrice: 0,
+        secKillStatus: "创建中......",
+        secKillImg: "/images/creating.png",
+        dialogShow: false
     },
 
     onLoad: function (options) {
@@ -73,31 +76,35 @@ Page({
         }
         const isAudited = wx.getStorageSync("isAudited")
         if (isAudited) {
-            wx.showLoading({
-                title: '等待结果中'
-            })
             secKill({
                 path: this.data.secKillPath,
                 id: this.data.aid,
                 pid: this.data.pid,
                 token: app.globalData.token
             }).then(async res => {
-                console.log(res)
+                this.setData({
+                    dialogShow: true,
+                    secKillStatus: "创建中...",
+                    secKillImg: "/images/creating.png"
+                })
                 let status
                 do {
                     status = await this.timeout(500, res.data.orderId).then(res => {
                         return res.data.status
                     })
                 } while (status === 'CREATING')
-                wx.hideLoading()
                 if (status === 'NORMAL') {
-                    Toast.success("抢购成功")
+                    this.setData({
+                        secKillStatus: "抢购成功！",
+                        secKillImg: "/images/success.png"
+                    })
                 } else {
-                    Toast.fail("抢购失败")
+                    this.setData({
+                        secKillStatus: "抢购失败！",
+                        secKillImg: "/images/fail.png"
+                    })
                 }
-                wx.redirectTo({
-                  url: '../activity_list/activity_list',
-                })
+
             })
         } else {
             Toast.fail("无抢购资格")
@@ -115,4 +122,17 @@ Page({
             },duration);
         });
     },
+    onConfirmDialog(){
+        this.setData({
+            dialogShow: false
+        })
+        wx.redirectTo({
+            url: '../activity_list/activity_list',
+        })
+    },
+    onCancelDialog(){
+        this.setData({
+            dialogShow: false
+        })
+    }
 })

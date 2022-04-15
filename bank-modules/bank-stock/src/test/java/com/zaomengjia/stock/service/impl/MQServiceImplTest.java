@@ -32,8 +32,8 @@ class MQServiceImplTest {
 
     @Test
     void test() {
-//        stockSimpleService.deleteTokenBucket("f2", "s1");
-//        stockSimpleService.addTokenBucket("f2", "s1", 1000000);
-//        stockSimpleService.setStock("f2", "s1", 1000);
+//        stockSimpleService.deleteTokenBucket("f3", "s1");
+//        stockSimpleService.addTokenBucket("f3", "s1", 1000000);
+//        stockSimpleService.setStock("f3", "s1", 10);
     }
 }

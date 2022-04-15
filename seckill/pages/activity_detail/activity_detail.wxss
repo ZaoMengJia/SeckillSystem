@@ -21,3 +21,10 @@
     display: flex;
     flex-direction: row;
 }
+#van-dialog .condition{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}

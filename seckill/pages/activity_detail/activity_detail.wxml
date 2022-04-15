@@ -55,3 +55,11 @@
         bind:submit="onSecKill"
 />
 <van-toast id="van-toast"/>
+<van-dialog id="van-dialog" use-slot title="抢购情况" show="{{dialogShow}}" show-cancel-button bind:confirm="onConfirmDialog" bind:cancel="onCancelDialog">
+    <view class="condition">
+        <image src="{{secKillImg}}" style="width:150rpx;height:150rpx;margin-top:10px;"></image>
+        <text style="margin-bottom:5px;">
+            {{secKillStatus}}
+        </text>
+    </view>
+</van-dialog>
