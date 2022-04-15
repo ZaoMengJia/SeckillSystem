@@ -83,13 +83,18 @@ public class StockServiceImpl implements StockService {
             }
             needUpdateDetailMap.put(order.getFinancialProductId()+ "::" + order.getSeckillActivityId(), detail);
 
+            String oldId = order.getId();
+
             //创建订单
             order = orderMapper.save(order);
 
             //缓存重设
             order.setStatus(OrderStatus.NORMAL);
             orderSimpleService.setCache(order);
-            logger.trace("订单{}创建成功 {}", order.getId(), Thread.currentThread().getName());
+            logger.info("订单{}创建成功 {}", order.getId(), Thread.currentThread().getName());
+
+            order.setId(oldId);
+            orderSimpleService.setCache(order);
         }
         catch (Exception e) {
             //手动回滚

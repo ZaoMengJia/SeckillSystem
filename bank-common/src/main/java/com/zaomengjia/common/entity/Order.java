@@ -24,9 +24,10 @@ import java.util.Objects;
 public class Order implements Serializable {
     /**
      * 订单号
+     * 新增的话，需要注入id
      */
     @Id
-    @GeneratedValue(generator = "jpa-uuid")
+//    @GeneratedValue(generator = "jpa-uuid")
     @Column(name = "id")
     private String id;
 

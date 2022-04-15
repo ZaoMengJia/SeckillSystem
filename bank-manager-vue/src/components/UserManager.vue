@@ -138,42 +138,42 @@ export default {
         this.userList = res.data.data.data;
         this.total = res.data.data.total;
       }
-      else {
-        this.$http
-            .get(
-                "/back/web/weixin-user/search?keyword=" +
-                this.keyword +
-                "&type=" +
-                this.type+
-                "&pageNum="+
-                this.queryInfo.pageIndex +
-                "&pageSize=" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                this.userList = [];
-                const tempUserList = ress.data.data.records;
-                let temp = {};
-                for (let i = 0; i < tempUserList.length; i++) {
-                  temp = {};
-                  temp.id = tempUserList[i].id;
-                  temp.nickname = tempUserList[i].nickname;
-                  temp.realName = tempUserList[i].realName;
-                  temp.idNumber = tempUserList[i].idCard;
-                  temp.password = tempUserList[i].password;
-                  temp.sexForm = tempUserList[i].gender ? "女" : "男";
-                  temp.hasJob = tempUserList[i].hasJob ? "是":"否";
-                  temp.overdueRecord = tempUserList[i].overdueRecord;
-                  temp.isDiscredit = tempUserList[i].isDiscredit ? "是":"否";
-                  this.userList.push(temp);
-                }
-                this.total = ress.data.data.total;
-              } else {
-                that.$message.error("请求用户列表失败");
-              }
-            });
-      }
+      // else {
+      //   this.$http
+      //       .get(
+      //           "/back/web/weixin-user/search?keyword=" +
+      //           this.keyword +
+      //           "&type=" +
+      //           this.type+
+      //           "&pageNum="+
+      //           this.queryInfo.pageIndex +
+      //           "&pageSize=" +
+      //           this.queryInfo.pageSize
+      //       )
+      //       .then((ress) => {
+      //         if (ress.data.code === 10000) {
+      //           this.userList = [];
+      //           const tempUserList = ress.data.data.records;
+      //           let temp = {};
+      //           for (let i = 0; i < tempUserList.length; i++) {
+      //             temp = {};
+      //             temp.id = tempUserList[i].id;
+      //             temp.nickname = tempUserList[i].nickname;
+      //             temp.realName = tempUserList[i].realName;
+      //             temp.idNumber = tempUserList[i].idCard;
+      //             temp.password = tempUserList[i].password;
+      //             temp.sexForm = tempUserList[i].gender ? "女" : "男";
+      //             temp.hasJob = tempUserList[i].hasJob ? "是":"否";
+      //             temp.overdueRecord = tempUserList[i].overdueRecord;
+      //             temp.isDiscredit = tempUserList[i].isDiscredit ? "是":"否";
+      //             this.userList.push(temp);
+      //           }
+      //           this.total = ress.data.data.total;
+      //         } else {
+      //           that.$message.error("请求用户列表失败");
+      //         }
+      //       });
+      // }
     },
     //当前页面数据条数发生改变的时候触发
     handleSizeChange(val) {

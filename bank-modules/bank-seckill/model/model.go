@@ -16,7 +16,7 @@ type Order struct {
 	UserId             string     `json:"userId"`
 	FinancialProductId string     `json:"financialProductId"`
 	SeckillActivityId  string     `json:"seckillActivityId"`
-	Quantity           string     `json:"quantity"`
+	Quantity           int        `json:"quantity"`
 	Status             string     `json:"status"`
 	CreateTime         *time.Time `json:"createTime"`
 }

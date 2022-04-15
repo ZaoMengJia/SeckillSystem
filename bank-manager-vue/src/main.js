@@ -6,7 +6,7 @@ import Element from 'element-ui'
 import axios from 'axios'
 
 import "element-ui/lib/theme-chalk/index.css"
-import {RequestType, sign} from "@/utils/signUtils";
+import {RequestType, sign} from "../../signUtils";
 
 Vue.use(Element)
 
@@ -15,9 +15,9 @@ Vue.prototype.$http = axios;
 
 
 axios.interceptors.request.use(req => {
-  req.headers.nonce = sign(RequestType.query,req.data).nonce;
-  req.headers.signature = sign(RequestType.query,req.data).signature;
-  req.headers.timestamp = sign(RequestType.query,req.data).timestamp;
+  // req.headers.nonce = sign(RequestType.query,req.data).nonce;
+  // req.headers.signature = sign(RequestType.query,req.data).signature;
+  // req.headers.timestamp = sign(RequestType.query,req.data).timestamp;
   return req
 }, err => {
   return Promise.reject(err)

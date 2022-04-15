@@ -30,7 +30,7 @@ public class OrderSimpleService {
     }
 
     private String getKey(Order order) {
-        return orderFullKey(order.getSeckillActivityId(), order.getFinancialProductId(), order.getSeckillActivityId(), order.getUserId());
+        return orderFullKey(order.getId(), order.getFinancialProductId(), order.getSeckillActivityId(), order.getUserId());
     }
 
     private void setKey(Order order) {

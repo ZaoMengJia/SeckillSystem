@@ -28,9 +28,8 @@ export async function request(data, isBodyJson = true) {
         }
     }
 
+
     let signatureData = sign(isJson ? RequestType.json : RequestType.query, rawData);
-
-
     data.headers = {...data.headers, ...signatureData}
     return axios(data)
         .then(res => {

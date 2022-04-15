@@ -5,10 +5,12 @@ import (
 	"bank-seckill/model"
 	"bank-seckill/response"
 	"encoding/json"
+	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 	"github.com/wagslane/go-rabbitmq"
 	"strings"
+	"time"
 )
 
 type OrderService struct {
@@ -23,12 +25,12 @@ func (*OrderService) GetCacheOrder(orderId string) *string {
 	if err == redis.Nil {
 		return nil
 	}
-	result = result[1 : len(result)-1]
 	redisJson, err := common.RedisTemplate.Get(result).Result()
 
-	var order = model.Order{}
+	var order model.Order
 	err = json.Unmarshal([]byte(redisJson), &order)
 	if err != nil {
+		panic(err)
 		return nil
 	}
 
@@ -56,9 +58,14 @@ func (r *OrderService) CreateOrder(userId string, seckillActivityId string, fina
 	}
 
 	id := uuid.New().String()
-	strings.ReplaceAll("-", id, id)
+	id = strings.ReplaceAll(id, "-", "")
 	order.Id = id
 	order.Status = "CREATING"
+
+	key := fmt.Sprintf("order::%s::%s::%s::%s", order.Id, order.FinancialProductId, order.SeckillActivityId, order.UserId)
+	orderJson, _ := json.Marshal(order)
+	common.RedisTemplate.HSet("order-id-key-map", order.Id, key)
+	common.RedisTemplate.Set(key, string(orderJson), 4*time.Hour)
 
 	//存队列
 	go pushMessageQueue(order)

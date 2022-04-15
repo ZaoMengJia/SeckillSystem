@@ -12,10 +12,13 @@ async function getWeixinUserList(pageNum, pageSize, token) {
     })
 }
 
-async function searchWeixinUserList(keyword, pageNum, pageSize, token) {
+async function searchWeixinUserList(keyword, type, pageNum, pageSize, token) {
     return request({
         method: 'get',
-        url: `/web/weixin-user?pageNum=${pageNum}&pageSize=${pageSize}`,
+        url: `/web/weixin-user/search`,
+        data: {
+          keyword, type, pageNum, pageSize
+        },
         headers: {
             Authorization: token
         }
