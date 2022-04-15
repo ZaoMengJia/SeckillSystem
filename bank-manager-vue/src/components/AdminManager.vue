@@ -174,6 +174,8 @@
 </template>
 
 <script>
+import api from "@/api/api";
+
 export default {
   name: "AdminManager.vue",
   data() {
@@ -250,36 +252,24 @@ export default {
     };
   },
   methods: {
-    //请求管理员列表数据
-    getAdminList() {
+    /**
+     * 请求管理员列表
+     * @returns {Promise<void>}
+     */
+    async getAdminList() {
       const that = this;
-      if (this.keyword === "") {
-        this.$http
-            .get(
-                "/back/web/admin?pageNum=" +
-                this.queryInfo.pageIndex +
-                "&pageSize=" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                that.adminList = [];
-                const tempAdminList = ress.data.data.data;
-                let temp = {};
-                for (let i = 0; i < tempAdminList.length; i++) {
-                  temp = {};
-                  temp.id = tempAdminList[i].id;
-                  temp.userName = tempAdminList[i].username;
-                  temp.password = tempAdminList[i].password;
-                  temp.avatarUrl = tempAdminList[i].avatarUrl;
-                  that.adminList.push(temp);
-                }
-                that.total = ress.data.data.total;
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
-      } else {
+      if (this.keyword === '') {
+        let [res, err] = await api.getAdminUserList(this.queryInfo.pageIndex, this.queryInfo.pageSize, this.$store.getters.token);
+        if(err != null) {
+          this.$message.error(err.message);
+          return;
+        }
+
+        this.adminList = res.data.data.data;
+        this.total = res.data.data.total;
+
+      }
+      else {
         this.$http
             .get(
                 "/back/web/admin/search?keyword=" +

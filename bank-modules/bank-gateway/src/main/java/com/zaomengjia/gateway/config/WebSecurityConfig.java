@@ -130,13 +130,13 @@ public class WebSecurityConfig {
 
                 //2. 管理员服务，需要ADMIN的角色
                 .pathMatchers("/web/**")
-                .permitAll()
-//                .hasAuthority(AuthorityGroup.ADMIN.raw)
+//                .permitAll()
+                .hasAuthority(AuthorityGroup.ADMIN.raw)
 
                 //3. 用户订单服务，需要USER的角色
                 .pathMatchers("/weixin/**")
-                .permitAll()
-//                .hasAuthority(AuthorityGroup.USER.raw)
+//                .permitAll()
+                .hasAuthority(AuthorityGroup.USER.raw)
 
                 //4. OpenAPI，放行
                 .pathMatchers(

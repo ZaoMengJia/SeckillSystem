@@ -1,6 +1,7 @@
 package com.zaomengjia.gateway.filter;
 
 import cn.hutool.core.codec.Base64;
+import cn.hutool.core.net.URLDecoder;
 import com.alibaba.fastjson.JSON;
 import com.zaomengjia.common.constant.RequestHeaderKey;
 import com.zaomengjia.common.constant.ResultCode;
@@ -70,10 +71,6 @@ public class SignatureFilter implements GlobalFilter, Ordered {
     @NotNull
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, @NotNull GatewayFilterChain chain) {
-        if(true) {
-            return chain.filter(exchange);
-        }
-
         ServerHttpRequest request = exchange.getRequest();
         HttpHeaders headers = request.getHeaders();
         String requestSignature = headers.getFirst(RequestHeaderKey.SIGNATURE);
@@ -167,7 +164,9 @@ public class SignatureFilter implements GlobalFilter, Ordered {
     }
 
     private String getSignature(String input) {
+        input = URLDecoder.decode(input, StandardCharsets.UTF_8);
         String md5 = MD5Utils.toMD5(input);
+        System.out.println(md5);
         return Base64.encode(md5).replaceAll("[=/+]", "");
     }
 

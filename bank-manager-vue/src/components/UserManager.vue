@@ -27,13 +27,13 @@
           <el-col :span="10
 ">
             <el-radio-group v-model="type">
-              <el-radio label="nickname">nickname</el-radio>
-              <el-radio label="realname">realname</el-radio>
+              <el-radio label="nickname">昵称</el-radio>
+              <el-radio label="realName">真实姓名</el-radio>
             </el-radio-group>
           </el-col>
         </el-row>
         <!-- 渲染数据表格 -->
-        <el-table :data="userList" border style="width: 100%">
+        <el-table v-loading="isLoading" :data="userList" border style="width: 100%">
           <el-table-column type="index" width="50" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要userList里的属性名改成一样的 -->
@@ -96,6 +96,7 @@ export default {
   name: "UserService",
   data() {
     return {
+      isLoading: false,
       keyword: "",
       //用户搜索的方式
       type:"nickname",
@@ -128,52 +129,17 @@ export default {
   methods: {
     //请求用户列表数据
     async getUserList() {
-      const that = this;
-      if (this.keyword === "") {
-        let [res, err] = await api.getWeixinUserList(this.queryInfo.pageIndex, this.queryInfo.pageSize, this.$store.getters.token);
-        if(err !== null) {
-          this.$message.error(err.message);
-          return;
-        }
-        this.userList = res.data.data.data;
-        this.total = res.data.data.total;
+      this.isLoading = true;
+      let [res, err] = this.keyword === '' ?
+          await api.getWeixinUserList(this.queryInfo.pageIndex, this.queryInfo.pageSize, this.$store.getters.token) :
+          await api.searchWeixinUserList(this.keyword, this.type, this.queryInfo.pageIndex, this.queryInfo.pageSize, this.$store.getters.token);
+      this.isLoading = false;
+      if(err !== null) {
+        this.$message.error(err.message);
+        return;
       }
-      // else {
-      //   this.$http
-      //       .get(
-      //           "/back/web/weixin-user/search?keyword=" +
-      //           this.keyword +
-      //           "&type=" +
-      //           this.type+
-      //           "&pageNum="+
-      //           this.queryInfo.pageIndex +
-      //           "&pageSize=" +
-      //           this.queryInfo.pageSize
-      //       )
-      //       .then((ress) => {
-      //         if (ress.data.code === 10000) {
-      //           this.userList = [];
-      //           const tempUserList = ress.data.data.records;
-      //           let temp = {};
-      //           for (let i = 0; i < tempUserList.length; i++) {
-      //             temp = {};
-      //             temp.id = tempUserList[i].id;
-      //             temp.nickname = tempUserList[i].nickname;
-      //             temp.realName = tempUserList[i].realName;
-      //             temp.idNumber = tempUserList[i].idCard;
-      //             temp.password = tempUserList[i].password;
-      //             temp.sexForm = tempUserList[i].gender ? "女" : "男";
-      //             temp.hasJob = tempUserList[i].hasJob ? "是":"否";
-      //             temp.overdueRecord = tempUserList[i].overdueRecord;
-      //             temp.isDiscredit = tempUserList[i].isDiscredit ? "是":"否";
-      //             this.userList.push(temp);
-      //           }
-      //           this.total = ress.data.data.total;
-      //         } else {
-      //           that.$message.error("请求用户列表失败");
-      //         }
-      //       });
-      // }
+      this.userList = res.data.data.data;
+      this.total = res.data.data.total;
     },
     //当前页面数据条数发生改变的时候触发
     handleSizeChange(val) {
@@ -203,13 +169,6 @@ export default {
               }
             });
           })
-          .catch(() => {
-            //点击取消按钮，取消该次操作
-            that.$message({
-              type: "info",
-              message: "已取消删除",
-            });
-          });
     },
     // 表格编号
     indexFn(index) {
