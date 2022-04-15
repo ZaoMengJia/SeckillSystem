@@ -49,5 +49,13 @@ export default {
         data: {
             username, password
         }
+    }),
+    getSeckillActivityList: async (pageNum, pageSize) => request({
+        method: 'get',
+        url: `/web/seckillActivity/getAllSeckillActivity/${pageNum}/${pageSize}`,
+    }),
+    searchSeckillActivity: async (keyword, pageNum, pageSize) => request({
+        method: 'get',
+        url: `/seckillActivity/searchSeckillActivity/${keyword}/${pageNum}/${pageSize}`
     })
 }

@@ -7,6 +7,10 @@ import com.zaomengjia.common.utils.RedisUtils;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.MessageFormat;
+import java.util.Optional;
+
 import static com.zaomengjia.common.constant.RedisKey.*;
 
 /**
@@ -25,6 +29,20 @@ public class OrderSimpleService {
         this.redisUtils = redisUtils;
     }
 
+    public int getUserOrderQuantity(String userId, String financialProductId, String seckillActivityId) {
+        String key = MessageFormat.format("order-user-id-financial-product-id-seckill-activity-id-map::{0}::{1}::{2}", userId, financialProductId, seckillActivityId);
+        Integer quantity = (Integer) redisUtils.get(key);
+        return Optional.ofNullable(quantity).orElse(0);
+    }
+
+    public void decrUserOrderQuantity(String userId, String financialProductId, String seckillActivityId, long delta) {
+        String key = MessageFormat.format("order-user-id-financial-product-id-seckill-activity-id-map::{0}::{1}::{2}", userId, financialProductId, seckillActivityId);
+        long result = redisUtils.decr(key, delta);
+        if(result < 0) {
+            redisUtils.set(key, 0);
+        }
+    }
+
     private String getKeyById(String id) {
         return (String) redisUtils.hget(orderIdKeyMapKey(), id);
     }
@@ -40,7 +58,7 @@ public class OrderSimpleService {
 
     public void setCache(Order order) {
         String key = getKey(order);
-        redisUtils.set(key, order, 60 * 12 * 12);
+        redisUtils.set(key, order, 24 * 60 * 60);
         setKey(order);
     }
 

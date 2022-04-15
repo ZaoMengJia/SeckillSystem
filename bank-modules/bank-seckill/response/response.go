@@ -52,6 +52,10 @@ var (
 		code:    30005,
 		message: "没有这个秒杀活动",
 	}
+	ResultCodeOrderExceedLimit = ResultCode{
+		code:    30012,
+		message: "每人限购哦～不能贪多哦～",
+	}
 	ResultCodeActivityNotStarted = ResultCode{
 		code:    30013,
 		message: "活动未开始",

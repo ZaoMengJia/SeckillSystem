@@ -1,6 +1,8 @@
 package com.zaomengjia.common.service;
 
 import cn.hutool.core.lang.UUID;
+import com.alibaba.fastjson.JSONObject;
+import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.utils.RedisUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +22,11 @@ import static com.zaomengjia.common.constant.RedisKey.*;
 public class StockSimpleService {
     private final RedisUtils redisUtils;
 
-    public StockSimpleService(RedisUtils redisUtils) {
+    private final SaleProductDetailSimpleService saleProductDetailSimpleService;
+
+    public StockSimpleService(RedisUtils redisUtils, SaleProductDetailSimpleService saleProductDetailSimpleService) {
         this.redisUtils = redisUtils;
+        this.saleProductDetailSimpleService = saleProductDetailSimpleService;
     }
 
     public void addTokenBucket(String financialProductId, String seckillActivityId, long total) {
@@ -91,15 +96,33 @@ public class StockSimpleService {
 
     public void setStock(String financialProductId, String seckillActivityId, long quantity) {
         redisUtils.set(stockMapKey(financialProductId, seckillActivityId), quantity);
+
+        SaleProductDetail detail = saleProductDetailSimpleService.findByFinancialProductIdAndSeckillActivityId(financialProductId, seckillActivityId);
+        String key = saleProductDetailKey(detail.getId(), financialProductId, seckillActivityId);
+        Object o = redisUtils.get(key);
+        if(o != null) {
+            JSONObject jsonObject = (JSONObject) o;
+            SaleProductDetail saleProductDetail = jsonObject.toJavaObject(SaleProductDetail.class);
+            saleProductDetail.setQuantity(quantity);
+            redisUtils.set(key, saleProductDetail);
+        }
     }
 
-    public boolean decrStock(String financialProductId, String seckillActivityId, long quantity) {
+    public boolean decrStock(String saleProductId, String financialProductId, String seckillActivityId, long quantity) {
         long newValue = redisUtils.decr(stockMapKey(financialProductId, seckillActivityId));
         setDirtyStock(financialProductId, seckillActivityId, true);
         if(newValue < 0) {
             //相当于事务回滚
             redisUtils.incr(stockMapKey(financialProductId, seckillActivityId), quantity);
             return false;
+        }
+        String key = saleProductDetailKey(saleProductId, financialProductId, seckillActivityId);
+        Object o = redisUtils.get(key);
+        if(o != null) {
+            JSONObject jsonObject = (JSONObject) o;
+            SaleProductDetail saleProductDetail = jsonObject.toJavaObject(SaleProductDetail.class);
+            saleProductDetail.setQuantity(newValue);
+            redisUtils.set(key, saleProductDetail);
         }
         return true;
     }

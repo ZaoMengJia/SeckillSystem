@@ -226,6 +226,8 @@
 </template>
 
 <script>
+import api from "@/api/api";
+
 export default {
   name: "SeckillActivityService",
   data() {
@@ -293,69 +295,18 @@ export default {
   },
   methods: {
     //请求秒杀活动列表数据
-    getActivityList() {
-      const that = this;
-      if (this.keyword === "") {
-        this.$http
-            .get(
-                "/back/web/seckillActivity/getAllSeckillActivity/" +
-                (this.queryInfo.pageIndex-1) +
-                "/" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                that.activityList = [];
-                const tempActivityList = ress.data.data.records;
-                let temp = {};
-                for (let i = 0; i < tempActivityList.length; i++) {
-                  temp = {};
-                  temp.id = tempActivityList[i].id;
-                  temp.sname = tempActivityList[i].name;
-                  temp.image = tempActivityList[i].image;
-                  temp.detail = tempActivityList[i].detail;
-                  temp.beginTime = tempActivityList[i].beginTime;
-                  temp.endTime = tempActivityList[i].endTime;
-                  temp.createTime = tempActivityList[i].createTime;
-                  that.activityList.push(temp);
-                }
-                that.total = ress.data.data.total;
-              } else {
-                that.$message.error("请求秒杀活动列表失败");
-              }
-            });
-      } else {
-        this.$http
-            .get(
-                "/back/web/seckillActivity/searchSeckillActivity/" +
-                this.keyword +
-                "/" +
-                (this.queryInfo.pageIndex-1) +
-                "/" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                this.activityList = [];
-                const tempActivityList = ress.data.data.records;
-                let temp = {};
-                for (let i = 0; i < tempActivityList.length; i++) {
-                  temp = {};
-                  temp.id = tempActivityList[i].id;
-                  temp.sname = tempActivityList[i].name;
-                  temp.image = tempActivityList[i].image;
-                  temp.detail = tempActivityList[i].detail;
-                  temp.beginTime = tempActivityList[i].beginTime;
-                  temp.endTime = tempActivityList[i].endTime;
-                  temp.createTime = tempActivityList[i].createTime;
-                  that.activityList.push(temp);
-                }
-                this.total = ress.data.data.total;
-              } else {
-                that.$message.error("请求秒杀活动列表失败");
-              }
-            });
+    async getActivityList() {
+      let [res, err] = this.keyword === '' ?
+          await api.getSeckillActivityList(this.queryInfo.pageIndex, this.queryInfo.pageSize) :
+          await api.searchSeckillActivity(this.keyword, this.queryInfo.pageIndex, this.queryInfo.pageSize);
+
+      if(err != null) {
+        this.$message.error(err.message);
+        return;
       }
+
+      this.activityList = res.data.data.records;
+      this.total = res.data.data.total;
     },
     //当前页面数据条数发生改变的时候触发
     handleSizeChange(val) {

@@ -1,6 +1,8 @@
 package com.zaomengjia.stock.service.impl;
 
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
+import com.zaomengjia.common.entity.SaleProductDetail;
+import com.zaomengjia.common.service.SaleProductDetailSimpleService;
 import com.zaomengjia.common.service.StockSimpleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +27,12 @@ public class StockPersistService {
 
     private final SaleProductDetailMapper saleProductDetailMapper;
 
-    public StockPersistService(StockSimpleService stockSimpleService, SaleProductDetailMapper saleProductDetailMapper) {
+    private final SaleProductDetailSimpleService saleProductDetailSimpleService;
+
+    public StockPersistService(StockSimpleService stockSimpleService, SaleProductDetailMapper saleProductDetailMapper, SaleProductDetailSimpleService saleProductDetailSimpleService) {
         this.stockSimpleService = stockSimpleService;
         this.saleProductDetailMapper = saleProductDetailMapper;
+        this.saleProductDetailSimpleService = saleProductDetailSimpleService;
     }
 
 //    @Scheduled(cron = "0 */1 * * * ?")
@@ -47,6 +52,8 @@ public class StockPersistService {
             else {
                 logger.error("持久化更新库存失败 要更新{} => {}", rawKey, stock);
             }
+
+
         });
     }
 }

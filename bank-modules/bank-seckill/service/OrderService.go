@@ -38,34 +38,50 @@ func (*OrderService) GetCacheOrder(orderId string) *string {
 }
 
 func (r *OrderService) CreateOrder(userId string, seckillActivityId string, financialProductId string) (string, error) {
+	//判读活动存不存在
 	result := detailService.FindSaleProductByFinancialProductIdAndSeckillActivityId(financialProductId, seckillActivityId)
-
 	if result == nil {
 		return "", &response.AppException{ExceptionType: response.ResultCodeNoSuchActivity}
 	}
 
+	//判断这个用户下订单了吗
+	userOrderQuantityTotalKey := fmt.Sprintf("order-user-id-financial-product-id-seckill-activity-id-map::%s::%s::%s", userId, result.FinancialProductId, result.SeckillActivityId)
+	userOrderQuantityTotal, err := common.RedisTemplate.Get(userOrderQuantityTotalKey).Int()
+	if err != nil {
+		if err == redis.Nil {
+			userOrderQuantityTotal = 0
+		} else {
+			return "", &response.AppException{ExceptionType: response.ResultCodeInternalServerError}
+		}
+	}
+	if userOrderQuantityTotal >= 1 {
+		return "", &response.AppException{ExceptionType: response.ResultCodeOrderExceedLimit}
+	}
+
+	//组建订单
 	var order = model.Order{
 		SeckillActivityId:  seckillActivityId,
 		FinancialProductId: financialProductId,
 		UserId:             userId,
+		Quantity:           1,
 	}
 
-	//获取令牌
+	//获取令牌，如果可以购买多份，这里也要做更改
 	isSuccess := service.AttemptGetToken(financialProductId, seckillActivityId)
 	if !isSuccess {
 		//卖完了
 		return "", &response.AppException{ExceptionType: response.ResultCodeSellOut}
 	}
 
-	id := uuid.New().String()
-	id = strings.ReplaceAll(id, "-", "")
+	id := strings.ReplaceAll(uuid.New().String(), "-", "")
 	order.Id = id
 	order.Status = "CREATING"
 
 	key := fmt.Sprintf("order::%s::%s::%s::%s", order.Id, order.FinancialProductId, order.SeckillActivityId, order.UserId)
 	orderJson, _ := json.Marshal(order)
 	common.RedisTemplate.HSet("order-id-key-map", order.Id, key)
-	common.RedisTemplate.Set(key, string(orderJson), 4*time.Hour)
+	common.RedisTemplate.IncrBy(userOrderQuantityTotalKey, int64(order.Quantity))
+	common.RedisTemplate.Set(key, string(orderJson), 24*time.Hour)
 
 	//存队列
 	go pushMessageQueue(order)

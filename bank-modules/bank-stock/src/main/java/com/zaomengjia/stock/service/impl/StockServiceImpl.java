@@ -73,16 +73,18 @@ public class StockServiceImpl implements StockService {
             //减商品库存
             SaleProductDetail detail = saleProductDetailSimpleService.findByFinancialProductIdAndSeckillActivityId(order.getFinancialProductId(), order.getSeckillActivityId());
             if(detail == null || detail.getQuantity() < order.getQuantity()) {
-                throw new Exception("无法创建订单：订单余量不满足需求");
+                logger.info("无法创建订单{}：订单余量不满足需求", order.getId());
+                throw new Exception();
             }
-
-
-            boolean isSuccess = stockSimpleService.decrStock(order.getFinancialProductId(), order.getSeckillActivityId(), order.getQuantity());
+            boolean isSuccess = stockSimpleService.decrStock(detail.getId(), order.getFinancialProductId(), order.getSeckillActivityId(), order.getQuantity());
             if(!isSuccess) {
-                throw new Exception("无法创建订单：已售罄");
+                logger.info("无法创建订单{}：已售罄", order.getId());
+                throw new Exception();
             }
-            needUpdateDetailMap.put(order.getFinancialProductId()+ "::" + order.getSeckillActivityId(), detail);
 
+
+            //可以创建订单了
+            needUpdateDetailMap.put(order.getFinancialProductId()+ "::" + order.getSeckillActivityId(), detail);
             String oldId = order.getId();
 
             //创建订单
@@ -108,8 +110,14 @@ public class StockServiceImpl implements StockService {
             //设置订单失败
             order.setStatus(OrderStatus.ERROR);
 
+            //归还令牌
+            stockSimpleService.addTokenBucket(order.getFinancialProductId(), order.getSeckillActivityId(), order.getQuantity());
+
+            //重设用户订单数
+            orderSimpleService.decrUserOrderQuantity(order.getUserId(), order.getFinancialProductId(), order.getSeckillActivityId(), order.getQuantity());
+
             //错误信息4小时后删除
-            orderSimpleService.setCache(order, 4 * 60 * 60);
+            orderSimpleService.setCache(order);
 
             //开始回滚
 //            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

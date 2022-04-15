@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/viper"
 	"strings"
@@ -65,7 +64,7 @@ func GetSeckillSecretUrl(ctx *gin.Context) {
 }
 
 func Seckill(ctx *gin.Context) {
-	//path := ctx.Param("path")
+	path := ctx.Param("path")
 	seckillActivityId := ctx.Query("seckillActivityId")
 	financialProductId := ctx.Query("financialProductId")
 	token := ctx.GetHeader("Authorization")
@@ -76,20 +75,20 @@ func Seckill(ctx *gin.Context) {
 	}
 
 	//解密jwt
-	//payloadBase64 := strings.Split(token, ".")[1]
-	//payloadStr, _ := base64.StdEncoding.DecodeString(payloadBase64)
-	//userId := jsoniter.Get(payloadStr, "userId").ToString()
+	payloadBase64 := strings.Split(token, ".")[1]
+	payloadStr, _ := base64.StdEncoding.DecodeString(payloadBase64)
+	userId := jsoniter.Get(payloadStr, "userId").ToString()
 
 	//判断path是不是正确的
-	//pathKey := viper.GetString("seckill.path-key")
-	//correctPathByte := md5.Sum([]byte(seckillActivityId + userId + pathKey))
-	//correctPath := fmt.Sprintf("%x", correctPathByte)
-	//if path != strings.ToTitle(correctPath) {
-	//	//异常处理
-	//	return
-	//}
+	pathKey := viper.GetString("seckill.path-key")
+	correctPathByte := md5.Sum([]byte(seckillActivityId + userId + pathKey))
+	correctPath := fmt.Sprintf("%x", correctPathByte)
+	if path != correctPath {
+		response.Error(ctx, response.ResultCodePatternError)
+		return
+	}
 
-	orderId, err := orderService.CreateOrder(uuid.NewString(), seckillActivityId, financialProductId)
+	orderId, err := orderService.CreateOrder(userId, seckillActivityId, financialProductId)
 	if err == nil {
 		response.SuccessData(ctx, gin.H{
 			"orderId": orderId,
