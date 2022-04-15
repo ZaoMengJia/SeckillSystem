@@ -94,12 +94,9 @@ module.exports = {
         return request('/weixin/seckill/url/' + data.id, 'GET', {}, {'Authorization': data.token}, false)
     },
     secKill: (data) => {//秒杀接口
-        return request('/weixin/seckill/' + data.path, 'POST',
-        {
-            seckillActivityId: data.id,
-            financialProductId: data.pid
-        }
-        , {'Authorization': data.token, 'content-type': 'application/x-www-form-urlencoded'}, false)
+        return request('/weixin/seckill' + data.path+'?seckillActivityId='+data.id+'&financialProductId='+data.pid, 'POST',
+        {}
+        , {'Authorization': data.token}, false)
     },
     getSecKillResult: (data) => {//获取秒杀结果
         return request('/weixin/seckill/order/status/' + data.orderId, 'GET', {}, {'Authorization': data.token}, false)

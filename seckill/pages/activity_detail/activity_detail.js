@@ -81,34 +81,38 @@ Page({
                 id: this.data.aid,
                 pid: this.data.pid,
                 token: app.globalData.token
-            }).then(res => {
+            }).then(async res => {
                 console.log(res)
                 let status
                 do {
-                    this.timeout(500).then(()=>{
-                        getSecKillResult({
-                            orderId: res.data.orderId,
-                            token: app.globalData.token
-                        }).then(res => {
-                            console.log(res)
-                            status = res.data.status
-                        })
+                    status = await this.timeout(500, res.data.orderId).then(res => {
+                        return res.data.status
                     })
-                }while(status === 'CREATING')
-                if(status === 'NORMAL'){
+                } while (status === 'CREATING')
+                wx.hideLoading()
+                if (status === 'NORMAL') {
                     Toast.success("抢购成功")
-                }else{
+                } else {
                     Toast.fail("抢购失败")
                 }
-                wx.hideLoading()
+                wx.redirectTo({
+                  url: '../activity_list/activity_list',
+                })
             })
         } else {
             Toast.fail("无抢购资格")
         }
     },
-    timeout(duration){
-        return new Promise(function(resolve, reject){
-            setTimeout(resolve, duration)
-        })
-    }
+    timeout(duration, orderId) {
+        return new Promise(resolve => {
+            setTimeout(()=>{
+                 getSecKillResult({
+                    orderId: orderId,
+                    token: app.globalData.token
+                }).then(res => {
+                    resolve(res)
+                })
+            },duration);
+        });
+    },
 })
