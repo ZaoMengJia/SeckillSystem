@@ -31,23 +31,23 @@
           </el-col>
         </el-row>
         <!-- 渲染数据表格 -->
-        <el-table :data="adminList" border style="width: 100%">
+        <el-table v-loading="isTableLoading" :data="adminList" border style="width: 100%">
           <el-table-column type="index" width="100" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要adminList里的属性名改成一样的 -->
           <el-table-column prop="id" label="编号" width="100"> </el-table-column>
-          <el-table-column prop="userName" label="管理员名" width="150">
+          <el-table-column prop="username" label="姓名" width="150">
           </el-table-column>
           <!-- <el-table-column prop="password" label="密码" width="150">
           </el-table-column> -->
-          <el-table-column prop="avatarUrl" label="头像" width="100">
-              <img
-                  v-if="adminList.avatarUrl"
-                  :src="adminList.avatarUrl"
-                  alt=""
-                  style="width: 50px; height: 50px"
-              />
-          </el-table-column>
+<!--          <el-table-column prop="avatarUrl" label="头像" width="100">-->
+<!--              <img-->
+<!--                  v-if="adminList.avatarUrl"-->
+<!--                  :src="adminList.avatarUrl"-->
+<!--                  alt=""-->
+<!--                  style="width: 50px; height: 50px"-->
+<!--              />-->
+<!--          </el-table-column>-->
           <el-table-column prop="operate" label="操作" width="200">
             <template slot-scope="scope">
               <el-button
@@ -92,8 +92,8 @@
             label-width="100px"
             class="demo-ruleForm"
         >
-          <el-form-item label="管理员名" prop="userName">
-            <el-input v-model="addAdminForm.userName" clearable></el-input>
+          <el-form-item label="管理员名" prop="username">
+            <el-input v-model="addAdminForm.username" clearable></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password">
             <el-input
@@ -102,24 +102,24 @@
                 clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="头像" prop="avatarUrl">
-            <el-upload
-                class="avatar-uploader"
-                action="#"
-                list-type="picture-card"
-                :limit="1"
-                :auto-upload="false"
-                :on-success="handleAddAdminAvatarSuccess"
-                :before-upload="beforeAddAdminAvatarUpload"
-            >
-              <img
-                  v-if="addAdminForm.avatarUrl"
-                  :src="addAdminForm.avatarUrl"
-                  class="userAddImg"
-              />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-          </el-form-item>
+<!--          <el-form-item label="头像" prop="avatarUrl">-->
+<!--            <el-upload-->
+<!--                class="avatar-uploader"-->
+<!--                action="#"-->
+<!--                list-type="picture-card"-->
+<!--                :limit="1"-->
+<!--                :auto-upload="false"-->
+<!--                :on-success="handleAddAdminAvatarSuccess"-->
+<!--                :before-upload="beforeAddAdminAvatarUpload"-->
+<!--            >-->
+<!--              <img-->
+<!--                  v-if="addAdminForm.avatarUrl"-->
+<!--                  :src="addAdminForm.avatarUrl"-->
+<!--                  class="userAddImg"-->
+<!--              />-->
+<!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+<!--            </el-upload>-->
+<!--          </el-form-item>-->
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="addAdmin">确 定</el-button>
@@ -141,28 +141,28 @@
             label-width="100px"
             class="demo-ruleForm-edit"
         >
-          <el-form-item label="管理员名" prop="userName">
-            <el-input v-model="editAdminParams.userName" clearable></el-input>
+          <el-form-item label="管理员名" prop="username">
+            <el-input v-model="editAdminParams.username" clearable></el-input>
           </el-form-item>
-          <el-form-item label="头像" prop="avatarUrl">
-            <el-upload
-                class="avatar-uploader"
-                action="#"
-                name="picture"
-                list-type="picture-card"
-                :auto-upload="false"
-                :limit="1"
-                :on-success="handleEditAdminAvatarSuccess"
-                :before-upload="beforeEditAdminAvatarUpload"
-            >
-              <img
-                  v-if="editAdminParams.avatarUrl"
-                  :src="editAdminParams.avatarUrl"
-                  class="userEditAvatar"
-              />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-          </el-form-item>
+<!--          <el-form-item label="头像" prop="avatarUrl">-->
+<!--            <el-upload-->
+<!--                class="avatar-uploader"-->
+<!--                action="#"-->
+<!--                name="picture"-->
+<!--                list-type="picture-card"-->
+<!--                :auto-upload="false"-->
+<!--                :limit="1"-->
+<!--                :on-success="handleEditAdminAvatarSuccess"-->
+<!--                :before-upload="beforeEditAdminAvatarUpload"-->
+<!--            >-->
+<!--              <img-->
+<!--                  v-if="editAdminParams.avatarUrl"-->
+<!--                  :src="editAdminParams.avatarUrl"-->
+<!--                  class="userEditAvatar"-->
+<!--              />-->
+<!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+<!--            </el-upload>-->
+<!--          </el-form-item>-->
         </el-form>
         <span slot="footer" class="edit-footer">
           <el-button type="primary" @click="editAdminList">确 定</el-button>
@@ -174,10 +174,13 @@
 </template>
 
 <script>
+import api from "@/api/api";
+
 export default {
   name: "AdminManager.vue",
   data() {
     return {
+      isTableLoading: false,
       keyword: "",
       // 请求管理员列表的参数
       queryInfo: {
@@ -197,9 +200,9 @@ export default {
       addAdminVisible: false,
       //添加管理员参数
       addAdminForm: {
-        userName: "",
+        username: "",
         password: "",
-        avatarUrl:"",
+        // avatarUrl:"",
       },
       //添加管理员对话框验证规则
       addAdminFormRul: {
@@ -250,65 +253,25 @@ export default {
     };
   },
   methods: {
-    //请求管理员列表数据
-    getAdminList() {
-      const that = this;
-      if (this.keyword === "") {
-        this.$http
-            .get(
-                "/back/web/admin?pageNum=" +
-                this.queryInfo.pageIndex +
-                "&pageSize=" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                that.adminList = [];
-                const tempAdminList = ress.data.data.data;
-                let temp = {};
-                for (let i = 0; i < tempAdminList.length; i++) {
-                  temp = {};
-                  temp.id = tempAdminList[i].id;
-                  temp.userName = tempAdminList[i].username;
-                  temp.password = tempAdminList[i].password;
-                  temp.avatarUrl = tempAdminList[i].avatarUrl;
-                  that.adminList.push(temp);
-                }
-                that.total = ress.data.data.total;
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
-      } else {
-        this.$http
-            .get(
-                "/back/web/admin/search?keyword=" +
-                this.keyword +
-                "&pageNum=" +
-                this.queryInfo.pageIndex +
-                "&pageSize" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                this.adminList = [];
-                const tempAdminList = ress.data.data.data;
-                let temp = {};
-                for (let i = 0; i < tempAdminList.length; i++) {
-                  temp = {};
-                  temp.id = tempAdminList[i].id;
-                  temp.userName = tempAdminList[i].username;
-                  temp.password = tempAdminList[i].password;
-                  temp.avatarUrl = tempAdminList[i].avatarUrl;
-                  this.adminList.push(temp);
-                }
-                this.total = ress.data.data.total;
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
+    /**
+     * 请求管理员列表
+     * @returns {Promise<void>}
+     */
+    async getAdminList() {
+      this.isTableLoading = true;
+      let [res, err] = this.keyword === '' ?
+          await api.getAdminUserList(this.queryInfo.pageIndex, this.queryInfo.pageSize) :
+          await api.searchAdminUserList(this.keyword, this.queryInfo.pageIndex, this.queryInfo.pageSize);
+      this.isTableLoading = false;
+      if(err != null) {
+        this.$message.error(err.message);
+        return;
       }
+
+      this.adminList = res.data.data.data;
+      this.total = res.data.data.total;
     },
+
     //当前页面数据条数发生改变的时候触发
     handleSizeChange(val) {
       this.queryInfo.pageSize = val;
@@ -321,27 +284,21 @@ export default {
     },
     //添加管理员
     addAdmin() {
-      this.$refs.addAdminFormRef.validate((valid) => {
-        const that = this;
-        if (valid) {
-          this.$http.get('/back/web/admin/adminExist?name='+this.addAdminForm.userName).then
-          this.$http
-              .post("/back/web/admin/", {
-                username: this.addAdminForm.userName,
-                password: this.addAdminForm.password,
-                avatarUrl: this.addAdminForm.avatarUrl,
-              })
-              .then((ress) => {
-                if (ress.data.code === 10000) {
-                  that.$message.success("添加成功");
-                } else {
-                  that.$message.error(ress.data.message);
-                }
-              });
-          //关闭dialog对话框
-          this.addAdminVisible = false;
-          this.getAdminList();
+      this.$refs.addAdminFormRef.validate(async (valid) => {
+        if(!valid) {
+          return;
         }
+
+        let [_, err] = await api.insertAdminUser(this.addAdminForm.username, this.addAdminForm.password);
+        if(err != null) {
+          this.$message.error(err.message);
+          return;
+        }
+
+        this.$message.success('添加成功');
+        this.addAdminVisible = false;
+        await this.getAdminList();
+
       });
     },
     //关闭对话框事件
@@ -353,64 +310,42 @@ export default {
     },
     //点击编辑按钮，编辑管理员信息
     editAdmin(row) {
-      //根据管理员id获取当前管理员信息
-      this.$http.get("/back/web/admin/" + row.id).then((ress) => {
-        //存储获取到的管理员信息
-        this.editAdminParams.id = ress.data.data.id;
-        this.editAdminParams.userName = ress.data.data.username;
-        this.editAdminParams.password = ress.data.data.password;
-        this.editAdminParams.avatarUrl = ress.data.data.avatarUrl;
-        this.editAdminVisible = !this.editAdminVisible;
-      });
+      this.editAdminParams = {...row}
+      this.editAdminVisible = true;
     },
     editAdminList() {
-      this.$refs.editAdminParams.validate((valid) => {
-        const that = this;
-        if (valid) {
-          this.$http
-              .put("/back/web/admin/"+this.editAdminParams.id, {
-                id: this.editAdminParams.id,
-                username: this.editAdminParams.userName,
-                password: this.editAdminParams.password,
-                avatarUrl: this.editAdminParams.avatarUrl,
-              })
-              .then((ress) => {
-                if (ress.data.code === 10000) {
-                  this.editAdminVisible = !this.editAdminVisible;
-                  that.$message.success("修改成功");
-                  this.getAdminList();
-                } else {
-                  that.$message.error(ress.data.message);
-                }
-              });
+      this.$refs.editAdminParams.validate(async (valid) => {
+        if(!valid) {
+          return;
         }
+        let [, err] = await api.editAdminUser(this.editAdminParams.id, this.editAdminParams.username, this.editAdminParams.password);
+        if(err != null) {
+          this.$message.error(err.message);
+          return;
+        }
+
+        this.$message.info('修改成功');
+        this.editAdminVisible = false;
+        await this.getAdminList();
       });
     },
     //删除管理员
     removeAdminItem(row) {
-      const that = this;
       this.$confirm("此操作将永久删除该管理员, 是否继续?", "删除管理员", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
-          .then(() => {
-            this.$http.delete("/back/web/admin/" + row.id).then((ress) => {
-              if (ress.data.code === 10000) {
-                that.$message.success("删除管理员成功");
-                this.getAdminList();
-              } else {
-                that.$message.error("删除管理员失败");
-              }
-            });
-          })
-          .catch(() => {
-            //点击取消按钮，取消该次操作
-            that.$message({
-              type: "info",
-              message: "已取消删除",
-            });
-          });
+          .then(async () => {
+            let [_, err] = await api.deleteAdminUser(row.id);
+            if(err != null) {
+              this.$message.error(err.message);
+              return;
+            }
+
+            this.$message.info('已删除');
+            await this.getAdminList();
+          }).catch(() => {});
     },
     // 表格编号
     indexFn(index) {

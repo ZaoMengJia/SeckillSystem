@@ -48,6 +48,9 @@ public class UsernamePasswordManager implements ReactiveAuthenticationManager {
             authenticate = new UsernamePasswordAuthenticationToken(username, password, AuthorityUtils.createAuthorityList(AuthorityGroup.ADMIN.raw));
             authenticate.setDetails(admin);
         }
+        else {
+            throw new LoginErrorException();
+        }
 
         return Mono.just(authenticate);
     }

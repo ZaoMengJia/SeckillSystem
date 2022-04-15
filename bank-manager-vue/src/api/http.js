@@ -4,10 +4,9 @@ import qs from "qs";
 
 axios.defaults.baseURL = 'http://localhost:8811'
 export async function request(data, isBodyJson = true) {
-
     let isJson = true;
     let rawData = data.data;
-    if(isBodyJson && (data.method.toLowerCase() === 'get' || (data.headers['content-type'] ?? '').indexOf('json') === -1)) {
+    if(!isBodyJson || data.method.toLowerCase() === 'get') {
         isJson = false;
         if(data.method.toLowerCase() === 'get' && data.data !== {}) {
             let arr = [];
@@ -28,9 +27,20 @@ export async function request(data, isBodyJson = true) {
         }
     }
 
+    if(isBodyJson) {
+        data.headers = {...data.headers, 'content-type': 'application/json'};
+    }
+
 
     let signatureData = sign(isJson ? RequestType.json : RequestType.query, rawData);
     data.headers = {...data.headers, ...signatureData}
+
+    //添加token
+    let token = getToken();
+    if(token !== null) {
+        data.headers.Authorization = token;
+    }
+
     return axios(data)
         .then(res => {
             if(res.data.code === 10000) {
@@ -43,6 +53,15 @@ export async function request(data, isBodyJson = true) {
         .catch(err => [null, err]);
 }
 
+function getToken() {
+    let vuex = localStorage.getItem("vuex");
+    if(vuex === '') {
+        return null;
+    }
+    vuex = JSON.parse(vuex);
+    return vuex.token ?? null;
+}
+
 export default {
-    request
+    request,
 }

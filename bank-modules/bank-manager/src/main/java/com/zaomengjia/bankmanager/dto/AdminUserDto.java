@@ -16,6 +16,5 @@ public class AdminUserDto {
 
     private String password;
 
-    @NotNull
     private String avatarUrl;
 }
