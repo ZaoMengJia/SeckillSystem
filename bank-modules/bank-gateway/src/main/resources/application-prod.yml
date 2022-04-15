@@ -28,7 +28,7 @@ spring:
           uri: lb://bank-manager
           predicates:
             - Path=/web/**
-        - id: bank-order-service-2
+        - id: bank-order-service
           uri: lb://bank-order
           predicates:
             - Path=/weixin/seckill/list**
@@ -36,9 +36,8 @@ spring:
           uri: lb://bank-seckill
           predicates:
             - Path=/weixin/seckill/**,Method=POST
-            - Path=/weixin/seckill/order/**
-            - Path=/weixin/seckill/url**
-        - id: bank-order-service
+            - Path=/weixin/seckill/order/**,/weixin/seckill/url**,/weixin/seckill/order/status/**
+        - id: bank-order-service-2
           uri: lb://bank-order
           predicates:
             - Path=/weixin/**

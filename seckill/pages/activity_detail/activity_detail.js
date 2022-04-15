@@ -85,13 +85,14 @@ Page({
                 console.log(res)
                 let status
                 do {
-                    setTimeout(function () {},500)
-                    //TODO 秒杀结果接口调用404
-                    getSecKillResult({
-                        orderId: res.data.orderId,
-                        token: app.globalData.token
-                    }).then(res => {
-                        status = res.data.status
+                    this.timeout(500).then(()=>{
+                        getSecKillResult({
+                            orderId: res.data.orderId,
+                            token: app.globalData.token
+                        }).then(res => {
+                            console.log(res)
+                            status = res.data.status
+                        })
                     })
                 }while(status === 'CREATING')
                 if(status === 'NORMAL'){
@@ -104,5 +105,10 @@ Page({
         } else {
             Toast.fail("无抢购资格")
         }
+    },
+    timeout(duration){
+        return new Promise(function(resolve, reject){
+            setTimeout(resolve, duration)
+        })
     }
 })
