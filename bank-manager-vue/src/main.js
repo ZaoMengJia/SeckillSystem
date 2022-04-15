@@ -6,7 +6,8 @@ import Element from 'element-ui'
 import axios from 'axios'
 
 import "element-ui/lib/theme-chalk/index.css"
-import {RequestType, sign} from "../../signUtils";
+import http from "@/api/http";
+
 
 Vue.use(Element)
 
@@ -23,10 +24,9 @@ axios.interceptors.request.use(req => {
   return Promise.reject(err)
 })
 
-let vue = new Vue({
+new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
 
-export default vue

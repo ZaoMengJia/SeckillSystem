@@ -45,7 +45,7 @@
           </el-table-column> -->
           <el-table-column prop="sexForm" label="性别" width="100">
             <template slot-scope="scope">
-              {{ scope.row.gender === 0 ? '女' : '男' }}
+              {{ scope.row.gender !== 0 ? '女' : '男' }}
             </template>
           </el-table-column>
           <el-table-column prop="avatarUrl" label="头像" width="100">
@@ -131,8 +131,8 @@ export default {
     async getUserList() {
       this.isLoading = true;
       let [res, err] = this.keyword === '' ?
-          await api.getWeixinUserList(this.queryInfo.pageIndex, this.queryInfo.pageSize, this.$store.getters.token) :
-          await api.searchWeixinUserList(this.keyword, this.type, this.queryInfo.pageIndex, this.queryInfo.pageSize, this.$store.getters.token);
+          await api.getWeixinUserList(this.queryInfo.pageIndex, this.queryInfo.pageSize) :
+          await api.searchWeixinUserList(this.keyword, this.type, this.queryInfo.pageIndex, this.queryInfo.pageSize);
       this.isLoading = false;
       if(err !== null) {
         this.$message.error(err.message);
@@ -159,16 +159,16 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       })
-          .then(() => {
-            this.$http.delete("/back/web/weixin-user/" + row.id).then((ress) => {
-              if (ress.data.code === 10000) {
-                that.$message.success("删除用户成功");
-                this.getUserList();
-              } else {
-                that.$message.error("删除用户失败");
-              }
-            });
+          .then(async () => {
+            let [, err] = await api.deleteWeixinUser(row.id);
+            if(err != null) {
+              this.$message.error(err.message);
+              return;
+            }
+
+            await this.getUserList();
           })
+      .catch(() => {})
     },
     // 表格编号
     indexFn(index) {
@@ -177,7 +177,7 @@ export default {
       return index;
     },
   },
-  created() {
+  mounted() {
     this.getUserList();
   },
 }

@@ -166,7 +166,6 @@ public class SignatureFilter implements GlobalFilter, Ordered {
     private String getSignature(String input) {
         input = URLDecoder.decode(input, StandardCharsets.UTF_8);
         String md5 = MD5Utils.toMD5(input);
-        System.out.println(md5);
         return Base64.encode(md5).replaceAll("[=/+]", "");
     }
 
