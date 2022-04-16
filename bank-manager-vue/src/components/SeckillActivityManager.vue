@@ -70,7 +70,7 @@
           <div class="activity-card-parent">
             <el-card @click.native="toDetail(activity.id)" shadow="never" v-for="(activity, index) in activityList" :key="activity.id" class="activity-card" :body-style="{ padding: '0px' }" style="margin-right: 12px; margin-bottom: 12px">
               <el-image
-                  style="height: 150px;"
+                  style="height: 300px;"
                   class="image"
                   :src="activity.image"
                   fit="cover"/>
@@ -298,11 +298,18 @@ export default {
         return;
       }
 
+      let image = '';
+      try {
+        image = decodeURIComponent(this.insertActivityDialog.data.image);
+      } catch (e) {
+        image = this.insertActivityDialog.data.image;
+      }
+
       let [, err] = await api.insertSeckillActivity({
         id: this.seckillActivityId,
         name: this.insertActivityDialog.data.name,
         detail: this.insertActivityDialog.data.detail,
-        image: this.insertActivityDialog.data.image,
+        image: image,
         beginTime: beginTime,
         endTime: endTime
       });
@@ -570,7 +577,7 @@ export default {
 .activity-card {
   border-radius: 10px;
   width: 32%;
-  height: 300px;
+  height: 450px;
   box-sizing: border-box;
 
   cursor: pointer;

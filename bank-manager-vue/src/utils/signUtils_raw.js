@@ -1,5 +1,6 @@
 import Base64 from '@/utils/encrypt/base64';
 import MD5 from '@/utils/encrypt/md5'
+import da from "element-ui/src/locale/lang/da";
 const appKey = 'IZe37zbJnGpPrZ5u'
 
 /**
@@ -22,7 +23,14 @@ export function sign(requestType = RequestType.query, body = {}) {
     let timestamp = new Date().getTime();
 
     let data = requestType !== RequestType.body ? standardizeObject(body) : body;
-    let input = decodeURIComponent(JSON.stringify(data)) + nonce + timestamp + appKey;
+    let preInput = '';
+    try {
+        preInput = decodeURIComponent(JSON.stringify(data));
+    }catch (e) {
+        preInput = JSON.stringify(data);
+    }
+
+    let input = preInput.replaceAll(/[+]/g, ' ') + nonce + timestamp + appKey;
     let signature = Base64.encode(MD5.md5(input)).replaceAll(/[/=+]/g, '');
     console.log(input)
     console.log(MD5.md5(input))
