@@ -23,6 +23,7 @@ public interface SaleProductDetailMapper extends JpaRepository<SaleProductDetail
 
     void deleteBySeckillActivityIdAndFinancialProductId(String seckillActivityId, String finalProductId);
 
+    @Transactional
     void deleteByFinancialProductId(String financialProductId);
 
     void deleteBySeckillActivityId(String seckillActivityId);

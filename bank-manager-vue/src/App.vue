@@ -5,4 +5,12 @@
 </template>
 
 <style>
+#app {
+  margin: -8px;
+}
+
+.font-title {
+  font-size: 32px;
+  font-weight: bolder;
+}
 </style>

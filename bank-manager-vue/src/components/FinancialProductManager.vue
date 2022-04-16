@@ -1,73 +1,76 @@
 <template>
   <!-- 理财产品管理界面 -->
   <div class="bread">
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item>理财产品</el-breadcrumb-item>
-      <el-breadcrumb-item>理财产品列表</el-breadcrumb-item>
-    </el-breadcrumb>
     <!-- 搜索头部input框 -->
     <div class="table">
-      <el-card>
-        <el-row>
-          <el-col :span="15">
-            <el-input
-                placeholder="请输入理财产品名称关键词"
-                v-model="keyword"
-                class="input-with-select"
-                clearable
-                @clear="getProductList"
-            >
-              <el-button
-                  slot="append"
-                  icon="el-icon-search"
-                  @click="getProductList"
-              ></el-button>
-            </el-input>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" class="add" @click="addProductVisible = true"
-            >添加理财产品
-            </el-button>
-          </el-col>
-        </el-row>
+      <span style="font-size: 32px; flex-basis: 62%; font-weight: bolder">商品列表</span><br>
+      <div style="height: 10px"/>
+      <div>
+        <div style="display: inline-flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+          <el-input
+              placeholder="输入关键词"
+              v-model="keyword"
+              class="input-with-select"
+              clearable
+              @clear="getProductList"
+          >
+            <el-button
+                slot="append"
+                icon="el-icon-search"
+                @click="getProductList"
+            ></el-button>
+          </el-input>
+          <el-button type="primary" style="margin-left: 20px;" plain @click="addProductVisible = true"
+          >添加
+          </el-button>
+        </div>
+
+        <div v-if="!isLoading" style="width: 1030px;">
+          <el-table :data="productList" :header-cell-style="{'text-align':'center'}"
+                    :cell-style="{'text-align':'center'}" style="width: 100%;">
+            <el-table-column type="index" width="50" :index="indexFn">
+            </el-table-column>
+            <!-- 所有的prop值必须要productList里的属性名改成一样的 -->
+            <el-table-column prop="id" label="编号" width="300"></el-table-column>
+            <el-table-column prop="name" label="产品名称" width="250"></el-table-column>
+            <el-table-column prop="price" label="每份价格" width="250"></el-table-column>
+            <el-table-column prop="operate" label="操作" width="180">
+              <template slot-scope="scope">
+                <el-button
+                    type="primary"
+                    icon="el-icon-edit"
+                    circle
+                    plain
+                    @click="editProduct(scope.row)"
+                ></el-button>
+                <el-button
+                    plain
+                    type="danger"
+                    icon="el-icon-delete"
+                    circle
+                    @click="removeProductItem(scope.row)"
+                ></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 分页功能 -->
+          <el-pagination
+              style="float:right;margin-top: 10px;"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="queryInfo.pageIndex"
+              :page-sizes="[5,10,15,20]"
+              :page-size="queryInfo.pageSize"
+              layout="prev, pager, next"
+              :total="total"
+              :hide-on-single-page="true"
+          >
+          </el-pagination>
+        </div>
+        <el-skeleton v-if="isLoading" :count="2" animated/>
         <!-- 渲染数据表格 -->
-        <el-table v-loading="isLoading" :data="productList" :header-cell-style="{'text-align':'center'}"
-                  :cell-style="{'text-align':'center'}" border style="width: 100%">
-          <el-table-column type="index" width="50" :index="indexFn">
-          </el-table-column>
-          <!-- 所有的prop值必须要productList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="编号"></el-table-column>
-          <el-table-column prop="name" label="理财产品名" width="250"></el-table-column>
-          <el-table-column prop="price" label="理财产品价格(每份)" width="250"></el-table-column>
-          <el-table-column prop="operate" label="操作" width="180">
-            <template slot-scope="scope">
-              <el-button
-                  type="primary"
-                  icon="el-icon-edit"
-                  circle
-                  @click="editProduct(scope.row)"
-              ></el-button>
-              <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  circle
-                  @click="removeProductItem(scope.row)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <!-- 分页功能 -->
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="queryInfo.pageIndex"
-            :page-sizes="[5,10,15,20]"
-            :page-size="queryInfo.pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-        >
-        </el-pagination>
-      </el-card>
+
+      </div>
       <!-- 添加产品dialog对话框 -->
       <el-dialog
           title="添加产品"

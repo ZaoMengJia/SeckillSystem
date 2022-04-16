@@ -1,57 +1,75 @@
 <template>
   <!-- 订单管理界面 -->
   <div class="bread">
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item>订单</el-breadcrumb-item>
-      <el-breadcrumb-item>订单列表</el-breadcrumb-item>
-    </el-breadcrumb>
-    <!-- 搜索头部input框 -->
     <div class="table">
-      <el-card>
-        <el-row>
-          <el-col :span="15">
-            <el-input
-                placeholder="请输入订单号"
-                v-model="keyword"
-                class="input-with-select"
-                clearable
-                @clear="getOrderList"
-            >
-              <el-button
-                  slot="append"
-                  icon="el-icon-search"
-                  @click="getOrderList"
-              ></el-button>
-            </el-input>
-          </el-col>
-        </el-row>
-        <!-- 渲染数据表格 -->
-        <el-table v-loading="isLoading" :data="orderList" :header-cell-style="{'text-align':'center'}"
-                  :cell-style="{'text-align':'center'}" border style="width: 100%;margin-top: 20px;">
-          <el-table-column type="index" width="50" :index="indexFn"></el-table-column>
-          <!-- 所有的prop值必须要orderList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="订单号"></el-table-column>
-          <el-table-column prop="weixinUser.id" label="用户id" width="120"></el-table-column>
-          <el-table-column prop="weixinUser.realName" label="用户姓名" width="100"></el-table-column>
-          <el-table-column prop="seckillActivity.id" label="秒杀活动id" width="120"></el-table-column>
-          <el-table-column prop="seckillActivity.name" label="秒杀活动名称" width="120"></el-table-column>
-          <el-table-column prop="financialProduct.id" label="产品id" width="120"></el-table-column>
-          <el-table-column prop="financialProduct.name" label="产品名称" width="120"></el-table-column>
-          <el-table-column prop="quantity" label="购买产品数量" width="60"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="150"></el-table-column>
-        </el-table>
-        <!-- 分页功能 -->
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="queryInfo.pageIndex"
-            :page-sizes="[5,10,15,20]"
-            :page-size="queryInfo.pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-        >
-        </el-pagination>
-      </el-card>
+      <span style="font-size: 32px; flex-basis: 62%; font-weight: bolder">成功添加的所有订单</span><br>
+      <div style="height: 10px"/>
+
+      <div>
+        <div style="display: inline-flex; justify-content: center; align-items: center;margin-bottom: 20px;">
+          <el-input
+              style="width: 300px"
+              placeholder="输入订单号"
+              v-model="keyword"
+              class="input-with-select"
+              clearable
+              @clear="getOrderList"
+          >
+            <el-button
+                slot="append"
+                icon="el-icon-search"
+                @click="getOrderList"
+            ></el-button>
+          </el-input>
+        </div>
+
+        <div  v-if="!isLoading">
+          <!-- 渲染数据表格 -->
+          <el-table :data="orderList" :header-cell-style="{'text-align':'center'}"
+                    :cell-style="{'text-align':'center'}" style="width: 100%">
+            <el-table-column type="index" width="50" :index="indexFn"></el-table-column>
+            <!-- 所有的prop值必须要orderList里的属性名改成一样的 -->
+            <el-table-column prop="id" label="订单号" width="300"></el-table-column>
+            <el-table-column prop="weixinUser.id" label="用户编号" width="300"></el-table-column>
+            <el-table-column prop="weixinUser.nickname" label="用户昵称" width="100"></el-table-column>
+            <el-table-column label="活动" width="200">
+              <template slot-scope="scope">
+                <span>{{scope.row.seckillActivity.name}}</span><br>
+                <span>({{scope.row.seckillActivity.id}})</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="产品" width="200">
+              <template slot-scope="scope">
+                <span>{{scope.row.financialProduct.name}}</span><br>
+                <span>({{scope.row.financialProduct.id}})</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="quantity" label="购买数量" width="100"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间">
+              <template slot-scope="scope">
+                <span>{{new Date(scope.row.createTime).Format('yyyy-MM-dd hh:mm:ss')}}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 分页功能 -->
+          <el-pagination
+              style="float:right;margin-top: 10px;"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="queryInfo.pageIndex"
+              :page-sizes="[5,10,15,20]"
+              :page-size="queryInfo.pageSize"
+              layout="prev, pager, next"
+              :total="total"
+              :hide-on-single-page="true"
+          >
+          </el-pagination>
+
+        </div>
+        <el-skeleton v-if="isLoading" :count="2" animated/>
+
+      </div>
+
     </div>
   </div>
 </template>

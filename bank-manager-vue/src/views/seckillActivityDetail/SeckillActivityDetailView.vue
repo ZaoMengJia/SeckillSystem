@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-card style="margin-left: 250px" shadow="never" body-style="padding: 50px">
+    <div style="margin-left: 250px" shadow="never" body-style="padding: 50px">
       <el-page-header @back="$router.push({name: 'SeckillActivity'})" content="详情"/>
-      <el-skeleton style="margin-top: 40px" v-if="isLoading" :rows="20" animated />
+      <el-skeleton style="margin-top: 40px" v-if="isLoading" :rows="18" animated />
       <div style="padding: 50px">
         <div v-if="!isLoading">
           <div style="display: inline-flex; margin-bottom: 24px">
@@ -15,7 +15,7 @@
               <span style="font-size: 32px;font-weight: bold">{{data.name}}</span><br>
               <span class="font-normal">{{data.detail}}</span><br>
               <div style="height: 30px"/>
-              <el-form class="demo-table-expand">
+              <el-form class="demo-table-expand" label-width="70px" label-position="left">
                 <el-form-item label="活动编号"><span>{{ data.id }}</span></el-form-item>
                 <el-form-item label="开始时间"><span>{{ new Date(data.beginTime).Format('yyyy-MM-dd hh:mm') }}</span></el-form-item>
                 <el-form-item label="结束时间"><span>{{ new Date(data.endTime).Format('yyyy-MM-dd hh:mm') }}</span></el-form-item>
@@ -65,7 +65,7 @@
           </div>
         </div>
       </div>
-    </el-card>
+    </div>
 
     <!--弹窗部分-->
     <el-dialog title="编辑" :visible.sync="editActivityInfoDialog.visible" :close-on-click-modal="false">

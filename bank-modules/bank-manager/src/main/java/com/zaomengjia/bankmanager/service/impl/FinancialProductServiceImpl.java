@@ -62,23 +62,23 @@ public class FinancialProductServiceImpl implements FinancialProductService {
 
     @Override
     public void modify(String id, FinancialProductDto dto) {
-        FinancialProduct entity = new FinancialProduct();
-        entity.setId(id);
+        FinancialProduct entity = financialProductMapper.findById(id).orElse(null);
+        if(entity == null) {
+            return;
+        }
+
         entity.setName(dto.getName());
         entity.setPrice((int) (dto.getPrice() * 100));
-
         financialProductMapper.save(entity);
     }
 
     @Override
     @Transactional
     public void delete(String id) {
-        try {
-            financialProductMapper.deleteById(id);
-            saleProductDetailMapper.deleteByFinancialProductId(id);
-        }
-        catch (Exception ignored) {}
+        financialProductMapper.deleteById(id);
+        saleProductDetailMapper.deleteByFinancialProductId(id);
     }
+
 
     @Override
     public FinancialProductVO getProductById(String pid) {

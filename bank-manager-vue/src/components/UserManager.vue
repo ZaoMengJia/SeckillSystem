@@ -1,92 +1,94 @@
 <template>
   <!-- 用户管理界面 -->
   <div class="bread">
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item>用户</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+
     <!-- 搜索头部input框 -->
     <div class="table">
-      <el-card>
-        <el-row>
-          <el-col :span="15">
-            <el-input
-                placeholder="请输入用户名关键词"
-                v-model="keyword"
-                class="input-with-select"
-                clearable
-                @clear="getUserList"
-            >
-              <el-button
-                  slot="append"
-                  icon="el-icon-search"
-                  @click="getUserList"
-              ></el-button>
-            </el-input>
-          </el-col>
-          <el-col :span="10
-">
-            <el-radio-group v-model="type">
-              <el-radio label="nickname">昵称</el-radio>
-              <el-radio label="realName">真实姓名</el-radio>
+      <span class="font-title">用户</span><br>
+      <div style="height: 10px"/>
+      <div>
+        <div style="display: inline-flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+          <el-input
+              style="width: 300px"
+              placeholder="输入关键词"
+              v-model="keyword"
+              class="input-with-select"
+              clearable
+              @clear="getUserList"
+          >
+            <el-button
+                slot="append"
+                icon="el-icon-search"
+                @click="getUserList"
+            />
+          </el-input>
+          <transition name="el-fade-in-linear">
+            <el-radio-group v-if="keyword !== ''" style="margin-left: 16px;" v-model="type">
+              <el-radio-button label="nickname">昵称</el-radio-button>
+              <el-radio-button label="realName">真实姓名</el-radio-button>
             </el-radio-group>
-          </el-col>
-        </el-row>
-        <!-- 渲染数据表格 -->
-        <el-table v-loading="isLoading" :data="userList" :header-cell-style="{'text-align':'center'}"
-                  :cell-style="{'text-align':'center'}" border style="width: 100%">
-          <el-table-column type="index" width="50" :index="indexFn">
-          </el-table-column>
-          <!-- 所有的prop值必须要userList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="编号"></el-table-column>
-          <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
-          <el-table-column prop="realName" label="真实姓名" width="100"></el-table-column>
-          <el-table-column prop="idCard" label="身份证号" width="200"></el-table-column>
-          <!-- <el-table-column prop="password" label="密码" width="150">
-          </el-table-column> -->
-          <el-table-column prop="sexForm" label="性别" width="100">
-            <template slot-scope="scope">
-              {{ scope.row.gender !== 0 ? '女' : '男' }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="avatarUrl" label="头像" width="100">
-            <!--            <template slot-scope="scope">-->
-            <!--              <img-->
-            <!--                  :src="scope.row.avartarUrl"-->
-            <!--                  alt=""-->
-            <!--                  style="width: 50px; height: 50px"-->
-            <!--              />-->
-            <!--            </template>-->
-            <template slot-scope="scope">
-              <el-avatar :src="scope.row.avatarUrl"></el-avatar>
-            </template>
-          </el-table-column>
-          <el-table-column prop="hasJob" label="是否工作" width="60"></el-table-column>
-          <el-table-column prop="overdueRecord" label="失约次数" width="60"></el-table-column>
-          <el-table-column prop="isDiscredit" label="是否为失约人" width="70"></el-table-column>
-          <el-table-column prop="operate" label="操作" width="100">
-            <template slot-scope="scope">
-              <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  circle
-                  @click="removeUserItem(scope.row)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <!-- 分页功能 -->
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="queryInfo.pageIndex"
-            :page-sizes="[5,10,15,20]"
-            :page-size="queryInfo.pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-        >
-        </el-pagination>
-      </el-card>
+
+          </transition>
+        </div>
+
+        <div v-if="!isLoading">
+          <!-- 渲染数据表格 -->
+          <el-table :data="userList" :header-cell-style="{'text-align':'center'}"
+                    :cell-style="{'text-align':'center'}" style="width: 100%">
+            <el-table-column type="index" width="30" align="right" :index="indexFn">
+            </el-table-column>
+            <!-- 所有的prop值必须要userList里的属性名改成一样的 -->
+            <el-table-column prop="avatarUrl" label="头像" align="right" width="60">
+              <template slot-scope="scope">
+                <el-avatar :src="scope.row.avatarUrl"></el-avatar>
+              </template>
+            </el-table-column>
+            <el-table-column prop="id" width="300" label="用户编号"></el-table-column>
+
+            <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
+            <el-table-column prop="realName" label="真实姓名" width="100"></el-table-column>
+            <el-table-column prop="idCard" label="身份证号" width="200"></el-table-column>
+            <!-- <el-table-column prop="password" label="密码" width="150">
+            </el-table-column> -->
+            <el-table-column prop="sexForm" label="性别" width="100">
+              <template slot-scope="scope">
+                {{ scope.row.gender !== 0 ? '女' : '男' }}
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="hasJob" label="是否工作" width="100"></el-table-column>
+            <el-table-column prop="overdueRecord" label="失约次数" width="100"></el-table-column>
+            <el-table-column prop="isDiscredit" label="是否为失约人" width="120"></el-table-column>
+            <el-table-column prop="operate" label="操作">
+              <template slot-scope="scope">
+                <el-button
+                    type="danger"
+                    icon="el-icon-delete"
+                    plain
+                    circle
+                    @click="removeUserItem(scope.row)"
+                ></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 分页功能 -->
+          <el-pagination
+              style="float:right;margin-top: 10px;"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="queryInfo.pageIndex"
+              :page-sizes="[5,10,15,20]"
+              :page-size="queryInfo.pageSize"
+              layout="prev, pager, next"
+              :total="total"
+              :hide-on-single-page="true"
+          >
+          </el-pagination>
+        </div>
+        <el-skeleton v-if="isLoading" :count="2" animated/>
+
+      </div>
+
     </div>
   </div>
 </template>

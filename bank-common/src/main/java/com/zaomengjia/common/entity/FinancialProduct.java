@@ -61,7 +61,7 @@ public class FinancialProduct {
     private int version;
 
 
-    @Column(name = "createTime")
+    @Column(name = "create_time")
     @CreatedDate
     private Date createTime;
 

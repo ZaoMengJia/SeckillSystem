@@ -11,26 +11,11 @@
     </el-header>
     <el-container>
       <!-- 左边菜单部分 -->
-      <div class="side">
+      <div>
         <el-aside :width="isCollapse ? '64px' : '225px'">
-          <!-- 收起导航栏 -->
-          <div
-              class=""
-              style="
-              margin-left: 45%;
-              color: #f6f099;
-              background: rgba(255,165,0,0);
-              cursor: pointer;
-            "
-              @click="isCollapse = !isCollapse"
-          >
-            |||
-          </div>
           <el-menu
+              style="height: 0"
               :default-active="activePath"
-              class="el-menu-vertical-demo"
-              background-color="#545c64"
-              text-color="#fff"
               active-text-color="#ffd04b"
               :unique-opened="true"
               :router="true"
@@ -75,14 +60,14 @@
                 <span slot="title">订单管理</span>
               </el-menu-item>
               <!-- 秒杀活动明细管理 -->
-              <el-menu-item
-                  index="/saleProductDetail"
-                  class="detail"
-                  @click="activeChoose('/saleProductDetail')"
-              >
-                <i class="el-icon-magic-stick"></i>
-                <span slot="title">秒杀活动明细管理</span>
-              </el-menu-item>
+<!--              <el-menu-item-->
+<!--                  index="/saleProductDetail"-->
+<!--                  class="detail"-->
+<!--                  @click="activeChoose('/saleProductDetail')"-->
+<!--              >-->
+<!--                <i class="el-icon-magic-stick"></i>-->
+<!--                <span slot="title">秒杀活动明细管理</span>-->
+<!--              </el-menu-item>-->
               <!-- 理财产品管理 -->
               <el-menu-item
                   index="/financialProduct"
@@ -120,7 +105,7 @@ export default {
   methods: {
     //退出登录
     loginOut() {
-      window.sessionStorage.clear()
+      this.$store.commit('setToken', null);
       this.$router.push("/login");
     },
     activeChoose(path) {
@@ -210,16 +195,15 @@ body,
 }
 
 .el-aside {
-  height: 100%;
+  height: 80%;
   display: block;
   position: absolute;
-  background-color: rgba(255,165,0,0.7);
   transition: width 0.15s;
   -webkit-transition: width 0.15s;
   -moz-transition: width 0.15s;
   -webkit-transition: width 0.15s;
   -o-transition: width 0.15s;
-  box-shadow: 1px 12px 9px 12px rgba(0, 0, 0, 0.2);
+  /*box-shadow: 1px 12px 9px 12px rgba(0, 0, 0, 0.2);*/
 }
 
 

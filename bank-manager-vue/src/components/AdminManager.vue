@@ -1,83 +1,84 @@
 <template>
   <!-- 管理员管理界面 -->
   <div class="bread">
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item>管理员</el-breadcrumb-item>
-      <el-breadcrumb-item>管理员列表</el-breadcrumb-item>
-    </el-breadcrumb>
+
     <!-- 搜索头部input框 -->
     <div class="table">
-      <el-card>
-        <el-row>
-          <el-col :span="15">
-            <el-input
-                placeholder="请输入管理员关键词"
-                v-model="keyword"
-                class="input-with-select"
-                clearable
-                @clear="getAdminList"
-            >
-              <el-button
-                  slot="append"
-                  icon="el-icon-search"
-                  @click="getAdminList"
-              ></el-button>
-            </el-input>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" class="add" @click="addAdminVisible = true"
-            >添加管理员
-            </el-button>
-          </el-col>
-        </el-row>
-        <!-- 渲染数据表格 -->
-        <el-table v-loading="isTableLoading" :data="adminList" :header-cell-style="{'text-align':'center'}"
-                  :cell-style="{'text-align':'center'}" border style="width: 100%">
-          <el-table-column type="index" width="50" :index="indexFn">
-          </el-table-column>
-          <!-- 所有的prop值必须要adminList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="编号"> </el-table-column>
-          <el-table-column prop="username" label="姓名" width="150">
-          </el-table-column>
-          <!-- <el-table-column prop="password" label="密码" width="150">
-          </el-table-column> -->
-<!--          <el-table-column prop="avatarUrl" label="头像" width="100">-->
-<!--              <img-->
-<!--                  v-if="adminList.avatarUrl"-->
-<!--                  :src="adminList.avatarUrl"-->
-<!--                  alt=""-->
-<!--                  style="width: 50px; height: 50px"-->
-<!--              />-->
-<!--          </el-table-column>-->
-          <el-table-column prop="operate" label="操作" width="200">
-            <template slot-scope="scope">
-              <el-button
-                  type="primary"
-                  icon="el-icon-edit"
-                  circle
-                  @click="editAdmin(scope.row)"
-              ></el-button>
-              <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  circle
-                  @click="removeAdminItem(scope.row)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <!-- 分页功能 -->
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="queryInfo.pageIndex"
-            :page-sizes="[5,10,15,20]"
-            :page-size="queryInfo.pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-        >
-        </el-pagination>
-      </el-card>
+      <span style="font-size: 32px; flex-basis: 62%; font-weight: bolder">管理员</span><br>
+      <div style="height: 10px"/>
+      <div>
+        <div style="display: inline-flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+          <el-input
+              placeholder="请输入管理员关键词"
+              v-model="keyword"
+              class="input-with-select"
+              clearable
+              @clear="getAdminList"
+          >
+            <el-button
+                slot="append"
+                icon="el-icon-search"
+                @click="getAdminList"
+            ></el-button>
+          </el-input>
+          <el-button type="primary" plain style="margin-left: 20px;" @click="addAdminVisible = true">添加</el-button>
+        </div>
+
+        <div  v-if="!isTableLoading" style="width: 700px">
+          <!-- 渲染数据表格 -->
+          <el-table :data="adminList" :header-cell-style="{'text-align':'center'}"
+                    :cell-style="{'text-align':'center'}" style="width: 100%">
+            <el-table-column type="index" width="50" :index="indexFn">
+            </el-table-column>
+            <!-- 所有的prop值必须要adminList里的属性名改成一样的 -->
+            <el-table-column prop="id" label="用户编号" width="300"> </el-table-column>
+            <el-table-column prop="username" label="姓名" width="150">
+            </el-table-column>
+            <!-- <el-table-column prop="password" label="密码" width="150">
+            </el-table-column> -->
+            <!--          <el-table-column prop="avatarUrl" label="头像" width="100">-->
+            <!--              <img-->
+            <!--                  v-if="adminList.avatarUrl"-->
+            <!--                  :src="adminList.avatarUrl"-->
+            <!--                  alt=""-->
+            <!--                  style="width: 50px; height: 50px"-->
+            <!--              />-->
+            <!--          </el-table-column>-->
+            <el-table-column prop="operate" label="操作" width="200">
+              <template slot-scope="scope">
+                <el-button
+                    type="primary"
+                    icon="el-icon-edit"
+                    circle
+                    plain
+                    @click="editAdmin(scope.row)"
+                ></el-button>
+                <el-button
+                    type="danger"
+                    icon="el-icon-delete"
+                    circle
+                    plain
+                    @click="removeAdminItem(scope.row)"
+                ></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 分页功能 -->
+          <el-pagination
+              style="float:right;margin-top: 10px;"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="queryInfo.pageIndex"
+              :page-sizes="[5,10,15,20]"
+              :page-size="queryInfo.pageSize"
+              layout="prev, pager, next"
+              :total="total"
+              :hide-on-single-page="true"
+          >
+          </el-pagination>
+        </div>
+        <el-skeleton v-if="isTableLoading" :count="2" animated/>
+      </div>
 
       <!-- 添加管理员dialog对话框 -->
       <el-dialog
@@ -93,7 +94,7 @@
             label-width="100px"
             class="demo-ruleForm"
         >
-          <el-form-item label="管理员名" prop="username">
+          <el-form-item label="用户名" prop="username">
             <el-input v-model="addAdminForm.username" clearable></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password">
@@ -101,7 +102,7 @@
                 v-model="addAdminForm.password"
                 type="password"
                 clearable
-            ></el-input>
+            />
           </el-form-item>
 <!--          <el-form-item label="头像" prop="avatarUrl">-->
 <!--            <el-upload-->
@@ -123,8 +124,8 @@
 <!--          </el-form-item>-->
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="addAdmin">确 定</el-button>
-          <el-button @click="addAdminVisible = false">取 消</el-button>
+<!--          <el-button @click="addAdminVisible = false">取消</el-button>-->
+          <el-button type="primary" @click="addAdmin">确定</el-button>
         </span>
       </el-dialog>
 
@@ -171,6 +172,7 @@
         </span>
       </el-dialog>
     </div>
+
   </div>
 </template>
 

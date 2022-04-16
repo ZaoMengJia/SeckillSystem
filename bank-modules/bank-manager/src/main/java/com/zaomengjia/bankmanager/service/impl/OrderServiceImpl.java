@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
         OrderVO vo = new OrderVO()
                 .setId(order.getId())
                 .setStatus(order.getStatus())
+                .setCreateTime(order.getCreateTime())
                 .setQuantity(order.getQuantity());
         vo.setSeckillActivity(
                 modelUtils.toSeckillActivityVO(seckillActivityMapper.findById(order.getSeckillActivityId()).orElse(null))

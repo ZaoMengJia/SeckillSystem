@@ -2,8 +2,9 @@
   <!-- 秒杀活动管理界面 -->
   <div class="bread">
     <div class="table">
-      <el-card>
+      <div>
         <div class="header" style="display: flex;">
+          <div style="height: 10px"/>
           <span style="font-size: 32px; flex-basis: 62%; font-weight: bolder">已添加的抢购活动</span><br>
           <div style="flex-basis: 38%">
             <div style="display: inline-flex; align-items: end">
@@ -25,47 +26,7 @@
 
         </div>
         <div style="height: 40px"/>
-
-        <!-- 渲染数据表格 -->
-        <!--        <el-table :data="activityList" border style="width: 100%">-->
-        <!--          <el-table-column type="index" width="100" :index="indexFn">-->
-        <!--          </el-table-column>-->
-        <!--          &lt;!&ndash; 所有的prop值必须要activityList里的属性名改成一样的 &ndash;&gt;-->
-        <!--          <el-table-column prop="name" label="秒杀活动名" width="150"></el-table-column>-->
-        <!--          <el-table-column prop="image" label="秒杀活动图片" width="150">-->
-        <!--            <img-->
-        <!--                :src="activityList.image"-->
-        <!--                alt=""-->
-        <!--                fit="fill"-->
-        <!--                style="width: 100px; height: 100px; "-->
-        <!--            />-->
-        <!--          </el-table-column>-->
-        <!--          <el-table-column prop="detail" label="秒杀活动描述" width="150"></el-table-column>-->
-        <!--          <el-table-column prop="beginTime" label="秒杀活动开始时间" width="150"></el-table-column>-->
-        <!--          <el-table-column prop="endTime" label="秒杀活动结束时间" width="150"></el-table-column>-->
-        <!--          <el-table-column prop="createTime" label="秒杀活动创建时间" width="150"></el-table-column>-->
-        <!--          &lt;!&ndash; <el-table-column prop="password" label="密码" width="150">-->
-        <!--          </el-table-column> &ndash;&gt;-->
-        <!--          <el-table-column prop="operate" label="操作" width="200">-->
-        <!--            <template slot-scope="scope">-->
-        <!--              <el-button-->
-        <!--                  type="primary"-->
-        <!--                  icon="el-icon-edit"-->
-        <!--                  circle-->
-        <!--                  @click="editActivity(scope.row)"-->
-        <!--              ></el-button>-->
-        <!--              <el-button-->
-        <!--                  type="danger"-->
-        <!--                  icon="el-icon-delete"-->
-        <!--                  circle-->
-        <!--                  @click="removeActivityItem(scope.row)"-->
-        <!--              ></el-button>-->
-        <!--            </template>-->
-        <!--          </el-table-column>-->
-        <!--        </el-table>-->
-
-        <el-skeleton v-if="isLoading" :rows="6" animated/>
-
+        <el-skeleton v-if="isLoading" :rows="12" animated/>
         <div v-if="!isLoading && activityList.length > 0">
           <div class="activity-card-parent">
             <el-card @click.native="toDetail(activity.id)" shadow="never" v-for="(activity, index) in activityList" :key="activity.id" class="activity-card" :body-style="{ padding: '0px' }" style="margin-right: 12px; margin-bottom: 12px">
@@ -105,7 +66,7 @@
         </div>
         <el-empty v-if="!isLoading && activityList.length === 0" description="没有已添加的抢购活动"/>
 
-      </el-card>
+      </div>
       <!-- 添加秒杀活动dialog对话框 -->
       <el-dialog title="编辑" :visible.sync="insertActivityDialog.visible" :close-on-click-modal="false">
         <el-form label-position="left" label-width="80px">
