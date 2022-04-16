@@ -1,4 +1,9 @@
-import {getActivityDetail, getSecKillResult, secKill, secKillPath} from "../../utils/api";
+import {
+    getActivityDetail,
+    getSecKillResult,
+    secKill,
+    secKillPath
+} from "../../utils/api";
 import Toast from "../../miniprogram_npm/@vant/weapp/toast/toast";
 
 const app = getApp()
@@ -38,12 +43,12 @@ Page({
                 url: res.data.image,
                 detail: res.data.detail,
                 title: res.data.name,
-                endTime: res.data.endTime.substring(0, 10)+" "+res.data.endTime.substring(11,16),
+                endTime: res.data.endTime.substring(0, 10) + " " + res.data.endTime.substring(11, 16),
                 productList: res.data.productList
             })
         })
     },
-    getSecKillPath(){
+    getSecKillPath() {
         secKillPath({
             id: this.data.aid,
             token: app.globalData.token
@@ -55,22 +60,22 @@ Page({
         })
     },
 
-    onChangeProduct(e){
+    onChangeProduct(e) {
         this.setData({
             pid: e.detail
         })
-        for(let i = 0; i < this.data.productList.length; i+=1){
+        for (let i = 0; i < this.data.productList.length; i += 1) {
             const cur = this.data.productList[i]
-            if(cur.id === this.data.pid){
+            if (cur.id === this.data.pid) {
                 this.setData({
-                    curProductPrice: cur.price*100
+                    curProductPrice: cur.price * 100
                 })
                 break
             }
         }
     },
     onSecKill() {
-        if(this.data.pid === -1){
+        if (this.data.pid === -1) {
             Toast.fail("请选择产品")
             return
         }
@@ -88,21 +93,23 @@ Page({
                     secKillImg: "/images/creating.png"
                 })
                 let status
-                do {
+                while (true) {
                     status = await this.timeout(500, res.data.orderId).then(res => {
                         return res.data.status
                     })
-                } while (status === 'CREATING')
-                if (status === 'NORMAL') {
-                    this.setData({
-                        secKillStatus: "抢购成功！",
-                        secKillImg: "/images/success.png"
-                    })
-                } else {
-                    this.setData({
-                        secKillStatus: "抢购失败！",
-                        secKillImg: "/images/fail.png"
-                    })
+                    if (status === 'NORMAL') {
+                        this.setData({
+                            secKillStatus: "抢购成功！",
+                            secKillImg: "/images/success.png"
+                        })
+                        break;
+                    } else if (status === 'ERROR') {
+                        this.setData({
+                            secKillStatus: "抢购失败！",
+                            secKillImg: "/images/fail.png"
+                        })
+                        break;
+                    }
                 }
 
             })
@@ -112,17 +119,17 @@ Page({
     },
     timeout(duration, orderId) {
         return new Promise(resolve => {
-            setTimeout(()=>{
-                 getSecKillResult({
+            setTimeout(() => {
+                getSecKillResult({
                     orderId: orderId,
                     token: app.globalData.token
                 }).then(res => {
                     resolve(res)
                 })
-            },duration);
+            }, duration);
         });
     },
-    onConfirmDialog(){
+    onConfirmDialog() {
         this.setData({
             dialogShow: false
         })
@@ -130,7 +137,7 @@ Page({
             url: '../activity_list/activity_list',
         })
     },
-    onCancelDialog(){
+    onCancelDialog() {
         this.setData({
             dialogShow: false
         })
