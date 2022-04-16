@@ -1,25 +1,22 @@
 package com.zaomengjia.bankmanager.service;
 
+import com.zaomengjia.bankmanager.dto.FinancialProductDto;
+import com.zaomengjia.bankmanager.dto.SeckillActivityDto;
 import com.zaomengjia.common.entity.FinancialProduct;
+import com.zaomengjia.common.vo.bank.FinancialProductVO;
+import com.zaomengjia.common.vo.bank.SeckillActivityVO;
+import com.zaomengjia.common.vo.page.PageVO;
 
 import java.util.Map;
 
 public interface FinancialProductService {
-    Boolean financialProductExist(String fname);
+    PageVO<FinancialProductVO> getList(int pageNum, int pageSize);
 
-    Map<String, Object> getFinancialProduct(int pageIndex, int pageSize);
+    PageVO<FinancialProductVO> searchByName(String name, int pageNum, int pageSize);
 
-    Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize);
+    String create(FinancialProductDto dto);
 
-    FinancialProduct getFinancialProductById(String fpid);
+    void modify(String id, FinancialProductDto dto);
 
-    FinancialProduct getFinancialProductByPrice(int price);
-
-    FinancialProduct getFinancialProductByName(String fname);
-
-    void addFinancialProduct(FinancialProduct financialProduct);
-
-    void deleteFinancialProduct(String fpid);
-
-    void updateFinancialProduct(FinancialProduct financialProduct);
+    void delete(String id);
 }

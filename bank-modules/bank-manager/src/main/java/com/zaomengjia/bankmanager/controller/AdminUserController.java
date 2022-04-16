@@ -40,7 +40,7 @@ public class AdminUserController {
     }
 
     @Operation(summary = "判断管理员是否存在")
-    @GetMapping("/adminExist")
+    @GetMapping("/exist")
     public ResultVO<?> adminUserExist(@RequestParam String name){
         return ResultUtils.success(userService.getAdminUserByUsername(name) != null);
     }

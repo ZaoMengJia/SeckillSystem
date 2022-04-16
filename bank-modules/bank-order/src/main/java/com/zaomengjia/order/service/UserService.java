@@ -2,6 +2,7 @@ package com.zaomengjia.order.service;
 
 import com.zaomengjia.common.vo.user.WeixinUserVO;
 import com.zaomengjia.order.dto.UserInfoDto;
+import org.springframework.data.util.Pair;
 
 /**
  * @author orangeboyChen
@@ -12,4 +13,6 @@ public interface UserService {
     void updateUserInfo(UserInfoDto userInfoDto, String userId);
 
     WeixinUserVO getUserInfo(String userId);
+
+    Pair<Boolean, Boolean> getUserState(String userId);
 }

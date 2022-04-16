@@ -65,6 +65,16 @@ public class WeixinUserController {
         return ResultUtils.success();
     }
 
+    @Operation(summary = "设置审核状态")
+    @PostMapping("/audit/{userId}")
+    public ResultVO<?> updateWeixinUserAudit(@PathVariable String userId, @RequestParam @Parameter(description = "0为未审核，1为审核") int audit) {
+        if(audit != 0 && audit != 1) {
+            throw new AppException(ResultCode.PATTERN_ERROR);
+        }
+        userService.setWeixinUserAudit(userId, audit);
+        return ResultUtils.success();
+    }
+
     @Operation(summary = "删除")
     @DeleteMapping("/{userId}")
     public ResultVO<?> deleteWeixinUser(@PathVariable String userId) {

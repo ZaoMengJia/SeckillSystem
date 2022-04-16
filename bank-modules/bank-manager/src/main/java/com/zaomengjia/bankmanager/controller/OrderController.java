@@ -1,91 +1,41 @@
 package com.zaomengjia.bankmanager.controller;
 
 import com.zaomengjia.bankmanager.service.OrderService;
-import com.zaomengjia.common.constant.ResultCode;
-import com.zaomengjia.common.entity.Order;
+import com.zaomengjia.bankmanager.service.impl.OrderServiceImpl;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+/**
+ * @author orangeboyChen
+ * @version 1.0
+ * @date 2022/4/15 20:22
+ */
+@Tag(name = "订单")
 @RequestMapping("/order")
+@RestController
 public class OrderController {
-    @Autowired
-    private OrderService orderService;
 
-    @GetMapping("/getAllOrders/{pageIndex}/{pageSize}")
-    public ResultVO<?> getAllOrders(@PathVariable int pageIndex, @PathVariable int pageSize){
-        try{
-            return ResultUtils.success(orderService.getOrder(pageIndex,pageSize));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
-    @GetMapping("/getOrderById/{id}")
-    public ResultVO<?> getOrderById(@PathVariable String id){
-        try{
-            return ResultUtils.success(orderService.getOrderById(id));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    @Operation(summary = "获取所有订单")
+    @GetMapping
+    public ResultVO<?> getOrderList(@RequestParam int pageNum, @RequestParam int pageSize) {
+        return ResultUtils.success(orderService.getOrderList(pageNum, pageSize));
     }
 
-    @GetMapping("/getProductByProductName/{productName}")
-    public ResultVO<?> getProductByProductName(@PathVariable String productName){
-        try{
-            return ResultUtils.success(orderService.getOrderByProductName(productName));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
-    @GetMapping("/getProductByUserName/{userName}")
-    public ResultVO<?> getProductByPrice(@PathVariable String userName){
-        try{
-            return ResultUtils.success(orderService.getOrderByUserName(userName));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
-    @GetMapping("/searchOrder/{keyword}/{pageIndex}/{pageSize}")
-    public ResultVO<?> searchOrder(@PathVariable String keyword,@PathVariable int pageIndex,@PathVariable int pageSize){
-        try{
-            return ResultUtils.success(orderService.searchOrder(keyword,pageIndex,pageSize));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR,e.getMessage());
-        }
-    }
-
-    @PostMapping("/addOrder/{order}")
-    public ResultVO<?> addOrder(@RequestBody Order order){
-        try{
-            orderService.addOrder(order);
-            return ResultUtils.success();
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/deleteOrder/{id}")
-    public ResultVO<?> deleteOrder(@PathVariable String id){
-        try{
-            orderService.deleteOrder(id);
-            return ResultUtils.success();
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
-    @PutMapping("/updateOrder/{order}")
-    public ResultVO<?> updateOrder(@RequestBody Order order){
-        try{
-            orderService.updateOrder(order);
-            return ResultUtils.success();
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    @Operation(summary = "根据订单号搜索")
+    @GetMapping("/search")
+    public ResultVO<?> searchOrder(@RequestParam String keyword, @RequestParam int pageNum, @RequestParam int pageSize) {
+        return ResultUtils.success(orderService.searchOrderById(keyword, pageNum, pageSize));
     }
 }

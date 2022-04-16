@@ -35,7 +35,7 @@
           <el-table-column type="index" width="100" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要orderList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="编号" width="100"> </el-table-column>
+          <el-table-column prop="id" label="订单号" width="100"> </el-table-column>
           <el-table-column prop="userId" label="用户id" width="150">
           </el-table-column>
           <el-table-column prop="financialProductId" label="产品id" width="150"></el-table-column>
@@ -156,6 +156,8 @@
 </template>
 
 <script>
+import api from "@/api/api";
+
 export default {
   name: "OrderService",
   data() {
@@ -230,67 +232,19 @@ export default {
   },
   methods: {
     //请求订单列表数据
-    getOrderList() {
-      const that = this;
-      if (this.keyword === "") {
-        this.$http
-            .get(
-                "/back/web/order/getAllOrders/" +
-                (this.queryInfo.pageIndex-1) +
-                "/" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                that.orderList = [];
-                const tempOrderList = ress.data.data.records;
-                let temp = {};
-                for (let i = 0; i < tempOrderList.length; i++) {
-                  temp = {};
-                  temp.id = tempOrderList[i].id;
-                  temp.userId = tempOrderList[i].userId;
-                  temp.financialProductId = tempOrderList[i].financialProductId;
-                  temp.seckillActivityId = tempOrderList[i].seckillActivityId;
-                  temp.quantity = tempOrderList[i].quantity;
-                  temp.createTime = tempOrderList[i].createTime;
-                  that.orderList.push(temp);
-                }
-                that.total = ress.data.data.total;
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
-      } else {
-        this.$http
-            .get(
-                "/back/web/order/searchOrder/" +
-                this.keyword +
-                "/" +
-                (this.queryInfo.pageIndex-1) +
-                "/" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                this.orderList = [];
-                const tempOrderList = ress.data.data.records;
-                let temp = {};
-                for (let i = 0; i < tempOrderList.length; i++) {
-                  temp = {};
-                  temp.id = tempOrderList[i].id;
-                  temp.userId = tempOrderList[i].userId;
-                  temp.financialProductId = tempOrderList[i].financialProductId;
-                  temp.seckillActivityId = tempOrderList[i].seckillActivityId;
-                  temp.quantity = tempOrderList[i].quantity;
-                  temp.createTime = tempOrderList[i].createTime;
-                  that.orderList.push(temp);
-                }
-                this.total = ress.data.data.total;
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
+    async getOrderList() {
+
+      let [res, err] = this.keyword === '' ?
+          await api.getOrderList(this.queryInfo.pageIndex, this.queryInfo.pageSize) :
+          await api.searchOrder(this.keyword, this.queryInfo.pageIndex, this.queryInfo.pageSize);
+
+      if(err != null) {
+        this.$message.error(err.message);
+        return;
       }
+
+      this.orderList = res.data.data.data;
+      this.total = res.data.data.total;
     },
     //当前页面数据条数发生改变的时候触发
     handleSizeChange(val) {
@@ -304,29 +258,19 @@ export default {
     },
     //添加订单
     addOrder() {
-      this.$refs.addOrderFormRef.validate((valid) => {
-        const that = this;
-        if (valid) {
-          this.$http
-              .post("/back/web/order/addOrder", {
-                id: this.addOrderForm.id,
-                userId: this.addOrderForm.userId,
-                financialProductId: this.addOrderForm.financialProductId,
-                seckillActivityId: this.addOrderForm.seckillActivityId,
-                quantity: this.addOrderForm.quantity,
-                createTime: this.addOrderForm.createTime,
-              })
-              .then((ress) => {
-                if (ress.data.code === 10000) {
-                  that.$message.success("添加成功");
-                } else {
-                  that.$message.error(ress.data.message);
-                }
-              });
-          //关闭dialog对话框
-          this.addOrderVisible = false;
-          this.getOrderList();
+      this.$refs.addOrderFormRef.validate(async (valid) => {
+        if(!valid) {
+          return;
         }
+
+        let [, err] = await api.insertOrder({...this.addOrderForm});
+        if(err != null) {
+          this.$message.error(err.message);
+          return;
+        }
+
+        this.addOrderVisible = false;
+        await this.getOrderList();
       });
     },
     //关闭对话框事件

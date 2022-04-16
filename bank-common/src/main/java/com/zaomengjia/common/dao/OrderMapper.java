@@ -18,5 +18,7 @@ public interface OrderMapper extends JpaRepository<Order, String> {
 
     Page<Order> findByUserIdContaining(String keyword, Pageable pageable);
 
+    Page<Order> findByIdContaining(String keyword, Pageable pageable);
+
     List<Order> findByUserIdAndFinancialProductIdAndSeckillActivityId(String userId, String financialProductId, String seckillActivityId);
 }

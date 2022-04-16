@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @date 2022/4/14 15:26
  */
 @SpringBootTest
-class SeckillActivityServiceImplTest {
+class OldSeckillActivityServiceImplTest {
 
     @Autowired
     private UserService service;

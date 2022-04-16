@@ -6,6 +6,7 @@ import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.utils.RedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +27,14 @@ public class SaleProductDetailSimpleService {
 
     private final RedisUtils redisUtils;
 
+    private final StockSimpleService stockSimpleService;
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public SaleProductDetailSimpleService(SaleProductDetailMapper saleProductDetailMapper, RedisUtils redisUtils) {
+    public SaleProductDetailSimpleService(SaleProductDetailMapper saleProductDetailMapper, RedisUtils redisUtils, @Lazy StockSimpleService stockSimpleService) {
         this.saleProductDetailMapper = saleProductDetailMapper;
         this.redisUtils = redisUtils;
+        this.stockSimpleService = stockSimpleService;
     }
 
     private String getKey(String id) {
@@ -89,6 +93,40 @@ public class SaleProductDetailSimpleService {
         detail = saleProductDetailMapper.save(detail);
         redisUtils.set(saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);
         setKey(detail);
+
+        //重设库存
+        stockSimpleService.updateTokenBucket(detail.getFinancialProductId(), detail.getSeckillActivityId(), detail.getQuantity());
+        stockSimpleService.setStock(detail.getFinancialProductId(), detail.getSeckillActivityId(), detail.getQuantity());
+    }
+
+
+    public void deleteByFinancialProductIdAndSeckillActivityId(String financialProductId, String seckillActivityId) {
+        saleProductDetailMapper.deleteBySeckillActivityIdAndFinancialProductId(seckillActivityId, financialProductId);
+
+        String key = getKey(seckillActivityId, financialProductId);
+        redisUtils.del(key);
+        stockSimpleService.deleteStock(financialProductId, seckillActivityId);
+        stockSimpleService.deleteTokenBucket(financialProductId, seckillActivityId);
+    }
+
+    public void modifyQuantityAndTotal(String financialProductId, String seckillActivityId, int quantity, int total) {
+        saleProductDetailMapper.updateQuantityAndTotal(financialProductId, seckillActivityId, quantity, total);
+        String key = getKey(seckillActivityId, financialProductId);
+        JSONObject jsonObject = (JSONObject) redisUtils.get(key);
+        if(jsonObject != null) {
+            SaleProductDetail detail = jsonObject.toJavaObject(SaleProductDetail.class);
+            detail.setQuantity(quantity);
+            detail.setTotal(total);
+            redisUtils.set(key, detail);
+        }
+
+        stockSimpleService.setStock(financialProductId, seckillActivityId, quantity);
+        stockSimpleService.updateTokenBucket(financialProductId, seckillActivityId, quantity);
+    }
+
+    public void setCache(SaleProductDetail saleProductDetail) {
+        setKey(saleProductDetail);
+        redisUtils.set(saleProductDetailKey(saleProductDetail.getId(), saleProductDetail.getFinancialProductId(), saleProductDetail.getSeckillActivityId()), saleProductDetail);
     }
 
     public void deleteById(String id) {

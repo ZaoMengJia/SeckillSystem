@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface SaleProductDetailService {
-    Boolean saleProductDetailExist(String said,String fpid);
+    Boolean saleProductDetailExist(String seckillActivityId, String financialProductId);
 
     Map<String,Object> getSaleProductDetail(int pageIndex,int pageSize);
 

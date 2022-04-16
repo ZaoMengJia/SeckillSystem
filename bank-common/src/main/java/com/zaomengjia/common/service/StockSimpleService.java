@@ -4,8 +4,11 @@ import cn.hutool.core.lang.UUID;
 import com.alibaba.fastjson.JSONObject;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.utils.RedisUtils;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,6 +43,16 @@ public class StockSimpleService {
 
     public void deleteTokenBucket(String financialProductId, String seckillActivityId) {
         redisUtils.del(tokenBucketMapKey(financialProductId, seckillActivityId));
+    }
+
+    public void deleteTokenBucketBatch(List<Pair<String, String>> list) {
+        String[] keys = list.stream().map(c -> tokenBucketMapKey(c.getFirst(), c.getSecond())).toArray(String[]::new);
+        redisUtils.del(keys);
+    }
+
+    public void updateTokenBucket(String financialProductId, String seckillActivityId, long total) {
+        deleteTokenBucket(financialProductId, seckillActivityId);
+        addTokenBucket(financialProductId, seckillActivityId, total);
     }
 
     public String getToken(String financialProductId, String seckillActivityId) {
@@ -94,8 +107,8 @@ public class StockSimpleService {
         return get != null ? get : 0;
     }
 
-    public void setStock(String financialProductId, String seckillActivityId, long quantity) {
-        redisUtils.set(stockMapKey(financialProductId, seckillActivityId), quantity);
+    public void setStockAndUpdateDetail(String financialProductId, String seckillActivityId, long quantity) {
+        setStock(financialProductId, seckillActivityId, quantity);
 
         SaleProductDetail detail = saleProductDetailSimpleService.findByFinancialProductIdAndSeckillActivityId(financialProductId, seckillActivityId);
         String key = saleProductDetailKey(detail.getId(), financialProductId, seckillActivityId);
@@ -108,7 +121,19 @@ public class StockSimpleService {
         }
     }
 
-    public boolean decrStock(String saleProductId, String financialProductId, String seckillActivityId, long quantity) {
+    public void setStock(String financialProductId, String seckillActivityId, long quantity) {
+        redisUtils.set(stockMapKey(financialProductId, seckillActivityId), quantity);
+    }
+
+    public void deleteStock(String financialProductId, String seckillActivityId) {
+        redisUtils.del(stockMapKey(financialProductId, seckillActivityId));
+    }
+
+    public void deleteStockBatch(List<Pair<String, String>> list) {
+        redisUtils.del(list.stream().map(c -> stockMapKey(c.getFirst(), c.getSecond())).toArray(String[]::new));
+    }
+
+    public boolean decrStock(String financialProductId, String seckillActivityId, long quantity) {
         long newValue = redisUtils.decr(stockMapKey(financialProductId, seckillActivityId));
         setDirtyStock(financialProductId, seckillActivityId, true);
         if(newValue < 0) {
@@ -116,6 +141,20 @@ public class StockSimpleService {
             redisUtils.incr(stockMapKey(financialProductId, seckillActivityId), quantity);
             return false;
         }
+
+        return true;
+
+    }
+
+    public boolean decrStockAndUpdateDetail(String saleProductId, String financialProductId, String seckillActivityId, long quantity) {
+        long newValue = redisUtils.decr(stockMapKey(financialProductId, seckillActivityId));
+        setDirtyStock(financialProductId, seckillActivityId, true);
+        if(newValue < 0) {
+            //相当于事务回滚
+            redisUtils.incr(stockMapKey(financialProductId, seckillActivityId), quantity);
+            return false;
+        }
+
         String key = saleProductDetailKey(saleProductId, financialProductId, seckillActivityId);
         Object o = redisUtils.get(key);
         if(o != null) {

@@ -13,6 +13,10 @@ public final class RedisKey {
         return "sale-product-detail-activity-id-product-id-key-map";
     }
 
+    public static String seckillActivityKey(String id) {
+        return "seckill-activity::" + id;
+    }
+
     public static String saleProductDetailIdKeyMapKey() {
         return "sale-product-detail-id-key-map";
     }

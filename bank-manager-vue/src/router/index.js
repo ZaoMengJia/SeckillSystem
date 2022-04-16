@@ -8,6 +8,7 @@ import SaleProductDetailManager from '../components/SaleProductDetailManager.vue
 import SeckillActivityManager from '../components/SeckillActivityManager.vue'
 import UserManager from '../components/UserManager.vue'
 import AdminManager from '../components/AdminManager.vue'
+import SeckillActivityDetailView from "@/views/seckillActivityDetail/SeckillActivityDetailView";
 
 Vue.use(VueRouter)
 
@@ -56,6 +57,11 @@ const routes = [
         name: 'Admin',
         component: AdminManager
       },
+      {
+        path: '/seckill-activity-detail',
+        name: 'seckillActivityDetail',
+        component: SeckillActivityDetailView
+      }
     ]
   }
 ]

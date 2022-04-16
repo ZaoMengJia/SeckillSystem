@@ -75,6 +75,10 @@ public final class RedisUtils {
         }
     }
 
+    public void multiSet(Map<String, Object> map) {
+        redisTemplate.opsForValue().multiSet(map);
+    }
+
     /**
      * 删除缓存
      *

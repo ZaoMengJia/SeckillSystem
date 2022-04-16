@@ -1,83 +1,63 @@
 package com.zaomengjia.bankmanager.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.zaomengjia.bankmanager.dto.FinancialProductDto;
 import com.zaomengjia.bankmanager.service.FinancialProductService;
-import com.zaomengjia.common.constant.ResultCode;
-import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.utils.ResultUtils;
 import com.zaomengjia.common.vo.ResultVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
-
+/**
+ * @author orangeboyChen
+ * @version 1.0
+ * @date 2022/4/15 20:39
+ */
+@Tag(name = "产品")
 @RestController
-@RequestMapping("/financialProduct")
+@RequestMapping("/product")
 public class FinancialProductController {
-    @Autowired
-    private FinancialProductService financialProductService;
 
-    @GetMapping("/getAllProduct/{pageIndex}/{pageSize}")
-    public ResultVO<?> getAllProduct(@PathVariable int pageIndex, @PathVariable int pageSize){
-        try{
-            return ResultUtils.success(financialProductService.getFinancialProduct(pageIndex, pageSize));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    private final FinancialProductService financialProductService;
+
+    public FinancialProductController(FinancialProductService financialProductService) {
+        this.financialProductService = financialProductService;
     }
 
-    @GetMapping("/getProductById/{id}")
-    public ResultVO<?> getProductById(@PathVariable String id){
-        try{
-            return ResultUtils.success(financialProductService.getFinancialProductById(id));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    @Operation(summary = "获取所有理财产品")
+    @GetMapping
+    public ResultVO<?> getList(@RequestParam int pageNum, @RequestParam int pageSize) {
+        return ResultUtils.success(financialProductService.getList(pageNum, pageSize));
     }
 
-    @GetMapping("/getProductByName/{name}")
-    public ResultVO<?> getProductByName(@PathVariable String name){
-        try{
-            return ResultUtils.success(financialProductService.getFinancialProductByName(name));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    @Operation(summary = "根据名称搜索理财产品")
+    @GetMapping("/search")
+    public ResultVO<?> searchByName(@RequestParam String keyword, @RequestParam int pageNum, @RequestParam int pageSize) {
+        return ResultUtils.success(financialProductService.searchByName(keyword, pageNum, pageSize));
     }
 
-    @GetMapping("/getProductByPrice/{price}")
-    public ResultVO<?> getProductByPrice(@PathVariable int price){
-        try{
-            return ResultUtils.success(financialProductService.getFinancialProductByPrice(price));
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    @Operation(summary = "新增")
+    @PostMapping
+    public ResultVO<?> insert(@RequestBody FinancialProductDto dto) {
+        String s = financialProductService.create(dto);
+        JSONObject json = new JSONObject();
+        json.put("financialProductId", s);
+        return ResultUtils.success(json);
     }
 
-    @PostMapping("/addProduct/{product}")
-    public ResultVO<?> addProduct(@RequestBody FinancialProduct product){
-        try{
-            financialProductService.addFinancialProduct(product);
-            return ResultUtils.success();
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    @Operation(summary = "修改")
+    @PutMapping("/{financialProductId}")
+    public ResultVO<?> modify(@PathVariable String financialProductId, @RequestBody FinancialProductDto dto) {
+        financialProductService.modify(financialProductId, dto);
+        return ResultUtils.success();
     }
 
-    @DeleteMapping("/deleteProduct/{id}")
-    public ResultVO<?> deleteProduct(@PathVariable String id){
-        try{
-            financialProductService.deleteFinancialProduct(id);
-            return ResultUtils.success();
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    @Operation(summary = "删除")
+    @DeleteMapping("/{financialProductId}")
+    public ResultVO<?> delete(@PathVariable String financialProductId) {
+        financialProductService.delete(financialProductId);
+        return ResultUtils.success();
     }
 
-    @PutMapping("/updateProduct/{product}")
-    public ResultVO<?> updateProduct(@RequestBody FinancialProduct product){
-        try{
-            financialProductService.updateFinancialProduct(product);
-            return ResultUtils.success();
-        }catch (Exception e){
-            return ResultUtils.error(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
 }

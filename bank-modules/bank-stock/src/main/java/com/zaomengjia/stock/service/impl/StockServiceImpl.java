@@ -13,17 +13,10 @@ import com.zaomengjia.stock.service.StockService;
 import com.zaomengjia.common.utils.RedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author orangeboyChen
@@ -76,7 +69,7 @@ public class StockServiceImpl implements StockService {
                 logger.info("无法创建订单{}：订单余量不满足需求", order.getId());
                 throw new Exception();
             }
-            boolean isSuccess = stockSimpleService.decrStock(detail.getId(), order.getFinancialProductId(), order.getSeckillActivityId(), order.getQuantity());
+            boolean isSuccess = stockSimpleService.decrStockAndUpdateDetail(detail.getId(), order.getFinancialProductId(), order.getSeckillActivityId(), order.getQuantity());
             if(!isSuccess) {
                 logger.info("无法创建订单{}：已售罄", order.getId());
                 throw new Exception();

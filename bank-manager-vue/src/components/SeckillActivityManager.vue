@@ -30,44 +30,78 @@
             </el-button>
           </el-col>
         </el-row>
+
+
+
+
         <!-- 渲染数据表格 -->
-        <el-table :data="activityList" border style="width: 100%">
-          <el-table-column type="index" width="100" :index="indexFn">
-          </el-table-column>
-          <!-- 所有的prop值必须要activityList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="秒杀活动id" width="100"> </el-table-column>
-          <el-table-column prop="sname" label="秒杀活动名" width="150"></el-table-column>
-          <el-table-column prop="image" label="秒杀活动图片" width="150">
-            <img
-                :src="activityList.image"
-                alt=""
-                fit="fill"
-                style="width: 100px; height: 100px; "
-            />
-          </el-table-column>
-          <el-table-column prop="detail" label="秒杀活动描述" width="150"></el-table-column>
-          <el-table-column prop="beginTime" label="秒杀活动开始时间" width="150"></el-table-column>
-          <el-table-column prop="endTime" label="秒杀活动结束时间" width="150"></el-table-column>
-          <el-table-column prop="createTime" label="秒杀活动创建时间" width="150"></el-table-column>
-          <!-- <el-table-column prop="password" label="密码" width="150">
-          </el-table-column> -->
-          <el-table-column prop="operate" label="操作" width="200">
-            <template slot-scope="scope">
-              <el-button
-                  type="primary"
-                  icon="el-icon-edit"
-                  circle
-                  @click="editActivity(scope.row)"
-              ></el-button>
-              <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  circle
-                  @click="removeActivityItem(scope.row)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+<!--        <el-table :data="activityList" border style="width: 100%">-->
+<!--          <el-table-column type="index" width="100" :index="indexFn">-->
+<!--          </el-table-column>-->
+<!--          &lt;!&ndash; 所有的prop值必须要activityList里的属性名改成一样的 &ndash;&gt;-->
+<!--          <el-table-column prop="name" label="秒杀活动名" width="150"></el-table-column>-->
+<!--          <el-table-column prop="image" label="秒杀活动图片" width="150">-->
+<!--            <img-->
+<!--                :src="activityList.image"-->
+<!--                alt=""-->
+<!--                fit="fill"-->
+<!--                style="width: 100px; height: 100px; "-->
+<!--            />-->
+<!--          </el-table-column>-->
+<!--          <el-table-column prop="detail" label="秒杀活动描述" width="150"></el-table-column>-->
+<!--          <el-table-column prop="beginTime" label="秒杀活动开始时间" width="150"></el-table-column>-->
+<!--          <el-table-column prop="endTime" label="秒杀活动结束时间" width="150"></el-table-column>-->
+<!--          <el-table-column prop="createTime" label="秒杀活动创建时间" width="150"></el-table-column>-->
+<!--          &lt;!&ndash; <el-table-column prop="password" label="密码" width="150">-->
+<!--          </el-table-column> &ndash;&gt;-->
+<!--          <el-table-column prop="operate" label="操作" width="200">-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-button-->
+<!--                  type="primary"-->
+<!--                  icon="el-icon-edit"-->
+<!--                  circle-->
+<!--                  @click="editActivity(scope.row)"-->
+<!--              ></el-button>-->
+<!--              <el-button-->
+<!--                  type="danger"-->
+<!--                  icon="el-icon-delete"-->
+<!--                  circle-->
+<!--                  @click="removeActivityItem(scope.row)"-->
+<!--              ></el-button>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--        </el-table>-->
+
+        <el-skeleton v-if="isLoading" :rows="6" animated />
+        <el-row v-else>
+          <el-col :span="8" v-for="(activity, index) in activityList" :key="o">
+            <el-card :body-style="{ padding: '0px' }" style="margin-right: 12px;border-radius: 5px;">
+              <el-image
+                  style="height: 150px;"
+                  class="image"
+                  :src="activity.image"
+                  fit="cover"/>
+              <div style="padding: 14px;">
+                <span style="font-size: 24px; font-weight: bold">{{ activity.name }}</span><br>
+
+
+                <span style="font-size: 14px">
+                  {{ new Date(activity.beginTime).Format('yyyy-MM-dd hh:mm') }} 至 {{ new Date(activity.endTime).Format('yyyy-MM-dd hh:mm') }}
+                </span><br>
+                <div style="height: 10px"/>
+                {{ activity.productList.length === 0 ? '没有商品' : `${activity.productList.length}件商品` }}
+                <div class="bottom clearfix">
+                  <el-button type="text" class="button">详情</el-button>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+
+
+
+
+
         <!-- 分页功能 -->
         <el-pagination
             @size-change="handleSizeChange"
@@ -232,6 +266,7 @@ export default {
   name: "SeckillActivityService",
   data() {
     return {
+      isLoading: false,
       keyword: "",
       // 请求秒杀活动列表的参数
       queryInfo: {
@@ -296,16 +331,17 @@ export default {
   methods: {
     //请求秒杀活动列表数据
     async getActivityList() {
+      this.isLoading = true;
       let [res, err] = this.keyword === '' ?
           await api.getSeckillActivityList(this.queryInfo.pageIndex, this.queryInfo.pageSize) :
           await api.searchSeckillActivity(this.keyword, this.queryInfo.pageIndex, this.queryInfo.pageSize);
-
+      this.isLoading = false;
       if(err != null) {
         this.$message.error(err.message);
         return;
       }
 
-      this.activityList = res.data.data.records;
+      this.activityList = res.data.data.data;
       this.total = res.data.data.total;
     },
     //当前页面数据条数发生改变的时候触发
@@ -397,29 +433,21 @@ export default {
     },
     //删除秒杀活动
     removeActivityItem(row) {
-      const that = this;
       this.$confirm("此操作将永久删除该秒杀活动, 是否继续?", "删除秒杀活动", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
-          .then(() => {
-            this.$http.delete("/back/web/seckillActivity/deleteSeckillActivity/" + row.id).then((ress) => {
-              if (ress.data.code === 10000) {
-                that.$message.success("删除秒杀活动成功");
-                this.getActivityList();
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
+          .then(async () => {
+            let [, err] = await api.deleteSeckillActivity(row.id);
+            if(err != null) {
+              this.$message.error(err.message);
+              return;
+            }
+
+            await this.getActivityList();
           })
-          .catch(() => {
-            //点击取消按钮，取消该次操作
-            that.$message({
-              type: "info",
-              message: "已取消删除",
-            });
-          });
+          .catch(() => {});
     },
     // 表格编号
     indexFn(index) {
@@ -501,6 +529,36 @@ export default {
 
 .el-pagination {
   margin-top: 20px;
+}
+
+.time {
+  font-size: 13px;
+  color: #999;
+}
+
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+}
+
+.button {
+  padding: 0;
+  float: right;
+}
+
+.image {
+  width: 100%;
+  display: block;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both
 }
 
 

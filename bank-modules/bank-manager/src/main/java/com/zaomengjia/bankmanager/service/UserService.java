@@ -35,4 +35,6 @@ public interface UserService {
     void deleteAdminUser(String userId);
 
     void deleteWeixinUser(String userId);
+
+    void setWeixinUserAudit(String userId, int audit);
 }

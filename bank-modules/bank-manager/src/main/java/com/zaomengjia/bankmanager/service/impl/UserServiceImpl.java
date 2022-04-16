@@ -135,6 +135,10 @@ public class UserServiceImpl implements UserService {
         weixinUserMapper.deleteById(userId);
     }
 
+    @Override
+    public void setWeixinUserAudit(String userId, int audit) {
+        weixinUserMapper.setAudit(userId, audit);
+    }
 
 
 }

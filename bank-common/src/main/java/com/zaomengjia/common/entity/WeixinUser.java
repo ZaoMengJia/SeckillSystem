@@ -74,6 +74,9 @@ public class WeixinUser {
     @Column(name = "is_discredit")
     private boolean isDiscredit;
 
+    @Column(name = "audit")
+    private int audit = 0;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

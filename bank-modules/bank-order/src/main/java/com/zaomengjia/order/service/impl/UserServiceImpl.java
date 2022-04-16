@@ -7,7 +7,9 @@ import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.common.vo.user.WeixinUserVO;
 import com.zaomengjia.order.dto.UserInfoDto;
 import com.zaomengjia.order.service.UserService;
+import io.netty.util.internal.StringUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -46,4 +48,21 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(user, vo);
         return vo;
     }
+
+    @Override
+    public Pair<Boolean, Boolean> getUserState(String userId) {
+        boolean isRegister;
+        boolean isAudited;
+
+        WeixinUser user = weixinUserMapper.findById(userId).orElse(null);
+        if(user == null) {
+            return Pair.of(false, false);
+        }
+
+        isRegister = !StringUtil.isNullOrEmpty(user.getRealName() + user.getIdCard());
+        isAudited = user.getAudit() != 0;
+        return Pair.of(isRegister, isAudited);
+    }
+
+
 }

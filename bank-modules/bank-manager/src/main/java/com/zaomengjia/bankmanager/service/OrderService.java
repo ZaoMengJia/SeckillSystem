@@ -1,28 +1,12 @@
 package com.zaomengjia.bankmanager.service;
 
-import com.zaomengjia.common.entity.Order;
-
-import java.util.Map;
+import com.zaomengjia.bankmanager.vo.OrderVO;
+import com.zaomengjia.common.vo.page.PageVO;
 
 public interface OrderService {
 
-    Boolean orderExist(String id);
+    PageVO<OrderVO> getOrderList(int pageNum, int pageSize);
 
-    Map<String,Object> getOrder(int pageIndex, int pageSize);
-
-    Map<String, Object> searchOrder(String keyword, int pageIndex, int pageSize);
-
-    Order getOrderById(String id);
-
-    Order getOrderByProductName(String productName);
-
-    Order getOrderByUserName(String userName);
-
-    void addOrder(Order order);
-
-    void deleteOrder(String id);
-
-    void updateOrder(Order order);
-
+    PageVO<OrderVO> searchOrderById(String keyword, int pageNum, int pageSize);
 
 }

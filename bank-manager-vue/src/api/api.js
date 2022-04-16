@@ -52,10 +52,36 @@ export default {
     }),
     getSeckillActivityList: async (pageNum, pageSize) => request({
         method: 'get',
-        url: `/web/seckillActivity/getAllSeckillActivity/${pageNum}/${pageSize}`,
+        url: `/web/seckill/detail`,
+        data: {
+            pageNum, pageSize
+        }
     }),
     searchSeckillActivity: async (keyword, pageNum, pageSize) => request({
         method: 'get',
-        url: `/seckillActivity/searchSeckillActivity/${keyword}/${pageNum}/${pageSize}`
+        url: `/web/seckillActivity/searchSeckillActivity/${keyword}/${pageNum}/${pageSize}`
+    }),
+    getSeckillActivityDetail: async (seckillActivityId) => request({
+        method: 'get',
+        url: `/web/seckill/detail/${seckillActivityId}`
+    }),
+    deleteSeckillActivity: async (id) => request({
+        method: 'delete',
+        url: `/web/seckillActivity/deleteSeckillActivity/${id}`
+    }),
+    getOrderList: async (pageNum, pageSize) => request({
+        method: 'get',
+        url: `/web/order/getAllOrders/${pageNum}/${pageSize}`
+    }),
+    searchOrder: async (keyword, pageNum, pageSize) => request({
+        method: 'get',
+        url: `/web/order/searchOrder/${keyword}/${pageNum}/${pageSize}`
+    }),
+    insertOrder: async ({id, userId, financialProductId, seckillActivityId, quantity}) => request({
+        method: 'post',
+        url: `/web/order/addOrder`,
+        data: {
+            id, userId, financialProductId, seckillActivityId, quantity
+        }
     })
 }

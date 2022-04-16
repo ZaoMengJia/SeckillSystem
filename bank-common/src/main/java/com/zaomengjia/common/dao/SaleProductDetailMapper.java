@@ -23,7 +23,15 @@ public interface SaleProductDetailMapper extends JpaRepository<SaleProductDetail
 
     void deleteBySeckillActivityIdAndFinancialProductId(String seckillActivityId, String finalProductId);
 
+    void deleteByFinancialProductId(String financialProductId);
+
+    void deleteBySeckillActivityId(String seckillActivityId);
+
     Page<SaleProductDetail> findBySeckillActivityIdContaining(String keyword, Pageable pageable);
+    @Transactional
+    @Modifying
+    @Query(value = "update com.zaomengjia.common.entity.SaleProductDetail set quantity = :quantity, total = :total where financialProductId = :financialProductId and seckillActivityId = :seckillActivityId")
+    int updateQuantityAndTotal(@Param("financialProductId") String financialProductId, @Param("seckillActivityId") String seckillActivityId, @Param("quantity") long quantity, @Param("total") long total);
 
     @Transactional
     @Modifying

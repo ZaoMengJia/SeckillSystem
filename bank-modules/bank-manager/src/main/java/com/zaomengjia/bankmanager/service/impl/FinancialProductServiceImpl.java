@@ -1,79 +1,81 @@
 package com.zaomengjia.bankmanager.service.impl;
 
-import com.zaomengjia.common.dao.FinancialProductMapper;
-import com.zaomengjia.common.entity.FinancialProduct;
+import com.zaomengjia.bankmanager.dto.FinancialProductDto;
 import com.zaomengjia.bankmanager.service.FinancialProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.zaomengjia.common.dao.FinancialProductMapper;
+import com.zaomengjia.common.dao.SaleProductDetailMapper;
+import com.zaomengjia.common.entity.FinancialProduct;
+import com.zaomengjia.common.utils.ModelUtils;
+import com.zaomengjia.common.vo.bank.FinancialProductVO;
+import com.zaomengjia.common.vo.page.PageVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
+/**
+ * @author orangeboyChen
+ * @version 1.0
+ * @date 2022/4/15 23:29
+ */
 @Service
 public class FinancialProductServiceImpl implements FinancialProductService {
-    @Autowired
-    FinancialProductMapper financialProductMapper;
 
-    @Override
-    public Boolean financialProductExist(String fname) {
-        return financialProductMapper.findByName(fname) != null;
-    }
+    private final FinancialProductMapper financialProductMapper;
 
-    /**
-     * 获取全部商品
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    @Override
-    public Map<String, Object> getFinancialProduct(int pageIndex, int pageSize) {
-        Page<FinancialProduct> page = financialProductMapper.findByNameContaining("", PageRequest.of(pageIndex, pageSize));
-        Map<String, Object> map = new HashMap<>(5);
-        map.put("records", page.getContent());
-        map.put("total", page.getTotalElements());
-        return map;
+    private final SaleProductDetailMapper saleProductDetailMapper;
+
+    private final ModelUtils modelUtils;
+
+    public FinancialProductServiceImpl(
+            FinancialProductMapper financialProductMapper,
+            ModelUtils modelUtils,
+            SaleProductDetailMapper saleProductDetailMapper
+    ) {
+        this.financialProductMapper = financialProductMapper;
+        this.modelUtils = modelUtils;
+        this.saleProductDetailMapper = saleProductDetailMapper;
     }
 
     @Override
-    public Map<String, Object> searchProduct(String keyword, int pageIndex, int pageSize) {
-        Page<FinancialProduct> page = financialProductMapper.findByNameContaining(keyword, PageRequest.of(pageIndex, pageSize));
-        Map<String, Object> map = new HashMap<>(5);
-        map.put("records", page.getContent());
-        map.put("total", page.getTotalElements());
-        return map;
-    }
-
-
-    @Override
-    public FinancialProduct getFinancialProductById(String fpid) {
-        return financialProductMapper.findById(fpid).orElse(null);
+    public PageVO<FinancialProductVO> getList(int pageNum, int pageSize) {
+        Page<FinancialProduct> page = financialProductMapper.findAll(PageRequest.of(pageNum - 1, pageSize));
+        return new PageVO<>(page.map(modelUtils::toFinancialProductVO));
     }
 
     @Override
-    public FinancialProduct getFinancialProductByPrice(int price) {
-        return financialProductMapper.findByPrice(price);
+    public PageVO<FinancialProductVO> searchByName(String name, int pageNum, int pageSize) {
+        Page<FinancialProduct> page = financialProductMapper.findByNameContaining(name, PageRequest.of(pageNum - 1, pageSize));
+        return new PageVO<>(page.map(modelUtils::toFinancialProductVO));
     }
 
     @Override
-    public FinancialProduct getFinancialProductByName(String fname) {
-        return financialProductMapper.findByName(fname);
+    public String create(FinancialProductDto dto) {
+        FinancialProduct entity = new FinancialProduct();
+        entity.setName(dto.getName());
+        entity.setPrice((int) (dto.getPrice() * 100));
+
+        entity = financialProductMapper.save(entity);
+        return entity.getId();
     }
 
     @Override
-    public void addFinancialProduct(FinancialProduct financialProduct) {
-        financialProductMapper.save(financialProduct);
+    public void modify(String id, FinancialProductDto dto) {
+        FinancialProduct entity = new FinancialProduct();
+        entity.setId(id);
+        entity.setName(dto.getName());
+        entity.setPrice((int) (dto.getPrice() * 100));
+
+        financialProductMapper.save(entity);
     }
 
     @Override
-    public void deleteFinancialProduct(String fpid) {
-         financialProductMapper.deleteById(fpid);
-    }
-
-    @Override
-    public void updateFinancialProduct(FinancialProduct financialProduct) {
-        financialProductMapper.save(financialProduct);
+    @Transactional
+    public void delete(String id) {
+        try {
+            financialProductMapper.deleteById(id);
+            saleProductDetailMapper.deleteByFinancialProductId(id);
+        }
+        catch (Exception ignored) {}
     }
 }

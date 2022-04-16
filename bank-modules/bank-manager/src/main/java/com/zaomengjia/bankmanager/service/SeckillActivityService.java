@@ -1,26 +1,24 @@
 package com.zaomengjia.bankmanager.service;
 
 
-import com.zaomengjia.common.entity.SeckillActivity;
-
-import java.util.Map;
+import com.zaomengjia.bankmanager.dto.SeckillActivityDto;
+import com.zaomengjia.bankmanager.vo.SeckillActivityWithProductListVO;
+import com.zaomengjia.common.vo.bank.SeckillActivityVO;
+import com.zaomengjia.common.vo.page.PageVO;
 
 public interface SeckillActivityService {
-    Boolean seckillActivityExist(String activityName);
 
-    Map<String ,Object> getSeckillActivity(int pageIndex, int pageSize);
+    PageVO<SeckillActivityVO> getList(int pageNum, int pageSize);
 
-    Map<String, Object> searchSeckillActivity(String keyword, int pageIndex, int pageSize);
+    PageVO<SeckillActivityWithProductListVO> getListWithDetail(int pageNum, int pageSize);
 
-    SeckillActivity getSeckillActivityByName(String name);
+    PageVO<SeckillActivityWithProductListVO> searchByName(String name, int pageNum, int pageSize);
 
-    SeckillActivity getSeckillActivityById(String id);
+    String create(SeckillActivityDto dto);
 
-    void addSeckillActivity(SeckillActivity seckillActivity);
+    void modify(String id, SeckillActivityDto dto);
 
-    void deleteSeckillActivity(String id);
+    void delete(String id);
 
-    void updateSeckillActivity(SeckillActivity seckillActivity);
-
-
+    SeckillActivityWithProductListVO getDetail(String id);
 }
