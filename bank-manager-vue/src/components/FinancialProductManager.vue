@@ -11,7 +11,7 @@
         <el-row>
           <el-col :span="15">
             <el-input
-                placeholder="请输入理财产品关键词"
+                placeholder="请输入理财产品名称关键词"
                 v-model="keyword"
                 class="input-with-select"
                 clearable
@@ -31,18 +31,15 @@
           </el-col>
         </el-row>
         <!-- 渲染数据表格 -->
-        <el-table :data="productList" :header-cell-style="{'text-align':'center'}"
+        <el-table v-loading="isLoading" :data="productList" :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center'}" border style="width: 100%">
           <el-table-column type="index" width="50" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要productList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="编号" width="100"></el-table-column>
-          <el-table-column prop="fname" label="理财产品名" width="150">
-          </el-table-column>
-          <el-table-column prop="price" label="理财产品价格(每份)" width="150"></el-table-column>
-          <!-- <el-table-column prop="password" label="密码" width="150">
-          </el-table-column> -->
-          <el-table-column prop="operate" label="操作" width="200">
+          <el-table-column prop="id" label="编号"></el-table-column>
+          <el-table-column prop="name" label="理财产品名" width="250"></el-table-column>
+          <el-table-column prop="price" label="理财产品价格(每份)" width="250"></el-table-column>
+          <el-table-column prop="operate" label="操作" width="180">
             <template slot-scope="scope">
               <el-button
                   type="primary"
@@ -76,7 +73,7 @@
           title="添加产品"
           :visible.sync="addProductVisible"
           width="50%"
-          @close="closeaddProductDialog"
+          @close="closeAddProductDialog"
       >
         <el-form
             :model="addProductForm"
@@ -85,10 +82,10 @@
             label-width="100px"
             class="demo-ruleForm"
         >
-          <el-form-item label="产品名" prop="fname">
-            <el-input v-model="addProductForm.fname" clearable></el-input>
+          <el-form-item label="产品名称" prop="name">
+            <el-input v-model="addProductForm.name" clearable></el-input>
           </el-form-item>
-          <el-form-item label="价格" prop="price">
+          <el-form-item label="每份价格" prop="price">
             <el-input v-model="addProductForm.price" clearable></el-input>
           </el-form-item>
         </el-form>
@@ -112,10 +109,10 @@
             label-width="100px"
             class="demo-ruleForm-edit"
         >
-          <el-form-item label="产品名" prop="fname">
-            <el-input v-model="editProductParams.fname" clearable></el-input>
+          <el-form-item label="产品名称" prop="name">
+            <el-input v-model="editProductParams.name" clearable></el-input>
           </el-form-item>
-          <el-form-item label="价格" prop="price">
+          <el-form-item label="每份价格" prop="price">
             <el-input v-model="editProductParams.price" clearable></el-input>
           </el-form-item>
         </el-form>
@@ -129,10 +126,13 @@
 </template>
 
 <script>
+import api from "@/api/api";
+
 export default {
   name: "FinancialProductService",
   data() {
     return {
+      isLoading: false,
       keyword: "",
       // 请求产品列表的参数
       queryInfo: {
@@ -143,7 +143,7 @@ export default {
       productList: [],
       productParams: {
         id: 0,
-        fname: "",
+        name: "",
         price: "",
       },
       total: 0,
@@ -151,18 +151,17 @@ export default {
       addProductVisible: false,
       //添加产品参数
       addProductForm: {
-        id: 0,
-        fname: "",
+        name: "",
         price: "",
       },
       //添加产品对话框验证规则
       addProductFormRul: {
-        fname: [
-          {required: true, message: "产品名不能为空", trigger: "blur"},
+        name: [
+          {required: true, message: "产品名称不能为空", trigger: "blur"},
           {
             min: 2,
-            max: 10,
-            message: "长度在 2 到 10 个字符",
+            max: 15,
+            message: "长度在 2 到 15 个字符",
             trigger: "blur",
           },
         ],
@@ -179,17 +178,17 @@ export default {
       //存储获取到的产品信息
       editProductParams: {
         id: 0,
-        fname: "",
+        name: "",
         price: "",
       },
       //编辑产品对话框验证规则
       editProductParamsRul: {
-        fname: [
-          {required: true, message: "产品名不能为空", trigger: "blur"},
+        name: [
+          {required: true, message: "产品名称不能为空", trigger: "blur"},
           {
             min: 2,
-            max: 10,
-            message: "长度在 2 到 10 个字符",
+            max: 15,
+            message: "长度在 2 到 15 个字符",
             trigger: "blur",
           },
         ],
@@ -212,62 +211,18 @@ export default {
   },
   methods: {
     //请求产品列表数据
-    getProductList() {
-      const that = this;
-      if (this.keyword === "") {
-        this.$http
-            .get(
-                "/back/web/financialProduct/getAllProduct/" +
-                (this.queryInfo.pageIndex - 1) +
-                "/" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              console.log(ress)
-              if (ress.data.code === 10000) {
-                that.productList = [];
-                const tempProductList = ress.data.data.records;
-                let temp = {};
-                for (let i = 0; i < tempProductList.length; i++) {
-                  temp = {};
-                  temp.id = tempProductList[i].id;
-                  temp.fname = tempProductList[i].name;
-                  temp.price = tempProductList[i].price;
-                  that.productList.push(temp);
-                }
-                that.total = ress.data.data.total;
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
-      } else {
-        this.$http
-            .get(
-                "/back/web/financialProduct/searchProduct/" +
-                this.keyword +
-                "/" +
-                (this.queryInfo.pageIndex - 1) +
-                "/" +
-                this.queryInfo.pageSize
-            )
-            .then((ress) => {
-              if (ress.data.code === 10000) {
-                this.productList = [];
-                const tempProductList = ress.data.data.records;
-                let temp = {};
-                for (let i = 0; i < tempProductList.length; i++) {
-                  temp = {};
-                  temp.id = tempProductList[i].id;
-                  temp.fname = tempProductList[i].name;
-                  temp.price = tempProductList[i].price;
-                  that.productList.push(temp);
-                }
-                this.total = ress.data.data.total;
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
+    async getProductList() {
+      this.isLoading = true;
+      let [res, err] = this.keyword === '' ?
+          await api.getProductList(this.queryInfo.pageIndex, this.queryInfo.pageSize) :
+          await api.searchProduct(this.keyword, this.queryInfo.pageIndex, this.queryInfo.pageSize);
+      this.isLoading = false;
+      if (err != null) {
+        this.$message.error(err.message);
+        return;
       }
+      this.productList = res.data.data.data;
+      this.total = res.data.data.total;
     },
     //当前页面数据条数发生改变的时候触发
     handleSizeChange(val) {
@@ -281,31 +236,24 @@ export default {
     },
     //添加产品
     addProduct() {
-      this.$refs.addProductFormRef.validate((valid) => {
-        const that = this;
-        if (valid) {
-          this.$http.get('/back/web/financialProduct/productExist/' + this.addProductForm.fname).then
-          this.$http
-              .post("/back/financialProduct/addProduct", {
-                id: this.addProductForm.id,
-                name: this.addProductForm.fname,
-                price: this.addProductForm.price,
-              })
-              .then((ress) => {
-                if (ress.data.code === 10000) {
-                  that.$message.success("添加成功");
-                } else {
-                  that.$message.error(ress.data.message);
-                }
-              });
-          //关闭dialog对话框
-          this.addProductVisible = false;
-          this.getProductList();
+      this.$refs.addProductFormRef.validate(async (valid) => {
+        if (!valid) {
+          return;
         }
+
+        let [_, err] = await api.saveProduct(this.addProductForm.name, this.addProductForm.price);
+        if (err != null) {
+          this.$message.error(err.message);
+          return;
+        }
+
+        this.$message.success('添加成功');
+        this.addProductVisible = false;
+        await this.getProductList();
       });
     },
     //关闭对话框事件
-    closeaddProductDialog() {
+    closeAddProductDialog() {
       //重置表单
       if (this.$refs.addProductFormRef !== undefined) {
         this.$refs.addProductFormRef.resetFields();
@@ -314,60 +262,44 @@ export default {
     //点击编辑按钮，编辑产品信息
     editProduct(row) {
       //根据产品id获取当前产品信息
-      this.$http.get("/back/financialProduct/getProductById/" + row.id).then((ress) => {
-        //存储获取到的产品信息
-        this.editProductParams.id = ress.data.data.id;
-        this.editProductParams.fname = ress.data.data.name;
-        this.editProductParams.price = ress.data.data.price;
-        this.editProductVisible = !this.editProductVisible;
-      });
+      this.editProductParams = {...row}
+      this.editProductVisible = true;
     },
     editProductList() {
-      this.$refs.editProductParams.validate((valid) => {
-        const that = this;
-        if (valid) {
-          this.$http
-              .put("/back/financialProduct/updateProduct", {
-                id: this.editProductParams.id,
-                name: this.editProductParams.fname,
-                price: this.editProductParams.price,
-              })
-              .then((ress) => {
-                if (ress.data.code === 10000) {
-                  this.editProductVisible = !this.editProductVisible;
-                  that.$message.success("修改成功");
-                  this.getProductList();
-                } else {
-                  that.$message.error(ress.data.message);
-                }
-              });
+      this.$refs.editProductParams.validate(async (valid) => {
+        if (!valid) {
+          return;
         }
+        console.log(this.editProductParams)
+        let [, err] = await api.editProduct(this.editProductParams.id, this.editProductParams.name, this.editProductParams.price);
+        if (err != null) {
+          this.$message.error(err.message);
+          return;
+        }
+
+        this.$message.info('修改成功');
+        this.editProductVisible = false;
+        await this.getProductList();
       });
     },
     //删除产品
     removeProductItem(row) {
-      const that = this;
       this.$confirm("此操作将永久删除该理财产品, 是否继续?", "删除产品", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
-          .then(() => {
-            this.$http.delete("/back/financialProduct/deleteProduct/" + row.id).then((ress) => {
-              if (ress.data.code === 10000) {
-                that.$message.success("删除理财产品成功");
-                this.getProductList();
-              } else {
-                that.$message.error(ress.data.message);
-              }
-            });
+          .then(async () => {
+            let [_, err] = await api.deleteProduct(row.id);
+            if (err != null) {
+              this.$message.error(err.message);
+              return;
+            }
+
+            this.$message.info('已删除');
+            await this.get();
           })
           .catch(() => {
-            //点击取消按钮，取消该次操作
-            that.$message({
-              type: "info",
-              message: "已取消删除",
-            });
           });
     },
     // 表格编号
@@ -379,7 +311,7 @@ export default {
   },
   created() {
     this.getProductList();
-  },
+  }
 }
 </script>
 

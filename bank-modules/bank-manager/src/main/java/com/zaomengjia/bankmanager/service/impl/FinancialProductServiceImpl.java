@@ -8,6 +8,7 @@ import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.utils.ModelUtils;
 import com.zaomengjia.common.vo.bank.FinancialProductVO;
 import com.zaomengjia.common.vo.page.PageVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -77,5 +78,16 @@ public class FinancialProductServiceImpl implements FinancialProductService {
             saleProductDetailMapper.deleteByFinancialProductId(id);
         }
         catch (Exception ignored) {}
+    }
+
+    @Override
+    public FinancialProductVO getProductById(String pid) {
+        FinancialProduct financialProduct = financialProductMapper.findById(pid).orElse(null);
+        if(financialProduct == null){
+            return null;
+        }
+        FinancialProductVO vo = new FinancialProductVO();
+        BeanUtils.copyProperties(financialProduct, vo);
+        return vo;
     }
 }

@@ -1,4 +1,5 @@
 import {request} from "@/api/http";
+
 export default {
     getWeixinUserList: async (pageNum, pageSize) => request({
         method: 'get',
@@ -15,8 +16,8 @@ export default {
         }
     }),
     deleteWeixinUser: async (userId) => request({
-       method: 'delete',
-       url: `/web/weixin-user/${userId}`
+        method: 'delete',
+        url: `/web/weixin-user/${userId}`
     }),
     getAdminUserList: async (pageNum, pageSize) => request({
         method: 'get',
@@ -68,23 +69,6 @@ export default {
         method: 'get',
         url: `/web/seckill/detail/${seckillActivityId}`
     }),
-    getOrderList: async (pageNum, pageSize) => request({
-        method: 'get',
-        url: '/web/order',
-        data: {
-            pageNum: pageNum,
-            pageSize: pageSize
-        }
-    }),
-    searchOrder: async (keyword, pageNum, pageSize) => request({
-        method: 'get',
-        url: '/web/order/search',
-        data: {
-            keyword: keyword,
-            pageNum: pageNum,
-            pageSize: pageSize
-        }
-    }),
     updateSeckillActivity: async ({id, image = '', name, detail, beginTime, endTime}) => request({
         method: 'put',
         url: `/web/seckill/${id}`,
@@ -93,8 +77,8 @@ export default {
         }
     }),
     deleteSeckillActivity: async (id) => request({
-       method: 'delete',
-       url: `/web/seckill/${id}`
+        method: 'delete',
+        url: `/web/seckill/${id}`
     }),
     getFinancialProductList: async (pageNum, pageSize) => request({
         method: 'get',
@@ -119,11 +103,59 @@ export default {
             total
         }
     }),
-    insertSeckillActivity: async({image = '', name, detail, beginTime, endTime}) => request({
+    insertSeckillActivity: async ({image = '', name, detail, beginTime, endTime}) => request({
         method: 'post',
         url: `/web/seckill`,
         data: {
             name, detail, beginTime, endTime, image
         }
+    }),
+    //订单
+    getOrderList: async (pageNum, pageSize) => request({
+        method: 'get',
+        url: '/web/order',
+        data: {
+            pageNum, pageSize
+        }
+    }),
+    searchOrder: async (keyword, pageNum, pageSize) => request({
+        method: 'get',
+        url: '/web/order/search',
+        data: {
+            keyword, pageNum, pageSize
+        }
+    }),
+    //理财产品
+    getProductList: async (pageNum, pageSize) => request({
+        method: 'get',
+        url: '/web/product',
+        data: {
+            pageNum, pageSize
+        }
+    }),
+    searchProduct: async (keyword, pageNum, pageSize) => request({
+        method: 'get',
+        url: '/web/product/search',
+        data: {
+            keyword, pageNum, pageSize
+        }
+    }),
+    saveProduct: async (name, price) => request({
+        method: 'post',
+        url: '/web/product',
+        data: {
+            name, price
+        }
+    }),
+    editProduct: async (id, name, price) => request({
+        method: 'put',
+        url: `/web/product/${id}`,
+        data: {
+            name, price
+        }
+    }),
+    deleteProduct: async (id) => request({
+        method: 'delete',
+        url: `/web/product/${id}`
     }),
 }

@@ -19,4 +19,6 @@ public interface FinancialProductService {
     void modify(String id, FinancialProductDto dto);
 
     void delete(String id);
+
+    FinancialProductVO getProductById(String pid);
 }
