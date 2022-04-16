@@ -69,21 +69,52 @@ export default {
         method: 'delete',
         url: `/web/seckillActivity/deleteSeckillActivity/${id}`
     }),
+    //订单
     getOrderList: async (pageNum, pageSize) => request({
         method: 'get',
         url: '/web/order',
         data: {
-            pageNum: pageNum,
-            pageSize: pageSize
+            pageNum, pageSize
         }
     }),
     searchOrder: async (keyword, pageNum, pageSize) => request({
         method: 'get',
         url: '/web/order/search',
         data: {
-            keyword: keyword,
-            pageNum: pageNum,
-            pageSize: pageSize
+            keyword, pageNum, pageSize
         }
+    }),
+    //理财产品
+    getProductList: async (pageNum, pageSize) => request({
+        method: 'get',
+        url: '/web/product',
+        data: {
+            pageNum, pageSize
+        }
+    }),
+    searchProduct: async (keyword, pageNum, pageSize) => request({
+        method: 'get',
+        url: '/web/product/search',
+        data: {
+            keyword, pageNum, pageSize
+        }
+    }),
+    saveProduct: async (name, price) => request({
+        method: 'post',
+        url: '/web/product',
+        data:{
+            name, price
+        }
+    }),
+    editProduct: async (id, name, price) => request({
+        method: 'put',
+        url: `/web/product/${id}`,
+        data:{
+            name, price
+        }
+    }),
+    deleteProduct: async (id) => request({
+        method: 'delete',
+        url: `/web/product/${id}`
     })
 }
