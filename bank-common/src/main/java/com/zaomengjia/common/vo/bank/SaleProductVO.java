@@ -14,4 +14,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class SaleProductVO extends FinancialProductVO {
     private Long quantity;
+    private Long total;
 }

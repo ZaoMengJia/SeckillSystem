@@ -59,15 +59,14 @@ export default {
     }),
     searchSeckillActivity: async (keyword, pageNum, pageSize) => request({
         method: 'get',
-        url: `/web/seckillActivity/searchSeckillActivity/${keyword}/${pageNum}/${pageSize}`
+        url: `/web/seckill/search`,
+        data: {
+            keyword, pageNum, pageSize
+        }
     }),
     getSeckillActivityDetail: async (seckillActivityId) => request({
         method: 'get',
         url: `/web/seckill/detail/${seckillActivityId}`
-    }),
-    deleteSeckillActivity: async (id) => request({
-        method: 'delete',
-        url: `/web/seckillActivity/deleteSeckillActivity/${id}`
     }),
     getOrderList: async (pageNum, pageSize) => request({
         method: 'get',
@@ -85,5 +84,46 @@ export default {
             pageNum: pageNum,
             pageSize: pageSize
         }
-    })
+    }),
+    updateSeckillActivity: async ({id, image = '', name, detail, beginTime, endTime}) => request({
+        method: 'put',
+        url: `/web/seckill/${id}`,
+        data: {
+            name, detail, beginTime, endTime, image
+        }
+    }),
+    deleteSeckillActivity: async (id) => request({
+       method: 'delete',
+       url: `/web/seckill/${id}`
+    }),
+    getFinancialProductList: async (pageNum, pageSize) => request({
+        method: 'get',
+        url: `/web/product`,
+        data: {
+            pageNum, pageSize
+        }
+    }),
+    insertSeckillActivityProduct: async ({financialProductId, seckillActivityId, quantity}) => request({
+        method: 'post',
+        url: `/web/seckill/product/${seckillActivityId}/${financialProductId}`,
+        data: {
+            quantity,
+            total: quantity
+        }
+    }),
+    updateSeckillActivityProduct: async ({financialProductId, seckillActivityId, quantity, total}) => request({
+        method: 'put',
+        url: `/web/seckill/product/${seckillActivityId}/${financialProductId}`,
+        data: {
+            quantity,
+            total
+        }
+    }),
+    insertSeckillActivity: async({image = '', name, detail, beginTime, endTime}) => request({
+        method: 'post',
+        url: `/web/seckill`,
+        data: {
+            name, detail, beginTime, endTime, image
+        }
+    }),
 }

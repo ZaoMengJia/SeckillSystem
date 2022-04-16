@@ -1,10 +1,12 @@
 package com.zaomengjia.bankmanager.service.impl;
 
 import com.zaomengjia.bankmanager.service.SaleProductService;
+import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.dao.FinancialProductMapper;
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.SaleProductDetail;
+import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.common.service.SaleProductDetailSimpleService;
 import com.zaomengjia.common.utils.ModelUtils;
 import com.zaomengjia.common.vo.bank.SaleProductVO;
@@ -67,6 +69,14 @@ public class SaleProductServiceImpl implements SaleProductService {
 
     @Override
     public void insert(String financialProductId, String seckillActivityId, int quantity, int total) {
+
+        financialProductMapper.findById(financialProductId).orElseThrow(() -> new AppException(ResultCode.NO_SUCH_PRODUCT_ERROR));
+
+        SaleProductDetail detail = saleProductDetailSimpleService.findByFinancialProductIdAndSeckillActivityId(financialProductId, seckillActivityId);
+        if(detail != null) {
+            throw new AppException(ResultCode.SALE_PRODUCT_EXISTED);
+        }
+
         SaleProductDetail entity = new SaleProductDetail();
         entity.setFinancialProductId(financialProductId);
         entity.setSeckillActivityId(seckillActivityId);

@@ -3,12 +3,14 @@ package com.zaomengjia.bankmanager.service.impl;
 import com.zaomengjia.bankmanager.dto.SeckillActivityDto;
 import com.zaomengjia.bankmanager.service.SeckillActivityService;
 import com.zaomengjia.bankmanager.vo.SeckillActivityWithProductListVO;
+import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.dao.FinancialProductMapper;
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.dao.SeckillActivityMapper;
 import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.entity.SeckillActivity;
+import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.common.service.SeckillActivitySimpleService;
 import com.zaomengjia.common.service.StockSimpleService;
 import com.zaomengjia.common.utils.ModelUtils;
@@ -64,7 +66,7 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
 
     private SeckillActivityWithProductListVO getVO(SeckillActivity seckillActivity) {
         List<SaleProductDetail> list = saleProductDetailMapper.findBySeckillActivityId(seckillActivity.getId());
-        List<FinancialProduct> productList = financialProductMapper.findAllById(list.stream().map(SaleProductDetail::getId).collect(Collectors.toList()));
+        List<FinancialProduct> productList = financialProductMapper.findAllById(list.stream().map(SaleProductDetail::getFinancialProductId).collect(Collectors.toList()));
         Map<String, SaleProductDetail> map = list.stream().collect(Collectors.toMap(
                 SaleProductDetail::getFinancialProductId,
                 a -> a
@@ -73,14 +75,16 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
         List<SaleProductVO> saleProductList = productList.stream().map(p -> {
             SaleProductVO saleProductVO = new SaleProductVO();
             SaleProductDetail detail = map.get(p.getId());
-            saleProductVO.setId(detail.getId());
+            saleProductVO.setId(p.getId());
             saleProductVO.setPrice((double) p.getPrice() / 100);
             saleProductVO.setName(p.getName());
             saleProductVO.setQuantity(detail.getQuantity());
+            saleProductVO.setTotal(detail.getTotal());
             return saleProductVO;
         }).collect(Collectors.toList());
 
         SeckillActivityWithProductListVO vo = new SeckillActivityWithProductListVO();
+        vo.setId(seckillActivity.getId());
         vo.setName(seckillActivity.getName());
         vo.setDetail(seckillActivity.getDetail());
         vo.setImage(seckillActivity.getImage());
@@ -128,6 +132,12 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
 
     @Override
     public void modify(String id, SeckillActivityDto dto) {
+        SeckillActivity seckillActivity = seckillActivityMapper.findById(id).orElse(null);
+        if(seckillActivity == null) {
+            throw new AppException(ResultCode.NO_SUCH_ACTIVITY_ERROR);
+        }
+
+
         SeckillActivity entity = new SeckillActivity();
         entity.setId(id);
         entity.setName(dto.getName());

@@ -1,5 +1,5 @@
 import axios from "axios";
-import {RequestType, sign} from "@/utils/signUtils";
+import {RequestType, sign} from "@/utils/signUtils_raw";
 import qs from "qs";
 
 axios.defaults.baseURL = 'http://localhost:8811'
