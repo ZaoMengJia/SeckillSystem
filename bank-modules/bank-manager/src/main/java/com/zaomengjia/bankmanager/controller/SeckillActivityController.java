@@ -114,7 +114,7 @@ public class SeckillActivityController {
             throw new AppException(ResultCode.PATTERN_ERROR);
         }
 
-        saleProductService.modify(seckillActivityId, financialProductId, dto.getQuantity(), dto.getTotal());
+        saleProductService.modify(financialProductId, seckillActivityId, dto.getQuantity(), dto.getTotal());
         return ResultUtils.success();
     }
 }

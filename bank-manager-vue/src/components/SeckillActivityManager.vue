@@ -1,36 +1,30 @@
 <template>
   <!-- 秒杀活动管理界面 -->
   <div class="bread">
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item>秒杀活动</el-breadcrumb-item>
-      <el-breadcrumb-item>秒杀活动列表</el-breadcrumb-item>
-    </el-breadcrumb>
-    <!-- 搜索头部input框 -->
     <div class="table">
       <el-card>
-        <el-row>
-          <el-col :span="15">
-            <el-input
-                placeholder="请输入秒杀活动关键词"
-                v-model="keyword"
-                class="input-with-select"
-                clearable
-                @clear="getActivityList"
-            >
-              <el-button
-                  slot="append"
-                  icon="el-icon-search"
-                  @click="getActivityList"
-              ></el-button>
-            </el-input>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" class="add" @click="addActivityVisible = true"
-            >添加秒杀活动
-            </el-button>
-          </el-col>
-        </el-row>
+        <div class="header" style="display: flex;">
+          <span style="font-size: 32px; flex-basis: 62%; font-weight: bolder">已添加的抢购活动</span><br>
+          <div style="flex-basis: 38%">
+            <div style="display: inline-flex; align-items: end">
+              <el-input
+                  style="margin-right: 16px;"
+                  placeholder="输入关键词"
+                  v-model="keyword"
+                  class="input-with-select"
+                  clearable
+                  @clear="getActivityList"
+              >
+                <el-button slot="append" icon="el-icon-search" @click="getActivityList"/>
+              </el-input>
+              <el-button type="primary" plain @click="insertActivityDialog.visible = true">新增</el-button>
+            </div>
 
+          </div>
+<!--          <div style="flex-basis: 25%"/>-->
+
+        </div>
+        <div style="height: 40px"/>
 
         <!-- 渲染数据表格 -->
         <!--        <el-table :data="activityList" border style="width: 100%">-->
@@ -71,9 +65,10 @@
         <!--        </el-table>-->
 
         <el-skeleton v-if="isLoading" :rows="6" animated/>
-        <el-row v-else>
-          <el-col :span="8" v-for="(activity, index) in activityList" :key="o">
-            <el-card :body-style="{ padding: '0px' }" style="margin-right: 12px;border-radius: 5px;">
+
+        <div v-if="!isLoading && activityList.length > 0">
+          <div class="activity-card-parent">
+            <el-card @click.native="toDetail(activity.id)" shadow="never" v-for="(activity, index) in activityList" :key="activity.id" class="activity-card" :body-style="{ padding: '0px' }" style="margin-right: 12px; margin-bottom: 12px">
               <el-image
                   style="height: 150px;"
                   class="image"
@@ -90,102 +85,53 @@
                 </span><br>
                 <div style="height: 10px"/>
                 {{ activity.productList.length === 0 ? '没有商品' : `${activity.productList.length}件商品` }}
-                <div class="bottom clearfix">
-                  <el-button type="text" class="button">详情</el-button>
-                </div>
               </div>
             </el-card>
-          </el-col>
-        </el-row>
+          </div>
 
+          <!-- 分页功能 -->
+          <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="queryInfo.pageIndex"
+              :page-sizes="[5,10,15,20]"
+              :page-size="queryInfo.pageSize"
+              layout="total, prev, pager, next"
+              :total="total"
+              style="float:right;margin-bottom: 16px"
+              :hide-on-single-page="true"
+          >
+          </el-pagination>
+        </div>
+        <el-empty v-if="!isLoading && activityList.length === 0" description="没有已添加的抢购活动"/>
 
-        <!-- 分页功能 -->
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="queryInfo.pageIndex"
-            :page-sizes="[5,10,15,20]"
-            :page-size="queryInfo.pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-        >
-        </el-pagination>
       </el-card>
       <!-- 添加秒杀活动dialog对话框 -->
-      <el-dialog
-          title="添加秒杀活动"
-          :visible.sync="addActivityVisible"
-          width="50%"
-          @close="closeaddActivityDialog"
-      >
-        <el-form
-            :model="addActivityForm"
-            :rules="addActivityFormRul"
-            ref="addActivityFormRef"
-            label-width="100px"
-            class="demo-ruleForm"
-        >
-          <el-form-item label="秒杀活动名" prop="sname">
-            <el-input v-model="addActivityForm.sname" clearable></el-input>
+      <el-dialog title="编辑" :visible.sync="insertActivityDialog.visible" :close-on-click-modal="false">
+        <el-form label-position="left" label-width="80px">
+          <el-form-item label="名称">
+            <el-input v-model="insertActivityDialog.data.name"/>
           </el-form-item>
-          <el-form-item label="秒杀活动图片" prop="image">
-            <el-upload
-                class="avatar-uploader"
-                action="#"
-                list-type="picture-card"
-                :auto-upload="false"
-                :on-success="handleAddActivityImageSuccess"
-                :before-upload="beforeAddActivityImageUpload"
-            >
-              <img
-                  v-if="addActivityForm.image"
-                  :src="addActivityForm.image"
-                  class="activityAddImg"
-              />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
+          <el-form-item label="活动详情">
+            <el-input type="textarea" v-model="insertActivityDialog.data.detail"/>
           </el-form-item>
-          <el-form-item label="秒杀活动描述" prop="detail">
-            <el-input v-model="addActivityForm.detail" clearable></el-input>
+          <el-form-item label="时间">
+            <el-date-picker
+                v-model="insertActivityDialog.data.date"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+            </el-date-picker>
           </el-form-item>
-          <el-form-item label="创建时间" prop="createTime">
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.createTime"
-                              style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="0.2">-</el-col>
-            <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="addActivityForm.createTime"
-                              style="width: 100%;"></el-time-picker>
-            </el-col>
+          <el-form-item label="图片地址">
+            <el-input v-model="insertActivityDialog.data.image"/>
           </el-form-item>
-          <el-form-item label="开始时间" prop="beginTime">
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.beginTime"
-                              style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="0.2">-</el-col>
-            <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="addActivityForm.beginTime"
-                              style="width: 100%;"></el-time-picker>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="结束时间" prop="endTime">
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.endTime"
-                              style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="0.2">-</el-col>
-            <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="addActivityForm.endTime"
-                              style="width: 100%;"></el-time-picker>
-            </el-col>
-          </el-form-item>
+
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="addActivity">确 定</el-button>
-          <el-button @click="addActivityVisible = false">取 消</el-button>
-        </span>
+    <el-button type="primary" @click="commitInsertActivityInfo">应用</el-button>
+  </span>
       </el-dialog>
 
       <!-- 修改秒杀活动dialog对话框 -->
@@ -275,6 +221,10 @@ export default {
   name: "SeckillActivityService",
   data() {
     return {
+      insertActivityDialog: {
+        visible: false,
+        data: {}
+      },
       isLoading: false,
       keyword: "",
       // 请求秒杀活动列表的参数
@@ -298,7 +248,7 @@ export default {
       addActivityVisible: false,
       //添加秒杀活动参数
       addActivityForm: {
-        sname: "",
+        name: "",
         image: "",
         detail: "",
         beginTime: new Date(),
@@ -338,6 +288,46 @@ export default {
     };
   },
   methods: {
+    async commitInsertActivityInfo() {
+      //检验信息
+      let beginTime = this.insertActivityDialog.data.date[0];
+      let endTime = this.insertActivityDialog.data.date[1];
+
+      if(beginTime == null || endTime == null || beginTime >= endTime) {
+        this.$message.error('日期填写有误');
+        return;
+      }
+
+      let [, err] = await api.insertSeckillActivity({
+        id: this.seckillActivityId,
+        name: this.insertActivityDialog.data.name,
+        detail: this.insertActivityDialog.data.detail,
+        image: this.insertActivityDialog.data.image,
+        beginTime: beginTime,
+        endTime: endTime
+      });
+
+      if(err != null) {
+        this.$message.error(err.message);
+        return;
+      }
+
+      this.insertActivityDialog = {
+        visible: false,
+        data: {}
+      };
+      await this.getActivityList();
+    },
+    toDetail(id) {
+      console.log(id)
+      this.$router.push({
+        name: 'seckillActivityDetail',
+        query: {
+          id
+        }
+      });
+    },
+
     //请求秒杀活动列表数据
     async getActivityList() {
       this.isLoading = true;
@@ -368,11 +358,11 @@ export default {
       this.$refs.addActivityFormRef.validate((valid) => {
         const that = this;
         if (valid) {
-          this.$http.get('/back/web/seckillActivity/activityExist/' + this.addActivityForm.sname).then
+          this.$http.get('/back/web/seckillActivity/activityExist/' + this.addActivityForm.name).then
           this.$http
               .post("/back/web/seckillActivity/addSeckillActivity/", {
                 id: this.addActivityForm.id,
-                name: this.addActivityForm.sname,
+                name: this.addActivityForm.name,
                 image: this.addActivityForm.image,
                 detail: this.addActivityForm.detail,
                 beginTime: this.addActivityForm.beginTime,
@@ -569,6 +559,25 @@ export default {
 
 .clearfix:after {
   clear: both
+}
+
+.activity-card-parent {
+  display: flex;
+  flex-wrap: wrap;
+  width: 1200px;
+}
+
+.activity-card {
+  border-radius: 10px;
+  width: 32%;
+  height: 300px;
+  box-sizing: border-box;
+
+  cursor: pointer;
+}
+
+.activity-card:hover {
+  border-color: #bebebe;
 }
 
 

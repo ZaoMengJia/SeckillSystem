@@ -48,7 +48,7 @@ public class SaleProductDetail {
      * 活动总数
      */
     @Column(name = "total")
-    private int total;
+    private long total;
 
     /**
      * 乐观锁
