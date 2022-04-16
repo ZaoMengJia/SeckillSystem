@@ -1,4 +1,5 @@
 import {request} from "@/api/http";
+
 export default {
     getWeixinUserList: async (pageNum, pageSize) => request({
         method: 'get',
@@ -15,8 +16,8 @@ export default {
         }
     }),
     deleteWeixinUser: async (userId) => request({
-       method: 'delete',
-       url: `/web/weixin-user/${userId}`
+        method: 'delete',
+        url: `/web/weixin-user/${userId}`
     }),
     getAdminUserList: async (pageNum, pageSize) => request({
         method: 'get',
@@ -68,9 +69,46 @@ export default {
         method: 'get',
         url: `/web/seckill/detail/${seckillActivityId}`
     }),
+    updateSeckillActivity: async ({id, image = '', name, detail, beginTime, endTime}) => request({
+        method: 'put',
+        url: `/web/seckill/${id}`,
+        data: {
+            name, detail, beginTime, endTime, image
+        }
+    }),
     deleteSeckillActivity: async (id) => request({
         method: 'delete',
-        url: `/web/seckillActivity/deleteSeckillActivity/${id}`
+        url: `/web/seckill/${id}`
+    }),
+    getFinancialProductList: async (pageNum, pageSize) => request({
+        method: 'get',
+        url: `/web/product`,
+        data: {
+            pageNum, pageSize
+        }
+    }),
+    insertSeckillActivityProduct: async ({financialProductId, seckillActivityId, quantity}) => request({
+        method: 'post',
+        url: `/web/seckill/product/${seckillActivityId}/${financialProductId}`,
+        data: {
+            quantity,
+            total: quantity
+        }
+    }),
+    updateSeckillActivityProduct: async ({financialProductId, seckillActivityId, quantity, total}) => request({
+        method: 'put',
+        url: `/web/seckill/product/${seckillActivityId}/${financialProductId}`,
+        data: {
+            quantity,
+            total
+        }
+    }),
+    insertSeckillActivity: async ({image = '', name, detail, beginTime, endTime}) => request({
+        method: 'post',
+        url: `/web/seckill`,
+        data: {
+            name, detail, beginTime, endTime, image
+        }
     }),
     //订单
     getOrderList: async (pageNum, pageSize) => request({
@@ -105,61 +143,19 @@ export default {
     saveProduct: async (name, price) => request({
         method: 'post',
         url: '/web/product',
-        data:{
+        data: {
             name, price
         }
     }),
     editProduct: async (id, name, price) => request({
         method: 'put',
         url: `/web/product/${id}`,
-        data:{
+        data: {
             name, price
         }
     }),
     deleteProduct: async (id) => request({
         method: 'delete',
         url: `/web/product/${id}`
-    })
-    }),
-    updateSeckillActivity: async ({id, image = '', name, detail, beginTime, endTime}) => request({
-        method: 'put',
-        url: `/web/seckill/${id}`,
-        data: {
-            name, detail, beginTime, endTime, image
-        }
-    }),
-    deleteSeckillActivity: async (id) => request({
-       method: 'delete',
-       url: `/web/seckill/${id}`
-    }),
-    getFinancialProductList: async (pageNum, pageSize) => request({
-        method: 'get',
-        url: `/web/product`,
-        data: {
-            pageNum, pageSize
-        }
-    }),
-    insertSeckillActivityProduct: async ({financialProductId, seckillActivityId, quantity}) => request({
-        method: 'post',
-        url: `/web/seckill/product/${seckillActivityId}/${financialProductId}`,
-        data: {
-            quantity,
-            total: quantity
-        }
-    }),
-    updateSeckillActivityProduct: async ({financialProductId, seckillActivityId, quantity, total}) => request({
-        method: 'put',
-        url: `/web/seckill/product/${seckillActivityId}/${financialProductId}`,
-        data: {
-            quantity,
-            total
-        }
-    }),
-    insertSeckillActivity: async({image = '', name, detail, beginTime, endTime}) => request({
-        method: 'post',
-        url: `/web/seckill`,
-        data: {
-            name, detail, beginTime, endTime, image
-        }
     }),
 }
