@@ -31,11 +31,12 @@
           </el-col>
         </el-row>
         <!-- 渲染数据表格 -->
-        <el-table v-loading="isTableLoading" :data="adminList" border style="width: 100%">
-          <el-table-column type="index" width="100" :index="indexFn">
+        <el-table v-loading="isTableLoading" :data="adminList" :header-cell-style="{'text-align':'center'}"
+                  :cell-style="{'text-align':'center'}" border style="width: 100%">
+          <el-table-column type="index" width="50" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要adminList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="编号" width="100"> </el-table-column>
+          <el-table-column prop="id" label="编号"> </el-table-column>
           <el-table-column prop="username" label="姓名" width="150">
           </el-table-column>
           <!-- <el-table-column prop="password" label="密码" width="150">

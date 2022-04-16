@@ -71,17 +71,19 @@ export default {
     }),
     getOrderList: async (pageNum, pageSize) => request({
         method: 'get',
-        url: `/web/order/getAllOrders/${pageNum}/${pageSize}`
+        url: '/web/order',
+        data: {
+            pageNum: pageNum,
+            pageSize: pageSize
+        }
     }),
     searchOrder: async (keyword, pageNum, pageSize) => request({
         method: 'get',
-        url: `/web/order/searchOrder/${keyword}/${pageNum}/${pageSize}`
-    }),
-    insertOrder: async ({id, userId, financialProductId, seckillActivityId, quantity}) => request({
-        method: 'post',
-        url: `/web/order/addOrder`,
+        url: '/web/order/search',
         data: {
-            id, userId, financialProductId, seckillActivityId, quantity
+            keyword: keyword,
+            pageNum: pageNum,
+            pageSize: pageSize
         }
     })
 }

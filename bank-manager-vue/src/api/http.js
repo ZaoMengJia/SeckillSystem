@@ -3,12 +3,13 @@ import {RequestType, sign} from "@/utils/signUtils";
 import qs from "qs";
 
 axios.defaults.baseURL = 'http://localhost:8811'
+
 export async function request(data, isBodyJson = true) {
     let isJson = true;
     let rawData = data.data;
-    if(!isBodyJson || data.method.toLowerCase() === 'get') {
+    if (!isBodyJson || data.method.toLowerCase() === 'get') {
         isJson = false;
-        if(data.method.toLowerCase() === 'get' && data.data !== {}) {
+        if (data.method.toLowerCase() === 'get' && data.data !== {}) {
             let arr = [];
             for (let p in data.data) {
                 if (data.data.hasOwnProperty(p)) {
@@ -16,18 +17,17 @@ export async function request(data, isBodyJson = true) {
                 }
             }
 
-            if(arr.length > 0) {
+            if (arr.length > 0) {
                 data.url += `?${arr.join('&')}`;
             }
 
             data.data = {};
-        }
-        else {
+        } else {
             data.data = qs.stringify(data.data)
         }
     }
 
-    if(isBodyJson) {
+    if (isBodyJson) {
         data.headers = {...data.headers, 'content-type': 'application/json'};
     }
 
@@ -37,16 +37,15 @@ export async function request(data, isBodyJson = true) {
 
     //添加token
     let token = getToken();
-    if(token !== null) {
+    if (token !== null) {
         data.headers.Authorization = token;
     }
 
     return axios(data)
         .then(res => {
-            if(res.data.code === 10000) {
+            if (res.data.code === 10000) {
                 return [res, null];
-            }
-            else {
+            } else {
                 return [null, res.data];
             }
         })
@@ -55,7 +54,7 @@ export async function request(data, isBodyJson = true) {
 
 function getToken() {
     let vuex = localStorage.getItem("vuex");
-    if(vuex === '') {
+    if (vuex === '') {
         return null;
     }
     vuex = JSON.parse(vuex);

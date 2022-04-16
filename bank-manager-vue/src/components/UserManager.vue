@@ -33,14 +33,15 @@
           </el-col>
         </el-row>
         <!-- 渲染数据表格 -->
-        <el-table v-loading="isLoading" :data="userList" border style="width: 100%">
+        <el-table v-loading="isLoading" :data="userList" :header-cell-style="{'text-align':'center'}"
+                  :cell-style="{'text-align':'center'}" border style="width: 100%">
           <el-table-column type="index" width="50" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要userList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="编号" width="100"> </el-table-column>
+          <el-table-column prop="id" label="编号"></el-table-column>
           <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
           <el-table-column prop="realName" label="真实姓名" width="100"></el-table-column>
-          <el-table-column prop="idCard" label="身份证号" width="300"></el-table-column>
+          <el-table-column prop="idCard" label="身份证号" width="200"></el-table-column>
           <!-- <el-table-column prop="password" label="密码" width="150">
           </el-table-column> -->
           <el-table-column prop="sexForm" label="性别" width="100">
@@ -49,21 +50,21 @@
             </template>
           </el-table-column>
           <el-table-column prop="avatarUrl" label="头像" width="100">
-<!--            <template slot-scope="scope">-->
-<!--              <img-->
-<!--                  :src="scope.row.avartarUrl"-->
-<!--                  alt=""-->
-<!--                  style="width: 50px; height: 50px"-->
-<!--              />-->
-<!--            </template>-->
+            <!--            <template slot-scope="scope">-->
+            <!--              <img-->
+            <!--                  :src="scope.row.avartarUrl"-->
+            <!--                  alt=""-->
+            <!--                  style="width: 50px; height: 50px"-->
+            <!--              />-->
+            <!--            </template>-->
             <template slot-scope="scope">
               <el-avatar :src="scope.row.avatarUrl"></el-avatar>
             </template>
           </el-table-column>
-          <el-table-column prop="hasJob" label="是否工作" width="100"> </el-table-column>
-          <el-table-column prop="overdueRecord" label="失约次数" width="100"> </el-table-column>
-          <el-table-column prop="isDiscredit" label="是否为失约人" width="100"> </el-table-column>
-          <el-table-column prop="operate" label="操作" width="200">
+          <el-table-column prop="hasJob" label="是否工作" width="60"></el-table-column>
+          <el-table-column prop="overdueRecord" label="失约次数" width="60"></el-table-column>
+          <el-table-column prop="isDiscredit" label="是否为失约人" width="70"></el-table-column>
+          <el-table-column prop="operate" label="操作" width="100">
             <template slot-scope="scope">
               <el-button
                   type="danger"
@@ -92,6 +93,7 @@
 
 <script>
 import api from "@/api/api";
+
 export default {
   name: "UserService",
   data() {
@@ -99,7 +101,7 @@ export default {
       isLoading: false,
       keyword: "",
       //用户搜索的方式
-      type:"nickname",
+      type: "nickname",
       // 请求用户列表的参数
       queryInfo: {
         pageIndex: 1,
@@ -110,14 +112,14 @@ export default {
       userParams: {
         id: 0,
         nickname: "",
-        realname:"",
+        realname: "",
         password: "",
-        idNumber:"",
-        avartarUrl:"",
+        idNumber: "",
+        avartarUrl: "",
         sexForm: "",
         hasJob: "",
-        overdueRecord:0,
-        isDiscredit:"否",
+        overdueRecord: 0,
+        isDiscredit: "否",
       },
       total: 0,
       //上传头像
@@ -134,7 +136,7 @@ export default {
           await api.getWeixinUserList(this.queryInfo.pageIndex, this.queryInfo.pageSize) :
           await api.searchWeixinUserList(this.keyword, this.type, this.queryInfo.pageIndex, this.queryInfo.pageSize);
       this.isLoading = false;
-      if(err !== null) {
+      if (err !== null) {
         this.$message.error(err.message);
         return;
       }
@@ -161,14 +163,15 @@ export default {
       })
           .then(async () => {
             let [, err] = await api.deleteWeixinUser(row.id);
-            if(err != null) {
+            if (err != null) {
               this.$message.error(err.message);
               return;
             }
 
             await this.getUserList();
           })
-      .catch(() => {})
+          .catch(() => {
+          })
     },
     // 表格编号
     indexFn(index) {

@@ -31,8 +31,9 @@
           </el-col>
         </el-row>
         <!-- 渲染数据表格 -->
-        <el-table :data="detailList" border style="width: 100%">
-          <el-table-column type="index" width="100" :index="indexFn">
+        <el-table :data="detailList" :header-cell-style="{'text-align':'center'}"
+                  :cell-style="{'text-align':'center'}" border style="width: 100%">
+          <el-table-column type="index" width="50" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要detailList里的属性名改成一样的 -->
           <el-table-column prop="id" label="商品明细id" width="100"> </el-table-column>

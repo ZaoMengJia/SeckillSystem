@@ -31,11 +31,12 @@
           </el-col>
         </el-row>
         <!-- 渲染数据表格 -->
-        <el-table :data="productList" border style="width: 100%">
-          <el-table-column type="index" width="100" :index="indexFn">
+        <el-table :data="productList" :header-cell-style="{'text-align':'center'}"
+                  :cell-style="{'text-align':'center'}" border style="width: 100%">
+          <el-table-column type="index" width="50" :index="indexFn">
           </el-table-column>
           <!-- 所有的prop值必须要productList里的属性名改成一样的 -->
-          <el-table-column prop="id" label="编号" width="100"> </el-table-column>
+          <el-table-column prop="id" label="编号" width="100"></el-table-column>
           <el-table-column prop="fname" label="理财产品名" width="150">
           </el-table-column>
           <el-table-column prop="price" label="理财产品价格(每份)" width="150"></el-table-column>
@@ -157,7 +158,7 @@ export default {
       //添加产品对话框验证规则
       addProductFormRul: {
         fname: [
-          { required: true, message: "产品名不能为空", trigger: "blur" },
+          {required: true, message: "产品名不能为空", trigger: "blur"},
           {
             min: 2,
             max: 10,
@@ -166,7 +167,7 @@ export default {
           },
         ],
         price: [
-          { required: true, message: "价格不能为空", trigger: "blur" },
+          {required: true, message: "价格不能为空", trigger: "blur"},
           {
             min: 1,
             max: 8,
@@ -184,7 +185,7 @@ export default {
       //编辑产品对话框验证规则
       editProductParamsRul: {
         fname: [
-          { required: true, message: "产品名不能为空", trigger: "blur" },
+          {required: true, message: "产品名不能为空", trigger: "blur"},
           {
             min: 2,
             max: 10,
@@ -193,7 +194,7 @@ export default {
           },
         ],
         price: [
-          { required: true, message: "价格不能为空", trigger: "blur" },
+          {required: true, message: "价格不能为空", trigger: "blur"},
           {
             min: 1,
             max: 8,
@@ -217,7 +218,7 @@ export default {
         this.$http
             .get(
                 "/back/web/financialProduct/getAllProduct/" +
-                (this.queryInfo.pageIndex-1) +
+                (this.queryInfo.pageIndex - 1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -245,7 +246,7 @@ export default {
                 "/back/web/financialProduct/searchProduct/" +
                 this.keyword +
                 "/" +
-                (this.queryInfo.pageIndex-1) +
+                (this.queryInfo.pageIndex - 1) +
                 "/" +
                 this.queryInfo.pageSize
             )
@@ -283,7 +284,7 @@ export default {
       this.$refs.addProductFormRef.validate((valid) => {
         const that = this;
         if (valid) {
-          this.$http.get('/back/web/financialProduct/productExist/'+this.addProductForm.fname).then
+          this.$http.get('/back/web/financialProduct/productExist/' + this.addProductForm.fname).then
           this.$http
               .post("/back/financialProduct/addProduct", {
                 id: this.addProductForm.id,

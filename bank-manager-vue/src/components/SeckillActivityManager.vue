@@ -32,47 +32,45 @@
         </el-row>
 
 
-
-
         <!-- 渲染数据表格 -->
-<!--        <el-table :data="activityList" border style="width: 100%">-->
-<!--          <el-table-column type="index" width="100" :index="indexFn">-->
-<!--          </el-table-column>-->
-<!--          &lt;!&ndash; 所有的prop值必须要activityList里的属性名改成一样的 &ndash;&gt;-->
-<!--          <el-table-column prop="name" label="秒杀活动名" width="150"></el-table-column>-->
-<!--          <el-table-column prop="image" label="秒杀活动图片" width="150">-->
-<!--            <img-->
-<!--                :src="activityList.image"-->
-<!--                alt=""-->
-<!--                fit="fill"-->
-<!--                style="width: 100px; height: 100px; "-->
-<!--            />-->
-<!--          </el-table-column>-->
-<!--          <el-table-column prop="detail" label="秒杀活动描述" width="150"></el-table-column>-->
-<!--          <el-table-column prop="beginTime" label="秒杀活动开始时间" width="150"></el-table-column>-->
-<!--          <el-table-column prop="endTime" label="秒杀活动结束时间" width="150"></el-table-column>-->
-<!--          <el-table-column prop="createTime" label="秒杀活动创建时间" width="150"></el-table-column>-->
-<!--          &lt;!&ndash; <el-table-column prop="password" label="密码" width="150">-->
-<!--          </el-table-column> &ndash;&gt;-->
-<!--          <el-table-column prop="operate" label="操作" width="200">-->
-<!--            <template slot-scope="scope">-->
-<!--              <el-button-->
-<!--                  type="primary"-->
-<!--                  icon="el-icon-edit"-->
-<!--                  circle-->
-<!--                  @click="editActivity(scope.row)"-->
-<!--              ></el-button>-->
-<!--              <el-button-->
-<!--                  type="danger"-->
-<!--                  icon="el-icon-delete"-->
-<!--                  circle-->
-<!--                  @click="removeActivityItem(scope.row)"-->
-<!--              ></el-button>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--        </el-table>-->
+        <!--        <el-table :data="activityList" border style="width: 100%">-->
+        <!--          <el-table-column type="index" width="100" :index="indexFn">-->
+        <!--          </el-table-column>-->
+        <!--          &lt;!&ndash; 所有的prop值必须要activityList里的属性名改成一样的 &ndash;&gt;-->
+        <!--          <el-table-column prop="name" label="秒杀活动名" width="150"></el-table-column>-->
+        <!--          <el-table-column prop="image" label="秒杀活动图片" width="150">-->
+        <!--            <img-->
+        <!--                :src="activityList.image"-->
+        <!--                alt=""-->
+        <!--                fit="fill"-->
+        <!--                style="width: 100px; height: 100px; "-->
+        <!--            />-->
+        <!--          </el-table-column>-->
+        <!--          <el-table-column prop="detail" label="秒杀活动描述" width="150"></el-table-column>-->
+        <!--          <el-table-column prop="beginTime" label="秒杀活动开始时间" width="150"></el-table-column>-->
+        <!--          <el-table-column prop="endTime" label="秒杀活动结束时间" width="150"></el-table-column>-->
+        <!--          <el-table-column prop="createTime" label="秒杀活动创建时间" width="150"></el-table-column>-->
+        <!--          &lt;!&ndash; <el-table-column prop="password" label="密码" width="150">-->
+        <!--          </el-table-column> &ndash;&gt;-->
+        <!--          <el-table-column prop="operate" label="操作" width="200">-->
+        <!--            <template slot-scope="scope">-->
+        <!--              <el-button-->
+        <!--                  type="primary"-->
+        <!--                  icon="el-icon-edit"-->
+        <!--                  circle-->
+        <!--                  @click="editActivity(scope.row)"-->
+        <!--              ></el-button>-->
+        <!--              <el-button-->
+        <!--                  type="danger"-->
+        <!--                  icon="el-icon-delete"-->
+        <!--                  circle-->
+        <!--                  @click="removeActivityItem(scope.row)"-->
+        <!--              ></el-button>-->
+        <!--            </template>-->
+        <!--          </el-table-column>-->
+        <!--        </el-table>-->
 
-        <el-skeleton v-if="isLoading" :rows="6" animated />
+        <el-skeleton v-if="isLoading" :rows="6" animated/>
         <el-row v-else>
           <el-col :span="8" v-for="(activity, index) in activityList" :key="o">
             <el-card :body-style="{ padding: '0px' }" style="margin-right: 12px;border-radius: 5px;">
@@ -86,7 +84,9 @@
 
 
                 <span style="font-size: 14px">
-                  {{ new Date(activity.beginTime).Format('yyyy-MM-dd hh:mm') }} 至 {{ new Date(activity.endTime).Format('yyyy-MM-dd hh:mm') }}
+                  {{
+                    new Date(activity.beginTime).Format('yyyy-MM-dd hh:mm')
+                  }} 至 {{ new Date(activity.endTime).Format('yyyy-MM-dd hh:mm') }}
                 </span><br>
                 <div style="height: 10px"/>
                 {{ activity.productList.length === 0 ? '没有商品' : `${activity.productList.length}件商品` }}
@@ -97,9 +97,6 @@
             </el-card>
           </el-col>
         </el-row>
-
-
-
 
 
         <!-- 分页功能 -->
@@ -153,29 +150,35 @@
           </el-form-item>
           <el-form-item label="创建时间" prop="createTime">
             <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.createTime" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.createTime"
+                              style="width: 100%;"></el-date-picker>
             </el-col>
             <el-col class="line" :span="0.2">-</el-col>
             <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="addActivityForm.createTime" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" v-model="addActivityForm.createTime"
+                              style="width: 100%;"></el-time-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="开始时间" prop="beginTime">
             <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.beginTime" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.beginTime"
+                              style="width: 100%;"></el-date-picker>
             </el-col>
             <el-col class="line" :span="0.2">-</el-col>
             <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="addActivityForm.beginTime" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" v-model="addActivityForm.beginTime"
+                              style="width: 100%;"></el-time-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="结束时间" prop="endTime">
             <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.endTime" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" v-model="addActivityForm.endTime"
+                              style="width: 100%;"></el-date-picker>
             </el-col>
             <el-col class="line" :span="0.2">-</el-col>
             <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="addActivityForm.endTime" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" v-model="addActivityForm.endTime"
+                              style="width: 100%;"></el-time-picker>
             </el-col>
           </el-form-item>
         </el-form>
@@ -224,29 +227,35 @@
           </el-form-item>
           <el-form-item label="创建时间" prop="createTime">
             <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.createTime" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.createTime"
+                              style="width: 100%;"></el-date-picker>
             </el-col>
             <el-col class="line" :span="0.2">-</el-col>
             <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="editActivityParams.createTime" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" v-model="editActivityParams.createTime"
+                              style="width: 100%;"></el-time-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="开始时间" prop="beginTime">
             <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.beginTime" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.beginTime"
+                              style="width: 100%;"></el-date-picker>
             </el-col>
             <el-col class="line" :span="0.2">-</el-col>
             <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="editActivityParams.beginTime" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" v-model="editActivityParams.beginTime"
+                              style="width: 100%;"></el-time-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="结束时间" prop="endTime">
             <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.endTime" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" v-model="editActivityParams.endTime"
+                              style="width: 100%;"></el-date-picker>
             </el-col>
             <el-col class="line" :span="0.2">-</el-col>
             <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="editActivityParams.endTime" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" v-model="editActivityParams.endTime"
+                              style="width: 100%;"></el-time-picker>
             </el-col>
           </el-form-item>
         </el-form>
@@ -299,7 +308,7 @@ export default {
       //添加秒杀活动对话框验证规则
       addActivityFormRul: {
         sname: [
-          { required: true, message: "活动名不能为空", trigger: "blur" },
+          {required: true, message: "活动名不能为空", trigger: "blur"},
         ],
       },
       //存储获取到的秒杀活动信息
@@ -315,10 +324,10 @@ export default {
       //编辑秒杀活动对话框验证规则
       editActivityParamsRul: {
         id: [
-          { required: true, message: "秒杀活动名不能为空", trigger: "blur" },
+          {required: true, message: "秒杀活动名不能为空", trigger: "blur"},
         ],
         sname: [
-          { required: true, message: "价格不能为空", trigger: "blur" },
+          {required: true, message: "价格不能为空", trigger: "blur"},
         ],
       },
       editActivityVisible: false,
@@ -336,7 +345,7 @@ export default {
           await api.getSeckillActivityList(this.queryInfo.pageIndex, this.queryInfo.pageSize) :
           await api.searchSeckillActivity(this.keyword, this.queryInfo.pageIndex, this.queryInfo.pageSize);
       this.isLoading = false;
-      if(err != null) {
+      if (err != null) {
         this.$message.error(err.message);
         return;
       }
@@ -359,7 +368,7 @@ export default {
       this.$refs.addActivityFormRef.validate((valid) => {
         const that = this;
         if (valid) {
-          this.$http.get('/back/web/seckillActivity/activityExist/'+this.addActivityForm.sname).then
+          this.$http.get('/back/web/seckillActivity/activityExist/' + this.addActivityForm.sname).then
           this.$http
               .post("/back/web/seckillActivity/addSeckillActivity/", {
                 id: this.addActivityForm.id,
@@ -440,14 +449,15 @@ export default {
       })
           .then(async () => {
             let [, err] = await api.deleteSeckillActivity(row.id);
-            if(err != null) {
+            if (err != null) {
               this.$message.error(err.message);
               return;
             }
 
             await this.getActivityList();
           })
-          .catch(() => {});
+          .catch(() => {
+          });
     },
     // 表格编号
     indexFn(index) {
@@ -455,7 +465,7 @@ export default {
           index + 1 + (this.queryInfo.pageIndex - 1) * this.queryInfo.pageSize;
       return index;
     },
-    handleAddActivityImageSuccess(res,file) {
+    handleAddActivityImageSuccess(res, file) {
       this.addActivityForm.image = file.url;
 
     },
@@ -472,7 +482,7 @@ export default {
       }
       return (isJPG || isPNG) && isLt5M;
     },
-    handleRemove(file){
+    handleRemove(file) {
       file.clean();
     },
     handleEditActivityImageSuccess(res, file) {
