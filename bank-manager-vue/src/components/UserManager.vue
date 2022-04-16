@@ -46,8 +46,12 @@
             <el-table-column prop="id" width="300" label="用户编号"></el-table-column>
 
             <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
-            <el-table-column prop="realName" label="真实姓名" width="100"></el-table-column>
-            <el-table-column prop="idCard" label="身份证号" width="200"></el-table-column>
+            <el-table-column align="left" label="身份信息" width="200">
+              <template slot-scope="scope">
+                <span>{{ scope.row.realName }}</span><br>
+                  <span>{{ scope.row.idCard }}</span>
+              </template>
+            </el-table-column>
             <!-- <el-table-column prop="password" label="密码" width="150">
             </el-table-column> -->
             <el-table-column prop="sexForm" label="性别" width="100">
@@ -56,18 +60,52 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="hasJob" label="是否工作" width="100"></el-table-column>
-            <el-table-column prop="overdueRecord" label="失约次数" width="100"></el-table-column>
-            <el-table-column prop="isDiscredit" label="是否为失约人" width="120"></el-table-column>
+            <el-table-column prop="hasJob" label="已工作" width="100">
+              <template slot-scope="scope">
+                <span>{{scope.row.hasJob === null ? '未设置' : (scope.row.hasJob ? '是' : '否')}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="overdueRecord" label="失约次数" width="100">
+
+            </el-table-column>
+            <el-table-column prop="isDiscredit" label="失约人" width="120">
+              <template slot-scope="scope">
+                <span>{{scope.row.isDiscredit === null ? '未设置' : (scope.row.isDiscredit ? '是' : '否')}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="审核">
+              <template slot-scope="scope">
+                <el-button v-if="scope.row.audit === 0"
+                    type="success"
+                    plain
+                    size="mini"
+                    @click="setUserAudit(scope.row, 1)"
+                >设为通过</el-button>
+                <el-button v-else
+                           type="info"
+                           plain
+                           size="mini"
+                           @click="setUserAudit(scope.row, 0)"
+                >已通过</el-button>
+              </template>
+            </el-table-column>
             <el-table-column prop="operate" label="操作">
               <template slot-scope="scope">
+                <el-button
+                    type="primary"
+                    icon="el-icon-edit"
+                    circle
+                    plain
+                    @click="editUser(scope.row)"
+                />
                 <el-button
                     type="danger"
                     icon="el-icon-delete"
                     plain
                     circle
                     @click="removeUserItem(scope.row)"
-                ></el-button>
+                />
+
               </template>
             </el-table-column>
           </el-table>
@@ -90,6 +128,46 @@
       </div>
 
     </div>
+
+    <el-dialog
+        title="编辑"
+        :visible.sync="editUserDialog.visible"
+        width="50%"
+    >
+      <el-form label-position="left" label-width="120px">
+        <el-form-item label="真实姓名">
+          <el-input v-model="editUserDialog.data.realName"/>
+        </el-form-item>
+        <el-form-item label="身份证号码">
+          <el-input v-model="editUserDialog.data.idCard"/>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-radio-group v-model="editUserDialog.data.gender">
+            <el-radio-button :label="0">男</el-radio-button>
+            <el-radio-button :label="1">女</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="已工作">
+          <el-radio-group v-model="editUserDialog.data.hasJob">
+            <el-radio-button :label="true">是</el-radio-button>
+            <el-radio-button :label="false">否</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="失约次数">
+          <el-input-number v-model="editUserDialog.data.overdueRecord"/>
+        </el-form-item>
+        <el-form-item label="失约人">
+          <el-radio-group v-model="editUserDialog.data.isDiscredit">
+            <el-radio-button :label="true">是</el-radio-button>
+            <el-radio-button :label="false">否</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="commitEditUser">确定</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -100,6 +178,10 @@ export default {
   name: "UserService",
   data() {
     return {
+      editUserDialog: {
+        visible: false,
+        data: {}
+      },
       isLoading: false,
       keyword: "",
       //用户搜索的方式
@@ -131,6 +213,55 @@ export default {
     };
   },
   methods: {
+    async commitEditUser() {
+      let [, err] = await api.updateWeixinUser({
+        id: this.editUserDialog.data.id,
+        realName: this.editUserDialog.data.realName,
+        idCard: this.editUserDialog.data.idCard,
+        gender: this.editUserDialog.data.gender,
+        hasJob: this.editUserDialog.data.hasJob,
+        isDiscredit: this.editUserDialog.data.isDiscredit,
+        overdueRecord: this.editUserDialog.data.overdueRecord
+      });
+
+      if(err != null) {
+        this.$message.error(err.message);
+        return;
+      }
+
+      this.editUserDialog.visible = false;
+      await this.getUserList();
+
+    },
+    async setUserAudit(user, audit) {
+      let [, err] = await api.setWeixinUserAudit(user.id, audit);
+      if(err != null) {
+        this.$message.error(err.message);
+        return;
+      }
+
+      for(let i = 0; i < this.userList.length; i++) {
+        let u = this.userList[i];
+        if(u.id === user.id) {
+          u.audit = audit;
+          break;
+        }
+      }
+    },
+    editUser(user) {
+      this.editUserDialog.data = {
+        id: user.id,
+        realName: user.realName,
+        idCard: user.idCard,
+        gender: user.gender,
+        hasJob: user.hasJob,
+        isDiscredit: user.isDiscredit,
+        overdueRecord: user.overdueRecord
+      };
+
+      this.editUserDialog.visible = true;
+    },
+
     //请求用户列表数据
     async getUserList() {
       this.isLoading = true;

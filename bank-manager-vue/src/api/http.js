@@ -54,7 +54,7 @@ export async function request(data, isBodyJson = true) {
 }
 
 axios.interceptors.response.use(res => {
-    if(res.status === 200 && res.data && res.data.code === 40002 || res.data.code === 40003) {
+    if(res.status === 200 && res.data != null && (res.data.code === 40002 || res.data.code === 40003)) {
         localStorage.setItem('vuex', null);
         router.push('/login');
     }

@@ -158,4 +158,18 @@ export default {
         method: 'delete',
         url: `/web/product/${id}`
     }),
+    setWeixinUserAudit: async (id, audit) => request({
+        method: 'post',
+        url: `/web/weixin-user/audit/${id}`,
+        data: {
+            audit
+        }
+    }, false),
+    updateWeixinUser: async ({id, realName, idCard, gender, hasJob, isDiscredit, overdueRecord}) => request({
+        method: 'put',
+        url: `/web/weixin-user/${id}`,
+        data: {
+            realName, gender, id, hasJob, idCard, isDiscredit, overdueRecord
+        }
+    })
 }

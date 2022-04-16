@@ -13,11 +13,11 @@
 
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
             <el-form-item prop="account">
-              <el-input label="" class="username" v-model="ruleForm.account" placeholder="请输入账号" clearable></el-input>
+              <el-input v-model="ruleForm.account" placeholder="请输入账号" clearable></el-input>
             </el-form-item>
 
             <el-form-item prop="password">
-              <el-input label="" class="password" type="password" v-model="ruleForm.password" placeholder="请输入密码"
+              <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"
                         clearable></el-input>
             </el-form-item>
 
@@ -148,7 +148,7 @@ html.body {
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50px;
-  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .4);
+  box-shadow: 0 0 12px 6px rgba(47, 45, 45, 8%);
 }
 
 .left {
@@ -181,12 +181,12 @@ html.body {
 .right {
   float: left;
   width: 340px;
-  margin-left: -50px;
+  /*margin-left: -50px;*/
 }
 
-.username{
-  margin-left: 50px;
-}
+/*.username{*/
+/*  margin-left: 50px;*/
+/*}*/
 
 .username .el-input__inner {
   background: url(../assets/login/账号.png) no-repeat 10px center;
@@ -198,14 +198,15 @@ html.body {
   border-bottom: 1px solid;
 }
 
-.password{
-  margin-left: 50px;
-}
+/*.password{*/
+/*  margin-left: 50px;*/
+/*}*/
 
 .password .el-input__inner {
   background: url(../assets/login/密码.png) no-repeat 10px center;
-  padding: 0px 50px;
-  width: 340px;
+  padding: 0;
+  margin-right: 32px;
+  /*width: 340px;*/
   height: 60px;
   font-size: 18px;
   border: none;
@@ -219,11 +220,12 @@ html.body {
   font-size: 22px;
   border-radius: 3px;
   margin-top: 50px;
+  margin-left: -40px;
 }
 
 .login_title {
   width: 130px;
-  margin: 103px 160px 50px 210px;
+  margin: 103px 160px 50px 160px;
   color: rgba(2, 153, 208, 1);
   font-size: 24px;
 }

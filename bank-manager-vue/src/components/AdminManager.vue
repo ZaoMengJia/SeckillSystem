@@ -52,7 +52,7 @@
                     circle
                     plain
                     @click="editAdmin(scope.row)"
-                ></el-button>
+                />
                 <el-button
                     type="danger"
                     icon="el-icon-delete"
