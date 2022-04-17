@@ -3,8 +3,8 @@ import {RequestType, sign} from "@/utils/signUtils_raw";
 import qs from "qs";
 import router from "@/router";
 
-axios.defaults.baseURL = 'http://localhost:8811'
-
+// axios.defaults.baseURL = 'http://localhost:8811'
+axios.defaults.baseURL = 'http://52.82.45.59:8888';
 export async function request(data, isBodyJson = true) {
     let isJson = true;
     let rawData = data.data;

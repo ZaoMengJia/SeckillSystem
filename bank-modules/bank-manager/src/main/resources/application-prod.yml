@@ -1,0 +1,28 @@
+project:
+  version: 1.0.0
+
+server:
+  port: 8001
+  servlet:
+    encoding:
+      force-response: true
+    context-path: /web
+
+spring:
+  application:
+    name: bank-manager
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+  cloud:
+    nacos:
+      discovery:
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+
+
+
