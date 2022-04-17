@@ -1,9 +1,25 @@
 package com.zaomengjia.stock.service.impl;
 
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.net.URLDecoder;
+import cn.hutool.core.text.csv.CsvWriter;
+import cn.hutool.jwt.JWT;
+import com.alibaba.fastjson.JSON;
+import com.zaomengjia.common.dao.WeixinUserMapper;
+import com.zaomengjia.common.entity.User;
+import com.zaomengjia.common.entity.WeixinUser;
 import com.zaomengjia.common.service.StockSimpleService;
+import com.zaomengjia.common.utils.MD5Utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.stream.IntStream;
 
 /**
  * @author orangeboyChen
@@ -12,28 +28,5 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 class MQServiceImplTest {
-//    @Autowired
-//    private MQServiceImpl mqService;
 
-    @Autowired
-    private StockSimpleService stockSimpleService;
-
-//    @Test
-//    void test() throws InterruptedException {
-//        Order order = new Order();
-//        order.setStatus(false);
-//        order.setId(UuidUtils.generateUuid());
-//        order.setFinancialProductId("test");
-//        order.setSeckillActivityId("test");
-//        order.setQuantity(1);
-//        order.setUserId("test");
-////        mqService.saveOrder(order);
-//    }
-
-    @Test
-    void test() {
-//        stockSimpleService.deleteTokenBucket("f3", "s1");
-//        stockSimpleService.addTokenBucket("f3", "s1", 1000000);
-//        stockSimpleService.setStock("f3", "s1", 10);
-    }
 }

@@ -21,6 +21,7 @@ import java.util.Objects;
  * @version 1.0
  * @date 2022/4/7 22:02
  */
+//Todo
 @Entity(name = "weixin_user")
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 @SQLDelete(sql = "update `weixin_user` set `deleted`= 1 where `id` = ?")
