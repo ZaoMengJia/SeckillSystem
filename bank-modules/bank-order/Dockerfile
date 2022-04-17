@@ -2,4 +2,4 @@ FROM java:8
 ADD target/*.jar app.jar
 VOLUME /tmp
 EXPOSE 8090
-ENTRYPOINT ["java", "-Xmx256m", "Xmx256m", "-jar", "app.jar", "--spring.profiles.active=common-prod,prod"]
+ENTRYPOINT ["java", "-Xmx256m", "-Xmx256m", "-jar", "app.jar", "--spring.profiles.active=common-prod,prod"]

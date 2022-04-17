@@ -2,4 +2,4 @@ FROM java:8
 ADD target/*.jar app.jar
 VOLUME /tmp
 EXPOSE 8001
-ENTRYPOINT ["java", "-Xmx256m", "Xmx256m", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xmx256m", "-Xmx256m", "-jar", "app.jar"]
