@@ -45,7 +45,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="quantity" label="购买数量" width="100"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间">
+            <el-table-column prop="createTime" label="创建时间" width="100">
               <template slot-scope="scope">
                 <span>{{new Date(scope.row.createTime).Format('yyyy-MM-dd hh:mm:ss')}}</span>
               </template>
