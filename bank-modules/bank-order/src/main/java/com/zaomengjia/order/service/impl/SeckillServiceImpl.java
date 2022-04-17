@@ -5,6 +5,7 @@ import com.zaomengjia.common.dao.SeckillActivityMapper;
 import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.entity.SeckillActivity;
+import com.zaomengjia.common.service.SeckillActivitySimpleService;
 import com.zaomengjia.common.vo.bank.SaleProductVO;
 import com.zaomengjia.common.vo.bank.SeckillActivityDetailVO;
 import com.zaomengjia.common.vo.bank.SeckillActivityVO;
@@ -34,12 +35,15 @@ public class SeckillServiceImpl implements SeckillService {
 
     private final SaleProductDetailMapper saleProductDetailMapper;
 
+//    private final SeckillActivitySimpleService seckillActivitySimpleService;
+
     private final OrderService orderService;
 
     public SeckillServiceImpl(
             SeckillActivityMapper seckillActivityMapper,
             @Lazy OrderService orderService,
-            SaleProductDetailMapper saleProductDetailMapper
+            SaleProductDetailMapper saleProductDetailMapper,
+            SeckillActivitySimpleService seckillActivitySimpleService
     ) {
         this.seckillActivityMapper = seckillActivityMapper;
         this.orderService = orderService;

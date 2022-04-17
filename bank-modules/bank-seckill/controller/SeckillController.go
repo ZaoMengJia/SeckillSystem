@@ -54,6 +54,18 @@ func GetSeckillSecretUrl(ctx *gin.Context) {
 		return
 	}
 
+	//判断用户权限
+	verifyResult, err := orderService.VerifyUserAudit(userId)
+	if err != nil {
+		response.Error(ctx, response.ResultCodePermissionDenied)
+		return
+	}
+
+	if !verifyResult {
+		response.Error(ctx, response.ResultCodePermissionDenied)
+		return
+	}
+
 	pathKey := viper.GetString("seckill.path-key")
 	correctPathByte := md5.Sum([]byte(seckillActivityId + userId + pathKey))
 	correctPath := fmt.Sprintf("%x", correctPathByte)
@@ -78,6 +90,18 @@ func Seckill(ctx *gin.Context) {
 	payloadBase64 := strings.Split(token, ".")[1]
 	payloadStr, _ := base64.StdEncoding.DecodeString(payloadBase64)
 	userId := jsoniter.Get(payloadStr, "userId").ToString()
+
+	//判断用户权限
+	verifyResult, err := orderService.VerifyUserAudit(userId)
+	if err != nil {
+		response.Error(ctx, response.ResultCodePatternError)
+		return
+	}
+
+	if !verifyResult {
+		response.Error(ctx, response.ResultCodePermissionDenied)
+		return
+	}
 
 	//判断path是不是正确的
 	pathKey := viper.GetString("seckill.path-key")
@@ -110,7 +134,7 @@ func getUserIdFromJwtPayload(jwt string) (string, error) {
 	}
 
 	payloadBase64 := split[1]
-	payloadStr, err := base64.StdEncoding.DecodeString(payloadBase64)
+	payloadStr, err := base64.RawStdEncoding.DecodeString(payloadBase64)
 	if err != nil {
 		return "", err
 	}

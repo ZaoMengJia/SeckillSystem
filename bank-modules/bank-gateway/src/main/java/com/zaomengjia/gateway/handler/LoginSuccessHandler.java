@@ -43,14 +43,14 @@ public class LoginSuccessHandler implements ServerAuthenticationSuccessHandler {
         if(details instanceof WeixinUser) {
             WeixinUser weixinUser = (WeixinUser) details;
             userId = weixinUser.getId();
-            jwt = jwtUtils.getJwt(Collections.singletonList(AuthorityGroup.USER), userId);
+            jwt = jwtUtils.getWeixinJwt(Collections.singletonList(AuthorityGroup.USER), userId, weixinUser.getAudit());
             json.put("openId", weixinUser.getOpenid());
         }
         else {
             AdminUser user = (AdminUser) authentication.getDetails();
             AuthorityGroup authorityGroup = AuthorityGroup.ADMIN;
             userId = user.getId();
-            jwt = jwtUtils.getJwt(Collections.singletonList(authorityGroup), userId);
+            jwt = jwtUtils.getAdminJwt(Collections.singletonList(authorityGroup), userId);
         }
 
 

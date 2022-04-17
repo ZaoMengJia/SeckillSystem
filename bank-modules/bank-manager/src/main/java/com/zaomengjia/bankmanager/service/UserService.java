@@ -2,6 +2,7 @@ package com.zaomengjia.bankmanager.service;
 
 import com.zaomengjia.bankmanager.dto.AdminUserDto;
 import com.zaomengjia.bankmanager.dto.WeixinUserDto;
+import com.zaomengjia.bankmanager.vo.WeixinUserDetailVO;
 import com.zaomengjia.common.vo.page.PageVO;
 import com.zaomengjia.common.vo.user.AdminUserVO;
 import com.zaomengjia.common.vo.user.WeixinUserVO;
@@ -16,13 +17,13 @@ public interface UserService {
 
     PageVO<AdminUserVO> getAdminUserList(int pageNum, int pageSize);
 
-    PageVO<WeixinUserVO> getWeixinUserList(int pageNum, int pageSize);
+    PageVO<WeixinUserDetailVO> getWeixinUserList(int pageNum, int pageSize);
 
     AdminUserVO getAdminUserByUsername(String username);
 
-    PageVO<WeixinUserVO> searchWeixinUserByNickname(String nickname, int pageNum, int pageSize);
+    PageVO<WeixinUserDetailVO> searchWeixinUserByNickname(String nickname, int pageNum, int pageSize);
 
-    PageVO<WeixinUserVO> searchWeixinUserByRealName(String keyword, int pageNum, int pageSize);
+    PageVO<WeixinUserDetailVO> searchWeixinUserByRealName(String keyword, int pageNum, int pageSize);
 
     PageVO<AdminUserVO> searchAdminUserByUsername(String keyword, int pageNum, int pageSize);
 

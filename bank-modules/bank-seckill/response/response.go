@@ -60,6 +60,10 @@ var (
 		code:    30013,
 		message: "活动未开始",
 	}
+	ResultCodePermissionDenied = ResultCode{
+		code:    30050,
+		message: "您未通过抢购资格审核",
+	}
 
 	ResultCodeTokenExpired = ResultCode{
 		code:    40002,

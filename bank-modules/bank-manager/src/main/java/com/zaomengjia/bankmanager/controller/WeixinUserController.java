@@ -2,6 +2,7 @@ package com.zaomengjia.bankmanager.controller;
 
 import com.zaomengjia.bankmanager.dto.WeixinUserDto;
 import com.zaomengjia.bankmanager.service.UserService;
+import com.zaomengjia.bankmanager.vo.WeixinUserDetailVO;
 import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.exception.AppException;
 import com.zaomengjia.common.utils.ResultUtils;
@@ -33,7 +34,7 @@ public class WeixinUserController {
     @Operation(summary = "获取列表")
     @GetMapping
     public ResultVO<?> getWeixinUser(@RequestParam int pageNum, @RequestParam int pageSize) {
-        PageVO<WeixinUserVO> result = userService.getWeixinUserList(pageNum, pageSize);
+        PageVO<WeixinUserDetailVO> result = userService.getWeixinUserList(pageNum, pageSize);
         return ResultUtils.success(result);
     }
 
@@ -43,7 +44,7 @@ public class WeixinUserController {
                                         @RequestParam @Parameter(description = "nickname - 根据昵称搜索; realName - 根据真实姓名搜索") String type,
                                         @RequestParam int pageNum,
                                         @RequestParam int pageSize) {
-        PageVO<WeixinUserVO> result;
+        PageVO<WeixinUserDetailVO> result;
 
         switch (type) {
             case "nickname":

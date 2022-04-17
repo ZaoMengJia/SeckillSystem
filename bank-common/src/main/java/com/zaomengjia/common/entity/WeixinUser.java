@@ -66,13 +66,13 @@ public class WeixinUser {
     private int deleted;
 
     @Column(name = "has_job")
-    private boolean hasJob;
+    private Boolean hasJob;
 
     @Column(name = "overdue_record")
-    private int overdueRecord;
+    private Integer overdueRecord;
 
     @Column(name = "is_discredit")
-    private boolean isDiscredit;
+    private Boolean isDiscredit;
 
     @Column(name = "audit")
     private int audit = 0;

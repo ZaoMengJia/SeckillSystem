@@ -9,8 +9,10 @@ import lombok.Data;
  */
 @Data
 public class WeixinUserDto {
-    private String nickname;
     private String realName;
     private String idCard;
-    private Integer gender;
+    private int gender;
+    private Boolean hasJob;
+    private Boolean isDiscredit;
+    private int overdueRecord;
 }

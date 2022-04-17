@@ -4,6 +4,7 @@ import com.zaomengjia.common.constant.ResultCode;
 import com.zaomengjia.common.dao.WeixinUserMapper;
 import com.zaomengjia.common.entity.WeixinUser;
 import com.zaomengjia.common.exception.AppException;
+import com.zaomengjia.common.utils.RedisUtils;
 import com.zaomengjia.common.vo.user.WeixinUserVO;
 import com.zaomengjia.order.dto.UserInfoDto;
 import com.zaomengjia.order.service.UserService;
@@ -24,8 +25,11 @@ public class UserServiceImpl implements UserService {
 
     private final WeixinUserMapper weixinUserMapper;
 
-    public UserServiceImpl(WeixinUserMapper weixinUserMapper) {
+    private final RedisUtils redisUtils;
+
+    public UserServiceImpl(WeixinUserMapper weixinUserMapper, RedisUtils redisUtils) {
         this.weixinUserMapper = weixinUserMapper;
+        this.redisUtils = redisUtils;
     }
 
     @Override
@@ -59,6 +63,7 @@ public class UserServiceImpl implements UserService {
             return Pair.of(false, false);
         }
 
+        redisUtils.set("user-audit::" + userId, user.getAudit());
         isRegister = !StringUtil.isNullOrEmpty(user.getRealName() + user.getIdCard());
         isAudited = user.getAudit() != 0;
         return Pair.of(isRegister, isAudited);

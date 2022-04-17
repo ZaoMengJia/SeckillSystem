@@ -37,6 +37,20 @@ func (*OrderService) GetCacheOrder(orderId string) *string {
 	return &order.Status
 }
 
+func (*OrderService) VerifyUserAudit(userId string) (bool, error) {
+	result, err := common.RedisTemplate.Get("user-audit::" + userId).Int()
+	if err != nil {
+		if err == redis.Nil {
+			return false, &response.AppException{ExceptionType: response.ResultCodeTokenError}
+		} else {
+			panic(err)
+			return false, &response.AppException{ExceptionType: response.ResultCodeInternalServerError}
+		}
+	}
+
+	return result != 0, nil
+}
+
 func (r *OrderService) CreateOrder(userId string, seckillActivityId string, financialProductId string) (string, error) {
 	//判读活动存不存在
 	result := detailService.FindSaleProductByFinancialProductIdAndSeckillActivityId(financialProductId, seckillActivityId)

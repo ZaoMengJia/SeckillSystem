@@ -17,14 +17,21 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author orangeboyChen
@@ -47,7 +54,6 @@ public class WeixinLoginManager implements ReactiveAuthenticationManager {
     public WeixinLoginManager(WeixinUserMapper weixinUserMapper) {
         this.weixinUserMapper = weixinUserMapper;
     }
-
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) throws AuthenticationException {

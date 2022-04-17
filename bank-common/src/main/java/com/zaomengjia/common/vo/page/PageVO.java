@@ -23,4 +23,11 @@ public class PageVO<T> {
         pageTotal = page.getTotalPages();
         total = page.getTotalElements();
     }
+
+    public PageVO(List<T> data, int pageNum, int pageTotal, long total) {
+        this.data = data;
+        this.pageNum = pageNum;
+        this.pageTotal = pageTotal;
+        this.total = total;
+    }
 }
