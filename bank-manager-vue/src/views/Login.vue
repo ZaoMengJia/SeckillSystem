@@ -43,10 +43,11 @@ export default {
     return {
       username: '',
       password: '',
-      backgroundImageUrl: '',
+      backgroundImageUrl: "https://side-effect-1302668817.cos.ap-nanjing.myqcloud.com/95b7eb2d61a47da96895e46f3c146626.jpg?q-sign-algorithm=sha1&q-ak=AKIDXIjg8PDGjnBktc-082UE2vmQxrPsu-fzQ0qpxiR0UdME7anvqiOPDuXYtsSMaYMe&q-sign-time=1650213313;1650216913&q-key-time=1650213313;1650216913&q-header-list=&q-url-param-list=&q-signature=f5df172b399a7a6514c1dfcebd01a70ab681f371&x-cos-security-token=9ITkORePuz7IBfBdhi8QIJ2L2sOb5sladc86f8456b9438a71fb138e88c8ee258jpChbaeQND6NlsgSlfMxP_Vm6k76HTJCTVSraHctyiBrGvQQGdv-egWWSvkSDdGO9_5lFaidRaLYiEa3N3pwPyFU-gBuZAmDQCDwnlutT6iW__wskuohC118RZrkcZtUhkVquLcWD8He1CFMr0vtQX1h0LT5llS5mSZtYIl1tgnZDp5FzUuX3phY3fSHIJBB",
       urls: [
-        'https://side-effect-1302668817.cos.ap-nanjing.myqcloud.com/95b7eb2d61a47da96895e46f3c146626.jpg?q-sign-algorithm=sha1&q-ak=AKIDtYa2Y-py_6BJ7B4JT7slK78OpcGlRwGnGSZuyaUDOYSnq9kFApw-v10qXORM0OQ3&q-sign-time=1650206662;1650210262&q-key-time=1650206662;1650210262&q-header-list=&q-url-param-list=&q-signature=10e3f6d4b061ec28dc1730cc487654ca84de307f&x-cos-security-token=XDndFlnRpDFCDV4SQ1wAP5GmRShni4ja83c6ff1cbf48f9f491061b8ad49fa799nqCtOLuIWDJh-Ypoy4HaogV2IRWvwxpfqYyr3vzrSan3u4YlMZ_mVIRSFNXCuK9ye3PFJDcnLh9sevJJoRAHmpdbei_3FRJPm9FecDf-92gpaRxCM4Vm7Gb64A-aRqrtBY2zrmBuvIRL1XS1EIGdlRrdH37mqCN87FjIFG11gb4InhcpD8loYuJhDrMoGvFk',
-        'https://side-effect-1302668817.cos.ap-nanjing.myqcloud.com/95c792350b95d591faae76011415339c.png?q-sign-algorithm=sha1&q-ak=AKIDd-ZBSkbGEC5T97ak7gL5yyGswP2Ppyl-pwZBfoWTe-JzuHdzCVrivd80DfTCz7vw&q-sign-time=1650206710;1650210310&q-key-time=1650206710;1650210310&q-header-list=&q-url-param-list=&q-signature=daf93d9cdfeab05e1de9d15bdd688a018ba02a79&x-cos-security-token=XDndFlnRpDFCDV4SQ1wAP5GmRShni4ja02d0057052b5a669cf7c79aabec19974nqCtOLuIWDJh-Ypoy4HaojdcdLFw8y4U8u0CPUHVkaxouQ0tG70zYGkf_wrN59WZqa6moZjk9Jq4pPvAg4o7x1K1pRC5x2L2Mf-r1JGLBgqQCrszrKgX9fm4-hfwZvkWKfD6uY_5L02cIy9dGQ8kW8ldleSOW_A-zWMX_335Swrn7l9ONzD2bg11tFYEGqFR'
+          "https://side-effect-1302668817.cos.ap-nanjing.myqcloud.com/95b7eb2d61a47da96895e46f3c146626.jpg?q-sign-algorithm=sha1&q-ak=AKIDXIjg8PDGjnBktc-082UE2vmQxrPsu-fzQ0qpxiR0UdME7anvqiOPDuXYtsSMaYMe&q-sign-time=1650213313;1650216913&q-key-time=1650213313;1650216913&q-header-list=&q-url-param-list=&q-signature=f5df172b399a7a6514c1dfcebd01a70ab681f371&x-cos-security-token=9ITkORePuz7IBfBdhi8QIJ2L2sOb5sladc86f8456b9438a71fb138e88c8ee258jpChbaeQND6NlsgSlfMxP_Vm6k76HTJCTVSraHctyiBrGvQQGdv-egWWSvkSDdGO9_5lFaidRaLYiEa3N3pwPyFU-gBuZAmDQCDwnlutT6iW__wskuohC118RZrkcZtUhkVquLcWD8He1CFMr0vtQX1h0LT5llS5mSZtYIl1tgnZDp5FzUuX3phY3fSHIJBB",
+          "https://side-effect-1302668817.cos.ap-nanjing.myqcloud.com/20760b79fccca8b41e5b5b3c10802155b85aab25.jpg?q-sign-algorithm=sha1&q-ak=AKIDg852crmD3KjDFTKayhDy6KGt06cFjTWHw2xpKZOd6LxAHlKt7Es9L1_lvqhKxU6k&q-sign-time=1650213322;1650216922&q-key-time=1650213322;1650216922&q-header-list=&q-url-param-list=&q-signature=b1ef62043766fb7cceaa6ff436c0b5b51dee26ab&x-cos-security-token=9ITkORePuz7IBfBdhi8QIJ2L2sOb5sla24484de2713ccb368c97391a505b40c0jpChbaeQND6NlsgSlfMxP-1qBj7MhqD9HTclBy0kHlN8mwspBUBjH-aF35ihnMAhgxXZO1CClmykIudlUavBckD5dUNXbIkMnI_rQ_xCL-hY5xBKWn6iL79Lc0aJk3hyIfXx4xmVII2SLZZODu4ltfpihnzdJ471pBAfq_4r4qV375g81QokY3BzrgTxDvHJ",
+          "https://side-effect-1302668817.cos.ap-nanjing.myqcloud.com/20160910233049_emswi.jpeg?q-sign-algorithm=sha1&q-ak=AKID-eovuTw-Voh8d-eTIkAIQH0bNZ40aG11Ks8WYI8R5LhLgSMxlB6A31jFmtZVdz-q&q-sign-time=1650213334;1650216934&q-key-time=1650213334;1650216934&q-header-list=&q-url-param-list=&q-signature=1edc43bdbe2080a0ba40fd3b51a503769a60580d&x-cos-security-token=5O07AuGdlY8d2UwQ2ujDKGrEFvH2B1Fab4546d4d4c689fe66c999c2b215fe6d5VRoqTSTVXv5PvDnUbKzO5FrVwIbIIeVXV5Lj1XRD0c6hzw-iMzo5YgvDZc-gtEiCH6r8euFBvYEb5kdcCodnpdF72RZPmJLTnD4f8A9AHWquV_hj-SR1UxwpPc0NN2g_8XBziGRoCwmldBoML9npeJnDL5QpVXygsUkTAd5eXRC0cnsLeKBpwMsEJP6ZT2UL"
       ],
       ref: null
     }
@@ -56,7 +57,7 @@ export default {
       await this.$router.push('/')
       return
     }
-    let index = Math.floor(Math.random() * 6)
+    let index = Math.floor(Math.random() * 3)
     this.backgroundImageUrl = `url("${this.urls[index]}")`
     if (this.$route.query.ref) {
       this.ref = this.$route.query.ref
