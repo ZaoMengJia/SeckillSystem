@@ -89,7 +89,7 @@
                 >已通过</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="operate" label="操作">
+            <el-table-column prop="operate" label="操作" width="120">
               <template slot-scope="scope">
                 <el-button
                     type="primary"
