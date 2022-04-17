@@ -5,6 +5,7 @@ import com.zaomengjia.bankmanager.service.FinancialProductService;
 import com.zaomengjia.common.dao.FinancialProductMapper;
 import com.zaomengjia.common.dao.SaleProductDetailMapper;
 import com.zaomengjia.common.entity.FinancialProduct;
+import com.zaomengjia.common.service.FinancialProductSimpleService;
 import com.zaomengjia.common.utils.ModelUtils;
 import com.zaomengjia.common.vo.bank.FinancialProductVO;
 import com.zaomengjia.common.vo.page.PageVO;
@@ -26,27 +27,33 @@ public class FinancialProductServiceImpl implements FinancialProductService {
 
     private final SaleProductDetailMapper saleProductDetailMapper;
 
+    private final FinancialProductSimpleService financialProductSimpleService;
+
     private final ModelUtils modelUtils;
 
     public FinancialProductServiceImpl(
             FinancialProductMapper financialProductMapper,
             ModelUtils modelUtils,
-            SaleProductDetailMapper saleProductDetailMapper
+            SaleProductDetailMapper saleProductDetailMapper,
+            FinancialProductSimpleService financialProductSimpleService
     ) {
         this.financialProductMapper = financialProductMapper;
         this.modelUtils = modelUtils;
         this.saleProductDetailMapper = saleProductDetailMapper;
+        this.financialProductSimpleService = financialProductSimpleService;
     }
 
     @Override
     public PageVO<FinancialProductVO> getList(int pageNum, int pageSize) {
         Page<FinancialProduct> page = financialProductMapper.findAll(PageRequest.of(pageNum - 1, pageSize));
+        financialProductSimpleService.setCache(page.getContent());
         return new PageVO<>(page.map(modelUtils::toFinancialProductVO));
     }
 
     @Override
     public PageVO<FinancialProductVO> searchByName(String name, int pageNum, int pageSize) {
         Page<FinancialProduct> page = financialProductMapper.findByNameContaining(name, PageRequest.of(pageNum - 1, pageSize));
+        financialProductSimpleService.setCache(page.getContent());
         return new PageVO<>(page.map(modelUtils::toFinancialProductVO));
     }
 
@@ -57,6 +64,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
         entity.setPrice((int) (dto.getPrice() * 100));
 
         entity = financialProductMapper.save(entity);
+        financialProductSimpleService.setCache(entity);
         return entity.getId();
     }
 
@@ -70,6 +78,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
         entity.setName(dto.getName());
         entity.setPrice((int) (dto.getPrice() * 100));
         financialProductMapper.save(entity);
+        financialProductSimpleService.setCache(entity);
     }
 
     @Override
@@ -77,6 +86,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
     public void delete(String id) {
         financialProductMapper.deleteById(id);
         saleProductDetailMapper.deleteByFinancialProductId(id);
+        financialProductSimpleService.deleteCache(id);
     }
 
 
@@ -86,6 +96,7 @@ public class FinancialProductServiceImpl implements FinancialProductService {
         if(financialProduct == null){
             return null;
         }
+        financialProductSimpleService.setCache(financialProduct);
         FinancialProductVO vo = new FinancialProductVO();
         BeanUtils.copyProperties(financialProduct, vo);
         return vo;

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +33,12 @@ public class FinancialProductSimpleService {
     public FinancialProductSimpleService(FinancialProductMapper financialProductMapper, RedisUtils redisUtils) {
         this.financialProductMapper = financialProductMapper;
         this.redisUtils = redisUtils;
+    }
+
+    public void setCache(FinancialProduct financialProduct) {
+        String key = RedisKey.financialProductIdKey(financialProduct.getId());
+        redisUtils.set(key, financialProduct);
+
     }
 
     public FinancialProduct getFinancialProductEntity(String financialProductId) {
@@ -55,11 +62,8 @@ public class FinancialProductSimpleService {
         List<String> keyList = idList.stream().map(RedisKey::financialProductIdKey).collect(Collectors.toList());
         List<Object> object = redisUtils.multiGet(keyList);
         if(object != null) {
-            List<FinancialProduct> resultList = object.stream().map(c -> ((JSONObject) c).toJavaObject(FinancialProduct.class)).collect(Collectors.toList());
 
-            if(resultList.size() == idList.size()) {
-                return resultList;
-            }
+            return object.stream().filter(Objects::nonNull).map(c -> ((JSONObject) c).toJavaObject(FinancialProduct.class)).collect(Collectors.toList());
         }
 
         List<FinancialProduct> productList = financialProductMapper.findAllById(idList);
@@ -78,5 +82,10 @@ public class FinancialProductSimpleService {
                 c -> c
         ));
         redisUtils.multiSet(keyObjectMap);
+    }
+
+    public void deleteCache(String id) {
+        String key = RedisKey.financialProductIdKey(id);
+        redisUtils.del(key);
     }
 }

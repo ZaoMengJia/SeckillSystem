@@ -293,14 +293,13 @@ export default {
         type: "warning",
       })
           .then(async () => {
-            let [_, err] = await api.deleteProduct(row.id);
+            let [, err] = await api.deleteProduct(row.id);
             if (err != null) {
               this.$message.error(err.message);
               return;
             }
 
-            this.$message.info('已删除');
-            await this.get();
+            await this.getProductList();
           })
           .catch(() => {
           });

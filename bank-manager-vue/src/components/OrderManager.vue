@@ -34,14 +34,18 @@
             <el-table-column prop="weixinUser.nickname" label="用户昵称" width="100"></el-table-column>
             <el-table-column label="活动" width="200">
               <template slot-scope="scope">
-                <span>{{scope.row.seckillActivity.name}}</span><br>
-                <span>({{scope.row.seckillActivity.id}})</span>
+                <div v-if="scope.row.seckillActivity != null">
+                  <span>{{scope.row.seckillActivity.name}}</span><br>
+                  <span>({{scope.row.seckillActivity.id}})</span>
+                </div>
               </template>
             </el-table-column>
             <el-table-column label="产品" width="200">
               <template slot-scope="scope">
-                <span>{{scope.row.financialProduct.name}}</span><br>
-                <span>({{scope.row.financialProduct.id}})</span>
+                <div v-if="scope.row.financialProduct != null">
+                  <span>{{scope.row.financialProduct.name}}</span><br>
+                  <span>({{scope.row.financialProduct.id}})</span>
+                </div>
               </template>
             </el-table-column>
             <el-table-column prop="quantity" label="购买数量" width="100"></el-table-column>

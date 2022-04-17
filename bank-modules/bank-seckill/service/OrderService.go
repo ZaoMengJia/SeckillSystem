@@ -27,14 +27,16 @@ func (*OrderService) GetCacheOrder(orderId string) *string {
 	}
 	redisJson, err := common.RedisTemplate.Get(result).Result()
 
-	var order model.Order
-	err = json.Unmarshal([]byte(redisJson), &order)
+	//var order model.Order
+	var m map[string]interface{}
+	err = json.Unmarshal([]byte(redisJson), &m)
 	if err != nil {
 		panic(err)
 		return nil
 	}
 
-	return &order.Status
+	status := m["status"].(string)
+	return &status
 }
 
 func (*OrderService) VerifyUserAudit(userId string) (bool, error) {

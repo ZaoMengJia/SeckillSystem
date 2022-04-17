@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -79,6 +80,7 @@ public class StockServiceImpl implements StockService {
             //可以创建订单了
             needUpdateDetailMap.put(order.getFinancialProductId()+ "::" + order.getSeckillActivityId(), detail);
             String oldId = order.getId();
+            order.setCreateTime(new Date());
 
             //创建订单
             order = orderMapper.save(order);

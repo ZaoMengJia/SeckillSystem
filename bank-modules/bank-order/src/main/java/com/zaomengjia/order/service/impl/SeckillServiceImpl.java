@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -93,12 +94,15 @@ public class SeckillServiceImpl implements SeckillService {
                 .stream().collect(Collectors.toMap(FinancialProduct::getId, c -> c));
         return list.stream().map(c -> {
             FinancialProduct financialProduct = idFinancialProductMap.get(c.getFinancialProductId());
+            if(financialProduct == null) {
+                return null;
+            }
             return (SaleProductVO) new SaleProductVO()
                     .setQuantity(c.getQuantity())
                     .setPrice((double) financialProduct.getPrice() / 100)
                     .setId(financialProduct.getId())
                     .setName(financialProduct.getName());
-        }).collect(Collectors.toList());
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
