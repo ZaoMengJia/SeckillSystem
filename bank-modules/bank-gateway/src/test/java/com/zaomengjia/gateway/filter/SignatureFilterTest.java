@@ -1,59 +1,59 @@
-package com.zaomengjia.gateway.filter;
-
-import cn.hutool.core.codec.Base64;
-import cn.hutool.core.lang.UUID;
-import cn.hutool.core.net.URLDecoder;
-import cn.hutool.core.text.csv.CsvWriter;
-import com.alibaba.fastjson.JSON;
-import com.zaomengjia.common.dao.WeixinUserMapper;
-import com.zaomengjia.common.entity.WeixinUser;
-import com.zaomengjia.common.service.StockSimpleService;
-import com.zaomengjia.common.utils.MD5Utils;
-import com.zaomengjia.common.utils.RedisUtils;
-import com.zaomengjia.gateway.constant.AuthorityGroup;
-import com.zaomengjia.gateway.utils.JwtUtils;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.stream.IntStream;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-/**
- * @author orangeboyChen
- * @version 1.0
- * @date 2022/4/11 18:44
- */
-@SpringBootTest
-class SignatureFilterTest {
-
-
-    @Autowired
-    private StockSimpleService stockSimpleService;
-
-    @Autowired
-    private WeixinUserMapper weixinUserMapper;
-
-    @Autowired
-    private RedisUtils redisUtils;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
-    @Autowired
-    private EntityManager entityManager;
-
-
-
+//package com.zaomengjia.gateway.filter;
+//
+//import cn.hutool.core.codec.Base64;
+//import cn.hutool.core.lang.UUID;
+//import cn.hutool.core.net.URLDecoder;
+//import cn.hutool.core.text.csv.CsvWriter;
+//import com.alibaba.fastjson.JSON;
+//import com.zaomengjia.common.dao.WeixinUserMapper;
+//import com.zaomengjia.common.entity.WeixinUser;
+//import com.zaomengjia.common.service.StockSimpleService;
+//import com.zaomengjia.common.utils.MD5Utils;
+//import com.zaomengjia.common.utils.RedisUtils;
+//import com.zaomengjia.gateway.constant.AuthorityGroup;
+//import com.zaomengjia.gateway.utils.JwtUtils;
+//import org.junit.jupiter.api.Test;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.test.annotation.Commit;
+//import org.springframework.test.annotation.Rollback;
+//import org.springframework.transaction.annotation.Transactional;
+//
+//import javax.persistence.EntityManager;
+//import javax.persistence.EntityManagerFactory;
+//import java.nio.charset.StandardCharsets;
+//import java.text.MessageFormat;
+//import java.util.*;
+//import java.util.stream.IntStream;
+//
+//import static org.junit.jupiter.api.Assertions.*;
+//
+///**
+// * @author orangeboyChen
+// * @version 1.0
+// * @date 2022/4/11 18:44
+// */
+//@SpringBootTest
+//class SignatureFilterTest {
+//
+//
+//    @Autowired
+//    private StockSimpleService stockSimpleService;
+//
+//    @Autowired
+//    private WeixinUserMapper weixinUserMapper;
+//
+//    @Autowired
+//    private RedisUtils redisUtils;
+//
+//    @Autowired
+//    private JwtUtils jwtUtils;
+//
+//    @Autowired
+//    private EntityManager entityManager;
+//
+//
+//
 //    @Test
 //    @Transactional
 //    @Rollback(value = false)
@@ -68,7 +68,7 @@ class SignatureFilterTest {
 //        StringBuffer sb = new StringBuffer();
 //        sb.append("insert `weixin_user`(`id`,audit,avatar_url,create_time,deleted,gender,has_job,id_card,is_discredit,nickname,openid,overdue_record,real_name,update_time) values");
 //
-//        IntStream.rangeClosed(1, 10000).forEach(c -> {
+//        IntStream.rangeClosed(1, 100000).forEach(c -> {
 //            WeixinUser weixinUser = new WeixinUser();
 //            weixinUser.setId(UUID.fastUUID().toString(true));
 //            weixinUser.setOpenid(UUID.fastUUID().toString(true));
@@ -118,4 +118,4 @@ class SignatureFilterTest {
 //        String md5 = MD5Utils.toMD5(input);
 //        return Base64.encode(md5).replaceAll("[=/+]", "");
 //    }
-}
+//}

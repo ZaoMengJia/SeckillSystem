@@ -66,5 +66,5 @@ jobs:
             fi
             
             docker pull registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-gateway:latest
-            docker run --add-host=host.docker.internal:host-gateway --name zmj-gateway -p 8888:8888 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-gateway:latest
+            docker run --add-host=host.docker.internal:host-gateway --name zmj-gateway -p 8811:8811 -d registry.cn-shenzhen.aliyuncs.com/orangeboy/zmj-gateway:latest
             docker ps -a | grep zmj-gateway

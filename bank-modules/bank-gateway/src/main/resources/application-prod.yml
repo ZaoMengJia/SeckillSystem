@@ -9,7 +9,7 @@ weixin:
   secret: 0728701dbff0f9d33e29e65d59e57147
 
 server:
-  port: 8888
+  port: 8811
 
 
 spring:
