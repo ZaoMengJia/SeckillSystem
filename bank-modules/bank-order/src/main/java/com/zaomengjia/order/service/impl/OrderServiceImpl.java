@@ -208,7 +208,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<FinancialProduct> getFinancialProductEntityList(List<String> idList) {
-        return financialProductMapper.findAllById(idList);
+        return financialProductSimpleService.getCacheByList(idList);
     }
 
     @Override

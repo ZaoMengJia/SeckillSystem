@@ -1,7 +1,7 @@
 auth:
   app-key: IZe37zbJnGpPrZ5u
   secret: 123
-  expired-time: 3000
+  expired-time: 20000
   sign-expired-time: 60 # 分
 
 weixin:
@@ -44,7 +44,7 @@ spring:
         - id: bank-seckill-service2
           uri: lb://bank-seckill
           predicates:
-            - Path=/weixin/seckill/order/**,/weixin/seckill/url**,/weixin/seckill/order/status/**
+            - Path=/weixin/seckill/order/**,/weixin/seckill/url/**,/weixin/seckill/order/status/**
         - id: bank-order-service-2
           uri: lb://bank-order
           predicates:

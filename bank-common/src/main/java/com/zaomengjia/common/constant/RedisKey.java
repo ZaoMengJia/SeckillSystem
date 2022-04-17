@@ -13,6 +13,10 @@ public final class RedisKey {
         return "sale-product-detail-activity-id-product-id-key-map";
     }
 
+    public static String saleProductDetailActivityIdKeyMap(String seckillActivityId) {
+        return "sale-product-detail-activity-id-key-map::" + seckillActivityId;
+    }
+
     public static String seckillActivityKey(String id) {
         return "seckill-activity::" + id;
     }
@@ -51,5 +55,9 @@ public final class RedisKey {
 
     public static String[] getSaleProductDetailKeyComponents(String key) {
         return key.split("::");
+    }
+
+    public static String financialProductIdKey(String id) {
+        return "financial-product::" + id;
     }
 }

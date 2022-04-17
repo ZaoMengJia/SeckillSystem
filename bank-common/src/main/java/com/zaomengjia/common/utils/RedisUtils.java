@@ -105,6 +105,10 @@ public final class RedisUtils {
         return key == null ? null : redisTemplate.opsForValue().get(key);
     }
 
+    public List<Object> multiGet(List<String> key) {
+        return redisTemplate.opsForValue().multiGet(key);
+    }
+
     /**
      * 普通缓存放入
      *
@@ -121,6 +125,7 @@ public final class RedisUtils {
             return false;
         }
     }
+
 
 
     /**

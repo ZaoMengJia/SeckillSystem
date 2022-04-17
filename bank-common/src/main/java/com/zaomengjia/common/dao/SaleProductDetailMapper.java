@@ -21,8 +21,13 @@ public interface SaleProductDetailMapper extends JpaRepository<SaleProductDetail
 
     List<SaleProductDetail> findBySeckillActivityId(String seckillActivityId);
 
+    @Query("update sale_product_detail s set s.deleted = 1 where s.seckillActivityId = ?1 and s.financialProductId = ?2")
+    @Modifying
+    @Transactional
     void deleteBySeckillActivityIdAndFinancialProductId(String seckillActivityId, String finalProductId);
 
+    @Query("update sale_product_detail s set s.deleted = 1 where s.financialProductId = ?1")
+    @Modifying
     @Transactional
     void deleteByFinancialProductId(String financialProductId);
 

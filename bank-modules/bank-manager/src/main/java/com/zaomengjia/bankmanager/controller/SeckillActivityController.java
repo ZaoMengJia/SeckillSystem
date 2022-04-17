@@ -103,7 +103,7 @@ public class SeckillActivityController {
     @DeleteMapping("/product/{seckillActivityId}/{financialProductId}")
     @Operation(summary = "删除商品")
     public ResultVO<?> deleteProduct(@PathVariable String seckillActivityId, @PathVariable String financialProductId) {
-        saleProductService.delete(seckillActivityId, financialProductId);
+        saleProductService.delete(financialProductId, seckillActivityId);
         return ResultUtils.success();
     }
 

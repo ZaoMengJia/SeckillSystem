@@ -5,6 +5,7 @@ import com.zaomengjia.common.dao.SeckillActivityMapper;
 import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.entity.SeckillActivity;
+import com.zaomengjia.common.service.SaleProductDetailSimpleService;
 import com.zaomengjia.common.service.SeckillActivitySimpleService;
 import com.zaomengjia.common.vo.bank.SaleProductVO;
 import com.zaomengjia.common.vo.bank.SeckillActivityDetailVO;
@@ -35,7 +36,9 @@ public class SeckillServiceImpl implements SeckillService {
 
     private final SaleProductDetailMapper saleProductDetailMapper;
 
-//    private final SeckillActivitySimpleService seckillActivitySimpleService;
+    private final SaleProductDetailSimpleService saleProductDetailSimpleService;
+
+    private final SeckillActivitySimpleService seckillActivitySimpleService;
 
     private final OrderService orderService;
 
@@ -43,11 +46,14 @@ public class SeckillServiceImpl implements SeckillService {
             SeckillActivityMapper seckillActivityMapper,
             @Lazy OrderService orderService,
             SaleProductDetailMapper saleProductDetailMapper,
-            SeckillActivitySimpleService seckillActivitySimpleService
+            SeckillActivitySimpleService seckillActivitySimpleService,
+            SaleProductDetailSimpleService saleProductDetailSimpleService
     ) {
         this.seckillActivityMapper = seckillActivityMapper;
         this.orderService = orderService;
         this.saleProductDetailMapper = saleProductDetailMapper;
+        this.seckillActivitySimpleService = seckillActivitySimpleService;
+        this.saleProductDetailSimpleService = saleProductDetailSimpleService;
     }
 
     @Override
@@ -103,14 +109,21 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Override
     public SeckillActivityDetailVO getSeckillActivityDetail(String id) {
-        Optional<SeckillActivity> optional = seckillActivityMapper.findById(id);
-        if(!optional.isPresent()) {
-            return null;
+        SeckillActivity seckillActivity = seckillActivitySimpleService.getCache(id);
+        if(seckillActivity == null) {
+            Optional<SeckillActivity> optional = seckillActivityMapper.findById(id);
+            if(!optional.isPresent()) {
+                return null;
+            }
+            seckillActivity = optional.get();
+            seckillActivitySimpleService.setCache(seckillActivity);
         }
-        SeckillActivity seckillActivity = optional.get();
+
         SeckillActivityDetailVO result = new SeckillActivityDetailVO();
 
-        List<SaleProductDetail> saleProductDetail = saleProductDetailMapper.findBySeckillActivityId(id);
+
+
+        List<SaleProductDetail> saleProductDetail = saleProductDetailSimpleService.findBySeckillActivityId(id);
 
         result.setProductList(modelToVO(saleProductDetail));
         result.setId(seckillActivity.getId());

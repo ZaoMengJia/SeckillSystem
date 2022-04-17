@@ -11,10 +11,11 @@ import com.zaomengjia.common.entity.FinancialProduct;
 import com.zaomengjia.common.entity.SaleProductDetail;
 import com.zaomengjia.common.entity.SeckillActivity;
 import com.zaomengjia.common.exception.AppException;
+import com.zaomengjia.common.service.FinancialProductSimpleService;
+import com.zaomengjia.common.service.SaleProductDetailSimpleService;
 import com.zaomengjia.common.service.SeckillActivitySimpleService;
 import com.zaomengjia.common.service.StockSimpleService;
 import com.zaomengjia.common.utils.ModelUtils;
-import com.zaomengjia.common.vo.bank.FinancialProductVO;
 import com.zaomengjia.common.vo.bank.SaleProductVO;
 import com.zaomengjia.common.vo.bank.SeckillActivityVO;
 import com.zaomengjia.common.vo.page.PageVO;
@@ -47,13 +48,19 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
 
     private final SeckillActivitySimpleService seckillActivitySimpleService;
 
+    private final SaleProductDetailSimpleService saleProductDetailSimpleService;
+
+    private final FinancialProductSimpleService financialProductSimpleService;
+
     public SeckillActivityServiceImpl(
             SeckillActivityMapper seckillActivityMapper,
             ModelUtils modelUtils,
             SaleProductDetailMapper saleProductDetailMapper,
             FinancialProductMapper financialProductMapper,
             StockSimpleService stockSimpleService,
-            SeckillActivitySimpleService seckillActivitySimpleService
+            SeckillActivitySimpleService seckillActivitySimpleService,
+            SaleProductDetailSimpleService saleProductDetailSimpleService,
+            FinancialProductSimpleService financialProductSimpleService
     ) {
         this.seckillActivityMapper = seckillActivityMapper;
         this.modelUtils = modelUtils;
@@ -61,6 +68,8 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
         this.financialProductMapper = financialProductMapper;
         this.stockSimpleService = stockSimpleService;
         this.seckillActivitySimpleService = seckillActivitySimpleService;
+        this.saleProductDetailSimpleService = saleProductDetailSimpleService;
+        this.financialProductSimpleService = financialProductSimpleService;
     }
 
 
@@ -71,6 +80,9 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
                 SaleProductDetail::getFinancialProductId,
                 a -> a
         ));
+
+        saleProductDetailSimpleService.setSeckillActivityIdProductMapBySeckillActivityId(seckillActivity.getId(), list);
+        financialProductSimpleService.setCache(productList);
 
         List<SaleProductVO> saleProductList = productList.stream().map(p -> {
             SaleProductVO saleProductVO = new SaleProductVO();

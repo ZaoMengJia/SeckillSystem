@@ -158,6 +158,10 @@ export default {
         method: 'delete',
         url: `/web/product/${id}`
     }),
+    deleteActivityProduct: async (seckillActivityId, financialProductId) => request({
+        method: 'delete',
+        url: `/web/seckill/product/${seckillActivityId}/${financialProductId}`
+    }),
     setWeixinUserAudit: async (id, audit) => request({
         method: 'post',
         url: `/web/weixin-user/audit/${id}`,

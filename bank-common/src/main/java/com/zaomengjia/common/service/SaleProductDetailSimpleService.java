@@ -10,7 +10,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.zaomengjia.common.constant.RedisKey.*;
 
@@ -88,11 +92,44 @@ public class SaleProductDetailSimpleService {
         return detail;
     }
 
+    public void setSeckillActivityIdProductMapBySeckillActivityId(String seckillActivityId, List<SaleProductDetail> detailList) {
+        String setKey = saleProductDetailActivityIdKeyMap(seckillActivityId);
+        List<String> saleProductDetailKeyList = detailList.stream().map(c -> saleProductDetailKey(c.getId(), c.getFinancialProductId(), c.getSeckillActivityId())).collect(Collectors.toList());
+
+        redisUtils.del(setKey);
+        if(saleProductDetailKeyList.size() > 0) {
+            redisUtils.sSet(setKey, saleProductDetailKeyList.toArray());
+        }
+    }
+
+    public List<SaleProductDetail> findBySeckillActivityId(String seckillActivityId) {
+        String setKey = saleProductDetailActivityIdKeyMap(seckillActivityId);
+        Set<Object> keySet = redisUtils.sGet(setKey);
+        if(keySet != null) {
+            List<String> keyList = keySet.stream().map(o -> (String) o).collect(Collectors.toList());
+            List<Object> valueList = redisUtils.multiGet(keyList);
+            if(valueList != null) {
+                return valueList.stream().filter(Objects::nonNull).map(c -> ((JSONObject)c).toJavaObject(SaleProductDetail.class)).collect(Collectors.toList());
+            }
+        }
+
+        List<SaleProductDetail> detailList = saleProductDetailMapper.findBySeckillActivityId(seckillActivityId);
+        List<String> saleProductDetailKeyList = detailList.stream().map(c -> saleProductDetailKey(c.getId(), c.getFinancialProductId(), c.getSeckillActivityId())).collect(Collectors.toList());
+        redisUtils.del(setKey);
+        redisUtils.sSet(setKey, saleProductDetailKeyList.toArray());
+        return detailList;
+    }
+
     @Transactional
     public void save(SaleProductDetail detail) {
         detail = saleProductDetailMapper.save(detail);
-        redisUtils.set(saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId()), detail);
+        String key = saleProductDetailKey(detail.getId(), detail.getFinancialProductId(), detail.getSeckillActivityId());
+        redisUtils.set(key, detail);
         setKey(detail);
+
+        //设置缓存
+        String setKey = saleProductDetailActivityIdKeyMap(detail.getSeckillActivityId());
+        redisUtils.sSet(setKey, key);
 
         //重设库存
         stockSimpleService.updateTokenBucket(detail.getFinancialProductId(), detail.getSeckillActivityId(), detail.getQuantity());
@@ -100,11 +137,16 @@ public class SaleProductDetailSimpleService {
     }
 
 
+    @Transactional
     public void deleteByFinancialProductIdAndSeckillActivityId(String financialProductId, String seckillActivityId) {
         saleProductDetailMapper.deleteBySeckillActivityIdAndFinancialProductId(seckillActivityId, financialProductId);
 
         String key = getKey(seckillActivityId, financialProductId);
-        redisUtils.del(key);
+        if(key != null) {
+            redisUtils.del(key);
+            redisUtils.setRemove(saleProductDetailActivityIdKeyMap(seckillActivityId), key);
+
+        }
         stockSimpleService.deleteStock(financialProductId, seckillActivityId);
         stockSimpleService.deleteTokenBucket(financialProductId, seckillActivityId);
     }

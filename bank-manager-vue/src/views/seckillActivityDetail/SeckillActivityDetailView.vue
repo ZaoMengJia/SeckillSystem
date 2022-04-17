@@ -52,6 +52,7 @@
                       <el-input-number size="mini" v-model="product.editTotal" :min="1" :max="1000000" label="描述文字"></el-input-number>
                     </el-form-item>
                   </el-form>
+                  <el-button style="float:left;color: red;margin-top: -4px;" type="text" @click="commitDeleteProductInfo(product)">删除</el-button>
                   <el-button style="float:right;" size="mini" @click="commitEditProductInfo(product)">确定</el-button>
                 </div>
                 <el-button type="text" slot="reference">编辑</el-button>
@@ -150,6 +151,15 @@ export default {
     }
   },
   methods: {
+    async commitDeleteProductInfo(product) {
+      let [,err] = await api.deleteActivityProduct(this.seckillActivityId, product.id);
+      if(err != null) {
+        this.$message.error(err.message);
+        return;
+      }
+
+      await this.getSeckillActivityList();
+    },
     async commitEditProductInfo(product) {
       if(product.editQuantity > product.editTotal) {
         this.$message.error('商品数量输入有误')
