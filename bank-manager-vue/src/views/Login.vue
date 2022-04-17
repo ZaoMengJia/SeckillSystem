@@ -1,232 +1,178 @@
 <template>
-  <div class="back">
-    <div class="mengban">
-      <div class="center">
-        <div class="left">
-          <div class="image">
-            <img src="../assets/造梦珈橙.png" alt="">
+  <el-container>
+    <el-main class="background-image" :style="{'--backgroundImageUrl': backgroundImageUrl}">
+
+    </el-main>
+    <el-aside width="300px">
+      <div style="overflow: hidden">
+        <div class="aside-background" :style="{'--backgroundImageUrl': backgroundImageUrl}">
+          <div class="aside-modal">
+            <div style="margin: 25px">
+              <div style="height: 230px"></div>
+              <div style="display: flex;flex-direction: column;">
+                <span class="title">{{ ref ? '登录以继续' : '登录' }}</span>
+                <div style="height: 20px"></div>
+
+                <el-input placeholder="用户名" v-model="username"></el-input>
+                <div style="height: 10px"></div>
+                <el-input placeholder="密码" v-model="password" show-password></el-input>
+
+                <transition name="el-fade-in">
+                  <div v-if="username !== '' && password !== ''">
+                    <div style="height: 20px"></div>
+                    <el-button icon="el-icon-right" type="info" style="margin-left: 50%;transform: translateX(-50%)"
+                               plain circle @click="onLoginButtonClick"></el-button>
+                  </div>
+                </transition>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="right">
-
-          <div class="login_title">管理员登录</div>
-
-          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item prop="account">
-              <el-input v-model="ruleForm.account" placeholder="请输入账号" clearable></el-input>
-            </el-form-item>
-
-            <el-form-item prop="password">
-              <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"
-                        clearable></el-input>
-            </el-form-item>
-
-            <Vcode :show="isShow" @success="success" @close="close"/>
-            <el-form-item>
-              <el-button class="login" type="primary" @click="submitForm('ruleForm')">登&nbsp;&nbsp;&nbsp;录</el-button>
-            </el-form-item>
-          </el-form>
-
-        </div>
       </div>
-    </div>
-  </div>
+    </el-aside>
+  </el-container>
 </template>
 
 <script>
-import Vcode from "vue-puzzle-vcode"
-import qs from "qs";
 import api from "@/api/api";
+import qs from "qs";
+
 export default {
   name: "Login",
   data() {
     return {
-      isShow: false, // 验证码模态框是否出现
-      ruleForm: {    //初始化
-        account: '',
-        password: ''
-      },
-      rules: {   //校验
-        account: [
-          {required: true, message: '账号不能为空', trigger: 'blur'},
-          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
-        ],
-        password: [
-          {required: true, message: '密码不能为空', trigger: 'blur'},
-          { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
-        ]
+      username: '',
+      password: '',
+      backgroundImageUrl: '',
+      urls: [
+        'https://side-effect-1302668817.cos.ap-nanjing.myqcloud.com/95b7eb2d61a47da96895e46f3c146626.jpg?q-sign-algorithm=sha1&q-ak=AKIDtYa2Y-py_6BJ7B4JT7slK78OpcGlRwGnGSZuyaUDOYSnq9kFApw-v10qXORM0OQ3&q-sign-time=1650206662;1650210262&q-key-time=1650206662;1650210262&q-header-list=&q-url-param-list=&q-signature=10e3f6d4b061ec28dc1730cc487654ca84de307f&x-cos-security-token=XDndFlnRpDFCDV4SQ1wAP5GmRShni4ja83c6ff1cbf48f9f491061b8ad49fa799nqCtOLuIWDJh-Ypoy4HaogV2IRWvwxpfqYyr3vzrSan3u4YlMZ_mVIRSFNXCuK9ye3PFJDcnLh9sevJJoRAHmpdbei_3FRJPm9FecDf-92gpaRxCM4Vm7Gb64A-aRqrtBY2zrmBuvIRL1XS1EIGdlRrdH37mqCN87FjIFG11gb4InhcpD8loYuJhDrMoGvFk',
+        'https://side-effect-1302668817.cos.ap-nanjing.myqcloud.com/95c792350b95d591faae76011415339c.png?q-sign-algorithm=sha1&q-ak=AKIDd-ZBSkbGEC5T97ak7gL5yyGswP2Ppyl-pwZBfoWTe-JzuHdzCVrivd80DfTCz7vw&q-sign-time=1650206710;1650210310&q-key-time=1650206710;1650210310&q-header-list=&q-url-param-list=&q-signature=daf93d9cdfeab05e1de9d15bdd688a018ba02a79&x-cos-security-token=XDndFlnRpDFCDV4SQ1wAP5GmRShni4ja02d0057052b5a669cf7c79aabec19974nqCtOLuIWDJh-Ypoy4HaojdcdLFw8y4U8u0CPUHVkaxouQ0tG70zYGkf_wrN59WZqa6moZjk9Jq4pPvAg4o7x1K1pRC5x2L2Mf-r1JGLBgqQCrszrKgX9fm4-hfwZvkWKfD6uY_5L02cIy9dGQ8kW8ldleSOW_A-zWMX_335Swrn7l9ONzD2bg11tFYEGqFR'
+      ],
+      ref: null
+    }
+  },
+  async mounted() {
+    if (localStorage.getItem('Authorization') !== null) {
+      await this.$router.push('/')
+      return
+    }
+    let index = Math.floor(Math.random() * 6)
+    this.backgroundImageUrl = `url("${this.urls[index]}")`
+    if (this.$route.query.ref) {
+      this.ref = this.$route.query.ref
+      if (this.ref === '/login') {
+        this.ref = null
       }
     }
   },
-  components: {
-    Vcode
-  },
   methods: {
-    submitForm() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
-          this.isShow = true;
-        }
-      })
-    },
-    //用户通过了验证
-    success() {
-      this.isShow = false; // 通过验证后，需要手动隐藏模态框
-      let {account, password} = this.ruleForm;
+    onLoginButtonClick: function () {
       const that = this;
       this.$http({
         method: 'post',
         url: '/auth/web',
         data: qs.stringify({
-          username : account,
-          password: password
+          username: this.username,
+          password: this.password
         }),
         headers: {
           'content-type': 'application/x-www-form-urlencoded'
         }
-      })
-      .then(res => {
-        if(res.data.code === 10000) {
+      }).then(res => {
+        if (res.data.code === 10000) {
           this.$store.commit('setToken', res.data.data.token);
           // window.sessionStorage.setItem("adminLogin", "true")
           // window.sessionStorage.setItem("adminId", res.data.data.id)
           this.$router.push('/user'); //跳转到首页
-        }
-        else if(res.data.code === 40001) {
+        } else if (res.data.code === 40001) {
           that.$message.error("用户名或密码错误");
-        }
-        else {
+        } else {
           that.$message.error(res.data.message);
         }
-      });
-    },
-    // 用户点击遮罩层，应该关闭模态框
-    close() {
-      this.isShow = false;
+      })
+
     }
-  },
-  mounted() {
-    window.sessionStorage.clear()
   }
 }
 </script>
 
 <style scoped>
-* {
+body {
   margin: 0;
   padding: 0;
 }
 
-html.body {
-  margin: 0;
-  height: 100%;
+@keyframes on-show-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.back {
-  height: 100%;
+.title {
   width: 100%;
-  background-image: url("../assets/login/海洋.jpg");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-position: top;
-  position: fixed;
+  text-align: center;
+  font-weight: normal;
+  font-size: 25px;
 }
 
-.mengban {
-  height: 100%;
-  width: 100%;
-  background-color: rgba(255,165,0,0.7);
-}
-
-.center {
-  float: left;
-  width: 1059px;
-  height: 585px;
-  background-color: #fff;
+.aside-modal {
+  z-index: 5;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50px;
-  box-shadow: 0 0 12px 6px rgba(47, 45, 45, 8%);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
-.left {
-  float: left;
-  width: 58%;
+.aside-background {
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
   height: 100%;
-  background-color: rgba(253, 190, 1,0.3);
-  border-radius: 50px 0 0 50px;
-  position: relative;
+  width: 350px;
   overflow: hidden;
+  opacity: 0;
+  animation: on-show-fade-in 1s;
+  animation-delay: 0.3s;
+  animation-fill-mode: forwards;
 }
 
-.left .image {
-  height: 300px;
-  width: 400px;
+.aside-background::after {
+  content: '';
+  z-index: 1;
   position: absolute;
-  margin: 0 auto;
-  top: 100px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  top: -10%;
+  bottom: -10%;
+  height: 120%;
+  width: 350px;
+  /*background-image: url("https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg");*/
+  background-image: var(--backgroundImageUrl);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  -webkit-filter: blur(10px);
+  -moz-filter: blur(10px);
+  -ms-filter: blur(10px);
+  -o-filter: blur(10px);
+  filter: blur(10px);
+  transition-delay: 10s;
+  transition: all 1.0s ease-in-out;
 }
 
-.left img {
-  height: 171px;
-  width: 390px;
-  margin: 78px 0 0 0;
-}
-
-.right {
-  float: left;
-  width: 340px;
-  /*margin-left: -50px;*/
-}
-
-/*.username{*/
-/*  margin-left: 50px;*/
-/*}*/
-
-.username .el-input__inner {
-  background: url(../assets/login/账号.png) no-repeat 10px center;
-  padding: 0px 50px;
-  width: 340px;
-  height: 51px;
-  font-size: 18px;
-  border: none;
-  border-bottom: 1px solid;
-}
-
-/*.password{*/
-/*  margin-left: 50px;*/
-/*}*/
-
-.password .el-input__inner {
-  background: url(../assets/login/密码.png) no-repeat 10px center;
-  padding: 0;
-  margin-right: 32px;
-  /*width: 340px;*/
-  height: 60px;
-  font-size: 18px;
-  border: none;
-  border-bottom: 1px solid;
-}
-
-.login {
-  width: 340px;
-  height: 45px;
-  background-color: rgba(2, 153, 208, 1);
-  font-size: 22px;
-  border-radius: 3px;
-  margin-top: 50px;
-  margin-left: -40px;
-}
-
-.login_title {
-  width: 130px;
-  margin: 103px 160px 50px 160px;
-  color: rgba(2, 153, 208, 1);
-  font-size: 24px;
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: var(--backgroundImageUrl);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
 }
 </style>

@@ -16,7 +16,7 @@
           <el-menu
               style="height: 0"
               :default-active="activePath"
-              active-text-color="#ffd04b"
+              active-text-color="#213148"
               :unique-opened="true"
               :router="true"
               :collapse="isCollapse"
@@ -188,7 +188,7 @@ body,
   justify-content: space-between;
   height: 100px !important;
   line-height: 100px;
-  background-color: rgba(255,165,0,0.7);
+  background-color: #1B3045;
   color: #fff;
   font-size: 22px;
   font-weight: 700;
