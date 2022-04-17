@@ -64,7 +64,8 @@ public class UserServiceImpl implements UserService {
         }
 
         redisUtils.set("user-audit::" + userId, user.getAudit());
-        isRegister = !StringUtil.isNullOrEmpty(user.getRealName() + user.getIdCard());
+        isRegister = user.getRealName() != null && user.getIdCard() != null;
+//        isRegister = !StringUtil.isNullOrEmpty(user.getRealName() + user.getIdCard());
         isAudited = user.getAudit() != 0;
         return Pair.of(isRegister, isAudited);
     }
