@@ -15,12 +15,13 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        redirect: '/login',
+        redirect: '/login'
     },
     {
         path: '/login',
         name: "Login",
-        component: Login
+        component: Login,
+        meta:{title:"后台登录"}
     },
     {
         path: '/adminHome',
@@ -30,37 +31,44 @@ const routes = [
             {
                 path: '/financialProduct',
                 name: 'FinancialProduct',
-                component: FinancialProductManager
+                component: FinancialProductManager,
+                meta:{title:"理财产品管理"}
             },
             {
                 path: '/order',
                 name: 'Order',
-                component: OrderManager
+                component: OrderManager,
+                meta:{title:"订单管理"}
             },
             {
                 path: '/saleProductDetail',
                 name: 'SaleProductDetail',
-                component: SaleProductDetailManager
+                component: SaleProductDetailManager,
+                meta:{title:"产品细节管理"}
             },
             {
                 path: '/seckillActivity',
                 name: 'SeckillActivity',
-                component: SeckillActivityManager
+                component: SeckillActivityManager,
+                meta:{title:"秒杀活动管理"}
             },
             {
                 path: '/user',
                 name: 'User',
-                component: UserManager
+                component: UserManager,
+                meta:{title:"用户管理"}
             },
             {
                 path: '/admin',
                 name: 'Admin',
-                component: AdminManager
+                component: AdminManager,
+                meta:{title:"管理员管理"}
             },
             {
                 path: '/seckill-activity-detail',
                 name: 'seckillActivityDetail',
-                component: SeckillActivityDetailView
+                component: SeckillActivityDetailView,
+                meta:{title:"秒杀活动设置"}
             }
         ]
     }
